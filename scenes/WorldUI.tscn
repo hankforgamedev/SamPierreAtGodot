@@ -1,0 +1,74 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/WorldDialogue.gd" id="1_wdlg"]
+
+[node name="WorldUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_wdlg")
+
+[node name="RightPanel" type="Panel" parent="."]
+layout_mode = 0
+anchor_left = 0.65
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="Margin" type="MarginContainer" parent="RightPanel"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="Inner" type="VBoxContainer" parent="RightPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SpeakerBar" type="HBoxContainer" parent="RightPanel/Margin/Inner"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SpeakerAccent" type="ColorRect" parent="RightPanel/Margin/Inner/SpeakerBar"]
+layout_mode = 2
+custom_minimum_size = Vector2(4, 20)
+color = Color(0.5, 0.36, 0.14, 1)
+
+[node name="SpeakerName" type="Label" parent="RightPanel/Margin/Inner/SpeakerBar"]
+layout_mode = 2
+text = "— — —"
+theme_override_font_sizes/font_size = 13
+
+[node name="Divider" type="ColorRect" parent="RightPanel/Margin/Inner"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 1)
+color = Color(0.3, 0.22, 0.10, 1)
+
+[node name="DialogueText" type="Label" parent="RightPanel/Margin/Inner"]
+layout_mode = 2
+size_flags_vertical = 3
+text = ""
+theme_override_font_sizes/font_size = 16
+
+[node name="ChoicePanel" type="VBoxContainer" parent="RightPanel/Margin/Inner"]
+layout_mode = 2
+visible = false
+theme_override_constants/separation = 6
+
+[node name="ChoiceTitle" type="Label" parent="RightPanel/Margin/Inner/ChoicePanel"]
+layout_mode = 2
+text = "選擇："
+theme_override_font_sizes/font_size = 12
+
+[node name="ChoiceButtons" type="VBoxContainer" parent="RightPanel/Margin/Inner/ChoicePanel"]
+layout_mode = 2
+theme_override_constants/separation = 4

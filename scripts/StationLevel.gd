@@ -1,0 +1,40 @@
+extends AsciiLevelBase
+
+func _get_level_name() -> String:
+	return "[ 虎寨城地鐵站 //  LINE 3  //  02:47  //  NO SERVICE TONIGHT ]"
+
+func _get_player_spawn() -> Vector2i:
+	return Vector2i(6, 9)
+
+func _get_npcs() -> Dictionary:
+	return {
+		Vector2i(44, 9): {
+			"chapter_id": "ch1",
+			"start_line": 0,
+			"char_id":    "rat",
+			"display":    "?",
+		},
+	}
+
+func _get_map_data() -> Array:
+	return [
+		"####################################################",
+		"#                                                  #",
+		"#  METRO LINE 3  //  NO SERVICE  //  02:47        #",
+		"#  !! STAY BEHIND THE YELLOW LINE !!              #",
+		"#                                                  #",
+		"#  ............................................  #",
+		"#  .                                          .  #",
+		"#  .                                          .  #",
+		"#  .                                          .  #",
+		"#  .                                          .  #",
+		"#  .                                          .  #",
+		"#  .          %     %  %    %                 .  #",
+		"#  .                                          .  #",
+		"#  ............................................  #",
+		"#__________________________________________________#",
+		"#  [ TRACK ]                                       #",
+		"#   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _    #",
+		"#                                                  #",
+		"####################################################",
+	]
