@@ -126,6 +126,9 @@ func _try_interact() -> void:
 		if npc.has("next_level"):
 			get_tree().change_scene_to_file(npc["next_level"] as String)
 			return
+		if npc.has("start_chapter"):
+			GameManager.start_chapter(npc["start_chapter"] as String)
+			return
 		_in_dialogue = true
 		world_dialogue.open(
 			npc.get("chapter_id", "") as String,

@@ -301,10 +301,17 @@ func _on_choice(goto_index: int) -> Callable:
 		_show_line(goto_index)
 
 # ── Next chapter ──────────────────────────────────────────────
+const LEVEL_CHAPTERS := {
+	"ch3": "res://scenes/Office.tscn",
+	"ch5": "res://scenes/LaoxiaoRestaurant.tscn",
+}
+
 func _go_next_chapter() -> void:
 	var next_id : String = DialogueData.get_next_chapter_id(chapter["id"] as String)
 	if next_id == "":
 		get_tree().change_scene_to_file("res://scenes/StartScreen.tscn")
+	elif LEVEL_CHAPTERS.has(next_id):
+		get_tree().change_scene_to_file(LEVEL_CHAPTERS[next_id])
 	else:
 		GameManager.current_chapter_id = next_id
 		get_tree().reload_current_scene()

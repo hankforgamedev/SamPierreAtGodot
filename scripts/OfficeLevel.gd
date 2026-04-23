@@ -14,7 +14,16 @@ func _get_npcs() -> Dictionary:
 			"char_id":    "lee",
 			"display":    "L",
 		},
+		Vector2i(47, 10): {
+			"start_chapter": "ch4",
+			"char_id":       "narrator",
+			"display":       ">",
+		},
 	}
+
+func _on_dialogue_closed() -> void:
+	super._on_dialogue_closed()
+	stress_level = 0.2
 
 func _get_map_data() -> Array:
 	return [

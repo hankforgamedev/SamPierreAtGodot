@@ -107,6 +107,7 @@ func _show_line(index: int) -> void:
 
 	if line.has("minigame"):
 		GameManager.resume_line = index + 1
+		GameManager.current_chapter_id = _chapter.get("id", "") as String
 		get_tree().change_scene_to_file("res://scenes/CivilServantGame.tscn")
 		return
 

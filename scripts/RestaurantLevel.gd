@@ -15,11 +15,15 @@ func _get_npcs() -> Dictionary:
 			"display":    "甲",
 		},
 		Vector2i(2, 11): {
-			"next_level": "res://scenes/Street.tscn",
-			"char_id":    "narrator",
-			"display":    "<",
+			"start_chapter": "ch6",
+			"char_id":       "narrator",
+			"display":       "<",
 		},
 	}
+
+func _on_dialogue_closed() -> void:
+	super._on_dialogue_closed()
+	stress_level = 0.3
 
 func _get_map_data() -> Array:
 	return [
