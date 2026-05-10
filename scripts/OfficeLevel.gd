@@ -13,11 +13,14 @@ func _get_npcs() -> Dictionary:
 			"start_line": 0,
 			"char_id":    "lee",
 			"display":    "L",
+			"ambient_a":  "李先生正看著這邊。那個油膩的笑。",
+			"ambient_b":  "文件永遠是處理不完的。",
 		},
 		Vector2i(47, 10): {
 			"start_chapter": "ch4",
 			"char_id":       "narrator",
 			"display":       ">",
+			"ambient_a":     "走廊盡頭。",
 		},
 	}
 

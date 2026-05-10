@@ -42,6 +42,31 @@ var stress_level   : float      = 0.0
 var _glitch_timer  : float      = 0.0
 var _in_dialogue   : bool       = false
 
+# ── FX state ──────────────────────────────────────────────
+var _shake_timer     : float  = 0.0
+var _shake_intensity : float  = 0.0
+var _base_map_pos    : Vector2 = Vector2.ZERO
+var _glitch_spike_timer   : float = 0.0
+var _glitch_spike_base    : float = 0.0
+var _flash_rect      : ColorRect = null
+
+# ── Movement state ────────────────────────────────────────
+const MOVE_HOLD_DELAY  := 0.25   # seconds before repeat kicks in
+const MOVE_REPEAT_RATE := 0.10   # seconds between repeat steps
+const FRICTION_STEPS   := 0      # no slide after release — 1 press = 1 step
+const FRICTION_RATE    := 0.14
+
+var _held_dir      : Vector2i = Vector2i.ZERO
+var _move_phase    : int      = 0   # 0=idle 1=held 2=repeating 3=friction
+var _move_timer    : float    = 0.0
+var _friction_dir  : Vector2i = Vector2i.ZERO
+var _friction_count: int      = 0
+var _last_dialogue_chapter: String = ""
+
+# ── Ambient text state ────────────────────────────────────
+var _talked_npcs   := {}
+var _ambient_label: Node = null
+
 @onready var map_display   : RichTextLabel = $MapDisplay
 @onready var hud_label     : Label         = $HUD
 @onready var world_dialogue                = $WorldUI
@@ -58,10 +83,14 @@ func _ready() -> void:
 	_player_pos = _get_player_spawn()
 	_npcs       = _get_npcs()
 	world_dialogue.dialogue_closed.connect(_on_dialogue_closed)
+	world_dialogue.line_fx.connect(_on_line_fx)
 	world_dialogue.visible = false
 	_setup_display()
 	_draw_map()
 	hud_label.text = _get_level_name()
+	_base_map_pos  = map_display.position
+	_setup_flash()
+	_setup_ambient()
 
 func _setup_display() -> void:
 	var bg := StyleBoxFlat.new()
@@ -81,19 +110,7 @@ func _setup_display() -> void:
 func _input(event: InputEvent) -> void:
 	if _in_dialogue:
 		return
-	if event.is_action_pressed("move_left"):
-		if _try_move(Vector2i(-1, 0)):
-			get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("move_right"):
-		if _try_move(Vector2i(1, 0)):
-			get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("jump"):
-		if _try_move(Vector2i(0, -1)):
-			get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("move_down"):
-		if _try_move(Vector2i(0, 1)):
-			get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("interact"):
+	if event.is_action_pressed("interact"):
 		_try_interact()
 		get_viewport().set_input_as_handled()
 
@@ -130,25 +147,186 @@ func _try_interact() -> void:
 			GameManager.start_chapter(npc["start_chapter"] as String)
 			return
 		_in_dialogue = true
+		_last_dialogue_chapter = npc.get("chapter_id", "") as String
 		world_dialogue.open(
-			npc.get("chapter_id", "") as String,
-			npc.get("start_line", 0)  as int
+			_last_dialogue_chapter,
+			npc.get("start_line", 0) as int
 		)
 		return
 
 func _on_dialogue_closed() -> void:
 	_in_dialogue = false
+	var check_dirs := [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
+	for d in check_dirs:
+		var chk: Vector2i = _player_pos + d
+		if chk in _npcs:
+			var npc_d: Dictionary = _npcs[chk]
+			if npc_d.has("chapter_id"):
+				_talked_npcs[chk] = true
+				break
+	_update_ambient()
+
+func _on_player_moved() -> void:
+	pass
+
+# ── Ambient text ──────────────────────────────────────────
+func _setup_ambient() -> void:
+	var lbl := Label.new()
+	lbl.add_theme_font_size_override("font_size", 14)
+	lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
+	lbl.anchor_left   = 0.0
+	lbl.anchor_right  = 0.62
+	lbl.anchor_top    = 1.0
+	lbl.anchor_bottom = 1.0
+	lbl.offset_top    = -44.0
+	lbl.offset_bottom = -8.0
+	lbl.offset_left   = 14.0
+	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	lbl.z_index = 50
+	add_child(lbl)
+	_ambient_label = lbl
+
+func _get_nearby_npc() -> Vector2i:
+	var search_dirs := [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
+	for d in search_dirs:
+		var chk: Vector2i = _player_pos + d
+		if chk in _npcs:
+			return chk
+	return Vector2i(-1, -1)
+
+func _update_ambient() -> void:
+	if _ambient_label == null:
+		return
+	var lbl := _ambient_label as Label
+	if lbl == null:
+		return
+	var nearby := _get_nearby_npc()
+	if nearby.x == -1:
+		lbl.text = ""
+		return
+	var npc := _npcs[nearby] as Dictionary
+	var key := "ambient_a"
+	if _talked_npcs.has(nearby):
+		key = "ambient_b"
+	lbl.text = npc.get(key, "")
+
+func _setup_flash() -> void:
+	_flash_rect = ColorRect.new()
+	_flash_rect.color = Color(1, 1, 1, 0)
+	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flash_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_flash_rect.z_index = 100
+	add_child(_flash_rect)
+
+# ── FX triggers ───────────────────────────────────────────
+func trigger_shake(intensity: float = 6.0, duration: float = 0.35) -> void:
+	_shake_intensity = intensity
+	_shake_timer     = duration
+
+func trigger_flash(color: Color = Color.WHITE, duration: float = 0.25) -> void:
+	if _flash_rect == null:
+		return
+	_flash_rect.color = Color(color.r, color.g, color.b, 0.0)
+	var tw := create_tween()
+	tw.tween_property(_flash_rect, "color:a", 0.85, duration * 0.3)
+	tw.tween_property(_flash_rect, "color:a", 0.0,  duration * 0.7)
+
+func trigger_glitch_spike(duration: float = 1.2) -> void:
+	_glitch_spike_base  = stress_level
+	_glitch_spike_timer = duration
+	stress_level        = max(stress_level, 1.0)
+
+func _on_line_fx(effects: Array) -> void:
+	for fx in effects:
+		match fx:
+			"shake":       trigger_shake()
+			"flash_white": trigger_flash(Color.WHITE)
+			"flash_black": trigger_flash(Color.BLACK, 0.6)
+			"glitch_spike": trigger_glitch_spike()
 
 # ── Glitch ────────────────────────────────────────────────
 func _process(delta: float) -> void:
+	_tick_shake(delta)
 	if _in_dialogue:
 		return
+	_tick_movement(delta)
+	_tick_glitch_spike(delta)
 	_glitch_timer += delta
 	var interval: float = 2.5 / max(1.0 + stress_level * 4.0, 0.1)
 	if _glitch_timer >= interval:
 		_glitch_timer = 0.0
 		_apply_glitch()
 		_draw_map()
+
+func _tick_movement(delta: float) -> void:
+	var dir := Vector2i.ZERO
+	if Input.is_action_pressed("move_left"):
+		dir = Vector2i(-1, 0)
+	elif Input.is_action_pressed("move_right"):
+		dir = Vector2i(1, 0)
+	elif Input.is_action_pressed("jump"):
+		dir = Vector2i(0, -1)
+	elif Input.is_action_pressed("move_down"):
+		dir = Vector2i(0, 1)
+
+	if dir != Vector2i.ZERO:
+		_friction_dir   = dir
+		_friction_count = FRICTION_STEPS
+		if _held_dir != dir:
+			_held_dir   = dir
+			_move_timer = 0.0
+			_move_phase = 1
+			if _try_move(dir):
+				_draw_map()
+				_update_ambient()
+				_on_player_moved()
+		else:
+			_move_timer += delta
+			match _move_phase:
+				1:
+					if _move_timer >= MOVE_HOLD_DELAY:
+						_move_phase = 2
+						_move_timer = 0.0
+				2:
+					if _move_timer >= MOVE_REPEAT_RATE:
+						_move_timer = 0.0
+						if _try_move(dir):
+							_draw_map()
+							_update_ambient()
+							_on_player_moved()
+	else:
+		if _held_dir != Vector2i.ZERO:
+			_held_dir   = Vector2i.ZERO
+			_move_phase = 3
+			_move_timer = 0.0
+		if _move_phase == 3:
+			_move_timer += delta
+			if _friction_count > 0 and _move_timer >= FRICTION_RATE:
+				_move_timer      = 0.0
+				_friction_count -= 1
+				if _try_move(_friction_dir):
+					_draw_map()
+					_update_ambient()
+			elif _friction_count <= 0:
+				_move_phase = 0
+
+func _tick_shake(delta: float) -> void:
+	if _shake_timer <= 0.0:
+		map_display.position = _base_map_pos
+		return
+	_shake_timer -= delta
+	var off := Vector2(
+		randf_range(-_shake_intensity, _shake_intensity),
+		randf_range(-_shake_intensity * 0.5, _shake_intensity * 0.5)
+	)
+	map_display.position = _base_map_pos + off
+
+func _tick_glitch_spike(delta: float) -> void:
+	if _glitch_spike_timer <= 0.0:
+		return
+	_glitch_spike_timer -= delta
+	if _glitch_spike_timer <= 0.0:
+		stress_level = _glitch_spike_base
 
 func _apply_glitch() -> void:
 	_glitch_overlay.clear()

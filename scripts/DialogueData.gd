@@ -1,4 +1,4 @@
-extends Node
+﻿extends Node
 
 # ── Line fields ───────────────────────────────────────────────
 # speaker  : "sam" | "rat" | "lee" | "rachel" | "sarah" | "bill" | "moujia" | "david" | "narrator"
@@ -63,17 +63,17 @@ const CHAPTERS : Array = [
 			# 18
 			{"speaker": "sam", "text": "「滾開。」", "active": "left"},
 			# 19
-			{"speaker": "narrator", "text": "老鼠從皮靴內側抽出一把蝴蝶刀，衝向皮耶爾。\n\n皮耶爾反應過來掏槍時，下腹已經被刺中了。", "active": "none"},
+			{"speaker": "narrator", "text": "老鼠從皮靴內側抽出一把蝴蝶刀，衝向皮耶爾。\n\n皮耶爾反應過來掏槍時，下腹已經被刺中了。", "active": "none", "speed": "fast", "fx": ["shake", "flash_white"]},
 			# 20
-			{"speaker": "narrator", "text": "「最可悲的是，在我死之前，我一刻都沒有活成我想要的樣子……\n\n操！一次就好，就算只有一次也好，我想活著，真正的活著——」", "active": "none"},
+			{"speaker": "narrator", "text": "「最可悲的是，在我死之前，我一刻都沒有活成我想要的樣子……\n\n操！一次就好，就算只有一次也好，我想活著，真正的活著——」", "active": "none", "speed": "slow", "fx": ["glitch_spike"]},
 			# 21
-			{"speaker": "narrator", "text": "砰！子彈射穿老鼠的肺。\n\n末班車進站。皮耶爾把老鼠拽向軌道，用力一推。", "active": "none"},
+			{"speaker": "narrator", "text": "砰！子彈射穿老鼠的肺。\n\n末班車進站。皮耶爾把老鼠拽向軌道，用力一推。", "active": "none", "speed": "fast", "fx": ["shake"]},
 			# 22
-			{"speaker": "narrator", "text": "「唰，噗吱！」\n\n鮮血濺到皮耶爾的臉上和白襯衫上，朱紅的顏料渲染了好一幅抽象畫。", "active": "none"},
+			{"speaker": "narrator", "text": "「唰，噗吱！」\n\n鮮血濺到皮耶爾的臉上和白襯衫上，朱紅的顏料渲染了好一幅抽象畫。", "active": "none", "fx": ["flash_white", "glitch_spike"]},
 			# 23
-			{"speaker": "sam", "text": "（靠在柱子上，緩緩滑坐到地上）\n……某種程度上，他很快樂。", "active": "left"},
+			{"speaker": "sam", "text": "（靠在柱子上，緩緩滑坐到地上）\n……某種程度上，他很快樂。", "active": "left", "speed": "slow"},
 			# 24
-			{"speaker": "narrator", "text": "他的身體越來越輕。\n\n一片黑，最後什麼都沒有了。", "active": "none"},
+			{"speaker": "narrator", "text": "他的身體越來越輕。\n\n一片黑，最後什麼都沒有了。", "active": "none", "speed": "slow", "fx": ["flash_black"]},
 		]
 	},
 	{

@@ -12,6 +12,7 @@ func _get_npcs() -> Dictionary:
 			"next_level": "res://scenes/LaoxiaoRestaurant.tscn",
 			"char_id":    "narrator",
 			"display":    ">",
+			"ambient_a":  "巷子深處透著昏黃的燈光。老蕭餐館——全年無休。",
 		},
 	}
 

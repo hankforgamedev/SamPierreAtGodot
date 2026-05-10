@@ -13,11 +13,14 @@ func _get_npcs() -> Dictionary:
 			"start_line": 0,
 			"char_id":    "moujia",
 			"display":    "甲",
+			"ambient_a":  "角落那個人。一直沒動。盯著杯底，或者盯著空氣。",
+			"ambient_b":  "某甲說的那些話，還在耳邊轉。",
 		},
 		Vector2i(2, 11): {
 			"start_chapter": "ch6",
 			"char_id":       "narrator",
 			"display":       "<",
+			"ambient_a":     "門口。街上沒有人了。",
 		},
 	}
 

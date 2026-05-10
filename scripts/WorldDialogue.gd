@@ -9,9 +9,12 @@ const C_CHOICE_BG   := Color(0.08, 0.062, 0.048, 1.0)
 const C_CHOICE_HVR  := Color(0.16, 0.12,  0.07,  1.0)
 const C_CHOICE_TXT  := Color(0.72, 0.60,  0.38,  1.0)
 const C_CHOICE_HVTXT:= Color(0.96, 0.80,  0.38,  1.0)
-const TYPE_SPEED    := 0.020
+const SPEED_FAST   := 0.008
+const SPEED_NORMAL := 0.020
+const SPEED_SLOW   := 0.045
 
 signal dialogue_closed
+signal line_fx(effects: Array)
 
 var _chapter      : Dictionary = {}
 var _lines        : Array      = []
@@ -20,6 +23,7 @@ var _typing       := false
 var _full_text    := ""
 var _typed_so_far := ""
 var _type_timer   := 0.0
+var _type_speed   := SPEED_NORMAL
 var _has_choices  := false
 var _can_advance  := false
 
@@ -60,8 +64,8 @@ func _process(delta: float) -> void:
 	if not _typing:
 		return
 	_type_timer += delta
-	while _type_timer >= TYPE_SPEED and _typed_so_far.length() < _full_text.length():
-		_type_timer -= TYPE_SPEED
+	while _type_timer >= _type_speed and _typed_so_far.length() < _full_text.length():
+		_type_timer -= _type_speed
 		_typed_so_far += _full_text[_typed_so_far.length()]
 		dlg_text.text = _typed_so_far
 	if _typed_so_far.length() >= _full_text.length():
@@ -71,9 +75,14 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if not visible:
 		return
-	var is_advance := event.is_action_pressed("ui_accept") or \
-		(event is InputEventMouseButton and (event as InputEventMouseButton).pressed \
-		 and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
+	var is_keyboard := event.is_action_pressed("ui_accept")
+	var is_mouse    := event is InputEventMouseButton \
+		and (event as InputEventMouseButton).pressed \
+		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+	# When choices are shown, let mouse events reach the buttons
+	if _has_choices and is_mouse:
+		return
+	var is_advance := is_keyboard or is_mouse
 	if not is_advance:
 		return
 	get_viewport().set_input_as_handled()
@@ -124,6 +133,16 @@ func _show_line(index: int) -> void:
 	if line.has("choices"):
 		_has_choices = true
 		_build_choices(line["choices"] as Array)
+
+	var spd: String = line.get("speed", "normal") as String
+	match spd:
+		"fast":  _type_speed = SPEED_FAST
+		"slow":  _type_speed = SPEED_SLOW
+		_:       _type_speed = SPEED_NORMAL
+
+	var fx: Array = line.get("fx", []) as Array
+	if fx.size() > 0:
+		line_fx.emit(fx)
 
 	_full_text    = line.get("text", "") as String
 	_typed_so_far = ""
