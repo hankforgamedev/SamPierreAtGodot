@@ -5,6 +5,12 @@ var _train_triggered: bool = false
 func _get_level_name() -> String:
 	return "[ 虎寨城地鐵站 //  LINE 3  //  02:47  //  NO SERVICE TONIGHT ]"
 
+func _get_level_id() -> String:
+	return "station"
+
+func _get_scene_intro() -> String:
+	return "月台沒有人。\n\n深夜，末班車前。隧道那頭是什麼，沒有人說得清楚。燈管閃了一下，又穩住。\n\n月台那端有個人。"
+
 func _get_player_spawn() -> Vector2i:
 	return Vector2i(6, 9)
 

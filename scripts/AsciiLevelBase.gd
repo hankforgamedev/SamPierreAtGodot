@@ -67,6 +67,14 @@ var _last_dialogue_chapter: String = ""
 var _talked_npcs   := {}
 var _ambient_label: Node = null
 
+# ── Scene intro panel state ───────────────────────────────
+var _scene_panel_open: bool = false
+var _scene_panel: Node = null
+var _panel_text_label: Node = null
+
+# ── Interactable objects ───────────────────────────────────
+var _objects: Dictionary = {}
+
 @onready var map_display   : RichTextLabel = $MapDisplay
 @onready var hud_label     : Label         = $HUD
 @onready var world_dialogue                = $WorldUI
@@ -76,6 +84,8 @@ func _get_map_data()     -> Array      : return []
 func _get_player_spawn() -> Vector2i   : return Vector2i(4, 4)
 func _get_npcs()         -> Dictionary : return {}
 func _get_level_name()   -> String     : return ""
+func _get_scene_intro()  -> String     : return ""
+func _get_level_id()     -> String     : return ""
 
 # ── Lifecycle ─────────────────────────────────────────────
 func _ready() -> void:
@@ -91,6 +101,9 @@ func _ready() -> void:
 	_base_map_pos  = map_display.position
 	_setup_flash()
 	_setup_ambient()
+	_objects = ObjectData.OBJECTS.get(_get_level_id(), {})
+	_setup_scene_panel()
+	_show_panel_text(_get_scene_intro())
 
 func _setup_display() -> void:
 	var bg := StyleBoxFlat.new()
@@ -108,10 +121,22 @@ func _setup_display() -> void:
 
 # ── Input ─────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
-	if _in_dialogue:
-		return
 	if event.is_action_pressed("interact"):
-		_try_interact()
+		if _scene_panel_open:
+			_close_scene_panel()
+			get_viewport().set_input_as_handled()
+			return
+		if _in_dialogue:
+			return
+		var near_npc := false
+		for dir in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
+			if (_player_pos + dir) in _npcs:
+				near_npc = true
+				break
+		if near_npc:
+			_try_interact()
+		elif not _try_interact_object():
+			_open_scene_panel()
 		get_viewport().set_input_as_handled()
 
 # ── Movement ──────────────────────────────────────────────
@@ -186,6 +211,77 @@ func _setup_ambient() -> void:
 	add_child(lbl)
 	_ambient_label = lbl
 
+# ── Scene intro panel ─────────────────────────────────────
+func _setup_scene_panel() -> void:
+	var intro := _get_scene_intro()
+	if intro == "":
+		return
+
+	var panel := Panel.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.10, 0.078, 0.060)
+	style.border_color = Color(0.50, 0.36, 0.14)
+	style.set_border_width_all(2)
+	style.set_content_margin_all(28.0)
+	panel.add_theme_stylebox_override("panel", style)
+	panel.anchor_left   = 0.15
+	panel.anchor_right  = 0.85
+	panel.anchor_top    = 0.18
+	panel.anchor_bottom = 0.82
+	panel.z_index = 150
+	panel.visible = false
+	add_child(panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	vbox.add_theme_constant_override("separation", 20)
+	panel.add_child(vbox)
+
+	var text_lbl := Label.new()
+	text_lbl.text = intro
+	text_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
+	text_lbl.add_theme_font_size_override("font_size", 20)
+	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(text_lbl)
+	_panel_text_label = text_lbl
+
+	var hint_lbl := Label.new()
+	hint_lbl.text = "Press E to interact"
+	hint_lbl.add_theme_color_override("font_color", Color(0.50, 0.36, 0.14))
+	hint_lbl.add_theme_font_size_override("font_size", 13)
+	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	vbox.add_child(hint_lbl)
+
+	_scene_panel = panel
+
+func _show_panel_text(text: String) -> void:
+	if text == "" or _panel_text_label == null:
+		return
+	(_panel_text_label as Label).text = text
+	_open_scene_panel()
+
+func _open_scene_panel() -> void:
+	if _scene_panel == null:
+		return
+	_scene_panel.visible = true
+	_scene_panel_open = true
+
+func _close_scene_panel() -> void:
+	if _scene_panel == null:
+		return
+	_scene_panel.visible = false
+	_scene_panel_open = false
+
+func _try_interact_object() -> bool:
+	for dir in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
+		var chk := _player_pos + dir
+		if chk in _objects:
+			var obj := _objects[chk] as Dictionary
+			_show_panel_text(obj.get("text", ""))
+			return true
+	return false
+
 func _get_nearby_npc() -> Vector2i:
 	var search_dirs := [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
 	for d in search_dirs:
@@ -247,7 +343,7 @@ func _on_line_fx(effects: Array) -> void:
 # ── Glitch ────────────────────────────────────────────────
 func _process(delta: float) -> void:
 	_tick_shake(delta)
-	if _in_dialogue:
+	if _in_dialogue or _scene_panel_open:
 		return
 	_tick_movement(delta)
 	_tick_glitch_spike(delta)

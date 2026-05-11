@@ -3,6 +3,12 @@ extends AsciiLevelBase
 func _get_level_name() -> String:
 	return "[ 老蕭餐館  //  深夜  //  最後一桌 ]"
 
+func _get_level_id() -> String:
+	return "restaurant"
+
+func _get_scene_intro() -> String:
+	return "老蕭餐館。深夜。\n\n廚房早就收了，燈還開著。最後一桌沒有走。\n\n角落那個人。一直沒動。盯著杯底，或者盯著空氣。"
+
 func _get_player_spawn() -> Vector2i:
 	return Vector2i(4, 11)
 

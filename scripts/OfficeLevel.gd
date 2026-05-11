@@ -3,6 +3,12 @@ extends AsciiLevelBase
 func _get_level_name() -> String:
 	return "[ 虎寨城警察局  //  辦公室  //  08:55 ]"
 
+func _get_level_id() -> String:
+	return "office"
+
+func _get_scene_intro() -> String:
+	return "警察局三樓。辦公室。\n\n日光燈的嗡嗡聲從沒停過。文件疊著文件，椅子空著一半。\n\n李先生正看著這邊。那個油膩的笑。"
+
 func _get_player_spawn() -> Vector2i:
 	return Vector2i(5, 10)
 

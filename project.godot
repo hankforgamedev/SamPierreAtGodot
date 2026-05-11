@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 GameManager="*res://scripts/GameManager.gd"
 DialogueData="*res://scripts/DialogueData.gd"
+ObjectData="*res://scripts/ObjectData.gd"
 
 [input]
 
