@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3]
 
-[ext_resource type="Script" path="res://scripts/StationLevel.gd" id="1_lvl"]
+[ext_resource type="Script" uid="uid://c7o8vee0hrcj8" path="res://scripts/StationLevel.gd" id="1_lvl"]
 [ext_resource type="PackedScene" path="res://scenes/WorldUI.tscn" id="2_wui"]
 
 [node name="Station" type="Control"]
