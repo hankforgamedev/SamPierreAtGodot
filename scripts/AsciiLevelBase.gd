@@ -1,5 +1,5 @@
-extends Control
 class_name AsciiLevelBase
+extends Control
 
 # ── Wall symbols (block movement) ─────────────────────────
 const WALL_SYMS := ["#", "I", "|"]
@@ -275,7 +275,7 @@ func _close_scene_panel() -> void:
 
 func _try_interact_object() -> bool:
 	for dir in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
-		var chk := _player_pos + dir
+		var chk: Vector2i = _player_pos + dir
 		if chk in _objects:
 			var obj := _objects[chk] as Dictionary
 			_show_panel_text(obj.get("text", ""))
