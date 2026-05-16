@@ -55,6 +55,20 @@ const MOVE_HOLD_DELAY  := 0.25   # seconds before repeat kicks in
 const MOVE_REPEAT_RATE := 0.10   # seconds between repeat steps
 const FRICTION_STEPS   := 0      # no slide after release — 1 press = 1 step
 const FRICTION_RATE    := 0.14
+const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
+
+# ── Original design font sizes (all UI derives from these) ────────────
+const BASE_MAP_FONT    := 28   # map RichTextLabel font at design resolution
+const BASE_HUD_FONT    := 13   # HUD label font (matches scene file default)
+const BASE_HUD_HEIGHT  := 28   # HUD label height (offset_top magnitude in scene)
+const BASE_AMB_FONT    := 14   # ambient NPC hint label font
+const BASE_AMB_TOP     := 44   # ambient label offset_top magnitude in scene
+const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
+const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
+const BASE_PANEL_FONT  := 20   # scene intro panel body text
+const BASE_HINT_FONT   := 13   # scene intro "Press E" hint
+const BASE_PANEL_MARGIN := 28  # scene intro panel content margin
+const BASE_PANEL_SEP   := 20   # scene intro VBoxContainer separation
 
 var _held_dir      : Vector2i = Vector2i.ZERO
 var _move_phase    : int      = 0   # 0=idle 1=held 2=repeating 3=friction
@@ -74,6 +88,7 @@ var _panel_text_label: Node = null
 
 # ── Interactable objects ───────────────────────────────────
 var _objects: Dictionary = {}
+var _font_size: int = 28
 
 @onready var map_display   : RichTextLabel = $MapDisplay
 @onready var hud_label     : Label         = $HUD
@@ -87,6 +102,24 @@ func _get_level_name()   -> String     : return ""
 func _get_scene_intro()  -> String     : return ""
 func _get_level_id()     -> String     : return ""
 
+func _compute_font_size() -> int:
+	var vp   := get_viewport().get_visible_rect().size
+	var rows := _map_base.size()
+	if rows == 0:
+		return BASE_MAP_FONT
+	var cols := 0
+	for row in _map_base:
+		cols = max(cols, (row as String).length())
+	if cols == 0:
+		return BASE_MAP_FONT
+	# 0.65 = WorldUI anchor_left; subtract offset_left(24) from each side
+	var map_w := vp.x * 0.65 - 48.0
+	# subtract MapDisplay offset_top(24) + abs(offset_bottom(-40))
+	var map_h := vp.y - 64.0
+	var sz_w  := int(map_w / (cols * CHAR_ASPECT))
+	var sz_h  := int(map_h / rows)
+	return clampi(mini(sz_w, sz_h), 14, 80)
+
 # ── Lifecycle ─────────────────────────────────────────────
 func _ready() -> void:
 	_map_base   = _get_map_data()
@@ -95,6 +128,11 @@ func _ready() -> void:
 	world_dialogue.dialogue_closed.connect(_on_dialogue_closed)
 	world_dialogue.line_fx.connect(_on_line_fx)
 	world_dialogue.visible = false
+	_font_size = _compute_font_size()
+	var hud_fs := BASE_HUD_FONT * _font_size / BASE_MAP_FONT
+	hud_label.add_theme_font_size_override("font_size", hud_fs)
+	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(BASE_MAP_FONT)
+	world_dialogue.apply_scale(_font_size)
 	_setup_display()
 	_draw_map()
 	hud_label.text = _get_level_name()
@@ -117,7 +155,7 @@ func _setup_display() -> void:
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
 	map_display.add_theme_font_override("normal_font", font)
-	map_display.add_theme_font_size_override("normal_font_size", 28)
+	map_display.add_theme_font_size_override("normal_font_size", _font_size)
 
 # ── Input ─────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
@@ -196,16 +234,17 @@ func _on_player_moved() -> void:
 
 # ── Ambient text ──────────────────────────────────────────
 func _setup_ambient() -> void:
-	var lbl := Label.new()
-	lbl.add_theme_font_size_override("font_size", 14)
+	var lbl    := Label.new()
+	var amb_fs := BASE_AMB_FONT * _font_size / BASE_MAP_FONT
+	lbl.add_theme_font_size_override("font_size", amb_fs)
 	lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
 	lbl.anchor_left   = 0.0
 	lbl.anchor_right  = 0.62
 	lbl.anchor_top    = 1.0
 	lbl.anchor_bottom = 1.0
-	lbl.offset_top    = -44.0
-	lbl.offset_bottom = -8.0
-	lbl.offset_left   = 14.0
+	lbl.offset_top    = -float(BASE_AMB_TOP    * _font_size) / float(BASE_MAP_FONT)
+	lbl.offset_bottom = -float(BASE_AMB_BOTTOM * _font_size) / float(BASE_MAP_FONT)
+	lbl.offset_left   =  float(BASE_AMB_LEFT   * _font_size) / float(BASE_MAP_FONT)
 	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl.z_index = 50
 	add_child(lbl)
@@ -222,7 +261,7 @@ func _setup_scene_panel() -> void:
 	style.bg_color = Color(0.10, 0.078, 0.060)
 	style.border_color = Color(0.50, 0.36, 0.14)
 	style.set_border_width_all(2)
-	style.set_content_margin_all(28.0)
+	style.set_content_margin_all(float(BASE_PANEL_MARGIN * _font_size) / float(BASE_MAP_FONT))
 	panel.add_theme_stylebox_override("panel", style)
 	panel.anchor_left   = 0.15
 	panel.anchor_right  = 0.85
@@ -234,13 +273,13 @@ func _setup_scene_panel() -> void:
 
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 20)
+	vbox.add_theme_constant_override("separation", BASE_PANEL_SEP * _font_size / BASE_MAP_FONT)
 	panel.add_child(vbox)
 
 	var text_lbl := Label.new()
 	text_lbl.text = intro
 	text_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
-	text_lbl.add_theme_font_size_override("font_size", 20)
+	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / BASE_MAP_FONT)
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(text_lbl)
@@ -249,7 +288,7 @@ func _setup_scene_panel() -> void:
 	var hint_lbl := Label.new()
 	hint_lbl.text = "Press E to interact"
 	hint_lbl.add_theme_color_override("font_color", Color(0.50, 0.36, 0.14))
-	hint_lbl.add_theme_font_size_override("font_size", 13)
+	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / BASE_MAP_FONT)
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	vbox.add_child(hint_lbl)
 
@@ -443,7 +482,7 @@ func _apply_glitch() -> void:
 
 # ── Rendering ─────────────────────────────────────────────
 func _draw_map() -> void:
-	var out := "[font_size=28]"
+	var out := "[font_size=%d]" % _font_size
 	for y in _map_base.size():
 		var row := _map_base[y] as String
 		for x in row.length():

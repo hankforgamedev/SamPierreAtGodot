@@ -13,6 +13,16 @@ const SPEED_FAST   := 0.008
 const SPEED_NORMAL := 0.020
 const SPEED_SLOW   := 0.045
 
+# ── Original design sizes (must match AsciiLevelBase.BASE_MAP_FONT) ───
+const BASE_MAP_FONT   := 28
+const BASE_SPK_FONT   := 13
+const BASE_DLG_FONT   := 16
+const BASE_BTN_FONT   := 14
+const BASE_TITLE_FONT := 12
+const BASE_MARGIN     := 18
+const BASE_ACCENT_H   := 20
+const BASE_BTN_MARGIN := 8
+
 signal dialogue_closed
 signal line_fx(effects: Array)
 
@@ -24,14 +34,17 @@ var _full_text    := ""
 var _typed_so_far := ""
 var _type_timer   := 0.0
 var _type_speed   := SPEED_NORMAL
-var _has_choices  := false
-var _can_advance  := false
+var _has_choices    := false
+var _can_advance    := false
+var _map_font_size  := BASE_MAP_FONT
 
-@onready var spk_name     : Label         = $RightPanel/Margin/Inner/SpeakerBar/SpeakerName
-@onready var speaker_accent: ColorRect    = $RightPanel/Margin/Inner/SpeakerBar/SpeakerAccent
-@onready var dlg_text     : Label         = $RightPanel/Margin/Inner/DialogueText
-@onready var choice_panel : VBoxContainer = $RightPanel/Margin/Inner/ChoicePanel
-@onready var choice_buttons: VBoxContainer= $RightPanel/Margin/Inner/ChoicePanel/ChoiceButtons
+@onready var spk_name      : Label          = $RightPanel/Margin/Inner/SpeakerBar/SpeakerName
+@onready var speaker_accent: ColorRect      = $RightPanel/Margin/Inner/SpeakerBar/SpeakerAccent
+@onready var dlg_text      : Label          = $RightPanel/Margin/Inner/DialogueText
+@onready var choice_panel  : VBoxContainer  = $RightPanel/Margin/Inner/ChoicePanel
+@onready var choice_buttons: VBoxContainer  = $RightPanel/Margin/Inner/ChoicePanel/ChoiceButtons
+@onready var choice_title  : Label          = $RightPanel/Margin/Inner/ChoicePanel/ChoiceTitle
+@onready var margin_box    : MarginContainer= $RightPanel/Margin
 
 func _ready() -> void:
 	_apply_panel_style()
@@ -43,8 +56,19 @@ func _apply_panel_style() -> void:
 	sty.border_color = C_PANEL_BORDER
 	sty.border_width_left = 2
 	panel.add_theme_stylebox_override("panel", sty)
-	dlg_text.add_theme_font_size_override("font_size", 16)
 	dlg_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func apply_scale(map_font_size: int) -> void:
+	_map_font_size = map_font_size
+	var m := BASE_MARGIN * map_font_size / BASE_MAP_FONT
+	margin_box.add_theme_constant_override("margin_left",   m)
+	margin_box.add_theme_constant_override("margin_right",  m)
+	margin_box.add_theme_constant_override("margin_top",    m)
+	margin_box.add_theme_constant_override("margin_bottom", m)
+	speaker_accent.custom_minimum_size = Vector2(4.0, float(BASE_ACCENT_H * map_font_size) / float(BASE_MAP_FONT))
+	spk_name.add_theme_font_size_override("font_size",     BASE_SPK_FONT   * map_font_size / BASE_MAP_FONT)
+	dlg_text.add_theme_font_size_override("font_size",     BASE_DLG_FONT   * map_font_size / BASE_MAP_FONT)
+	choice_title.add_theme_font_size_override("font_size", BASE_TITLE_FONT * map_font_size / BASE_MAP_FONT)
 
 func open(chapter_id: String, start_line: int = 0) -> void:
 	_chapter = DialogueData.get_chapter(chapter_id)
@@ -154,14 +178,13 @@ func _build_choices(choices: Array) -> void:
 	for child in choice_buttons.get_children():
 		child.queue_free()
 	choice_panel.visible = true
-
 	for i in choices.size():
 		var choice : Dictionary = choices[i] as Dictionary
 		var btn    := Button.new()
 		btn.text = "  ›  " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", 14)
+		btn.add_theme_font_size_override("font_size", BASE_BTN_FONT * _map_font_size / BASE_MAP_FONT)
 		btn.add_theme_color_override("font_color",         C_CHOICE_TXT)
 		btn.add_theme_color_override("font_hover_color",   C_CHOICE_HVTXT)
 		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
@@ -169,12 +192,12 @@ func _build_choices(choices: Array) -> void:
 		sn.bg_color = C_CHOICE_BG
 		sn.border_color = Color(0.30, 0.22, 0.10)
 		sn.set_border_width_all(1)
-		sn.set_content_margin_all(8)
+		sn.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(BASE_MAP_FONT))
 		var sh := StyleBoxFlat.new()
 		sh.bg_color = C_CHOICE_HVR
 		sh.border_color = C_PANEL_BORDER
 		sh.set_border_width_all(1)
-		sh.set_content_margin_all(8)
+		sh.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(BASE_MAP_FONT))
 		btn.add_theme_stylebox_override("normal",  sn)
 		btn.add_theme_stylebox_override("hover",   sh)
 		btn.add_theme_stylebox_override("pressed", sh)

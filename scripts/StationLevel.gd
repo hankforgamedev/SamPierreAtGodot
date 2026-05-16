@@ -1,5 +1,9 @@
 extends AsciiLevelBase
 
+const TRACK_ROW       := 15  # map row index of the train track
+const BASE_TRAIN_FONT := 36  # train label font at BASE_MAP_FONT resolution
+const BASE_NARR_FONT  := 22  # narration label font at BASE_MAP_FONT resolution
+
 var _train_triggered: bool = false
 
 func _get_level_name() -> String:
@@ -60,10 +64,10 @@ func _trigger_train_death() -> void:
 	# 火車從右邊衝入
 	var train := Label.new()
 	train.text = "══════════════╗▶"
-	train.add_theme_font_size_override("font_size", 36)
+	train.add_theme_font_size_override("font_size", BASE_TRAIN_FONT * _font_size / BASE_MAP_FONT)
 	train.add_theme_color_override("font_color", Color(0.95, 0.95, 0.95))
 	var vp_size := get_viewport().get_visible_rect().size
-	var track_y  := _base_map_pos.y + 16 * 28.0 - 18.0
+	var track_y  := _base_map_pos.y + float(TRACK_ROW) * float(_font_size)
 	train.position = Vector2(vp_size.x + 40.0, track_y)
 	train.z_index  = 80
 	add_child(train)
@@ -88,7 +92,7 @@ func _trigger_train_death() -> void:
 func _make_narration(text: String) -> Label:
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", 22)
+	lbl.add_theme_font_size_override("font_size", BASE_NARR_FONT * _font_size / BASE_MAP_FONT)
 	lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
@@ -100,21 +104,21 @@ func _get_map_data() -> Array:
 	return [
 		"####################################################",
 		"#                                                  #",
-		"#  METRO LINE 3  //  NO SERVICE  //  02:47        #",
-		"#  !! STAY BEHIND THE YELLOW LINE !!              #",
+		"#  METRO LINE 3  //  NO SERVICE  //  02:47         #",
+		"#  !! STAY BEHIND THE YELLOW LINE !!               #",
 		"#                                                  #",
-		"#  ............................................  #",
-		"#  .                                          .  #",
-		"#  .                                          .  #",
-		"#  .                                          .  #",
-		"#  .                                          .  #",
-		"#  .                                          .  #",
-		"#  .          %     %  %    %                 .  #",
-		"#  .                                          .  #",
-		"#  ............................................  #",
+		"#  ............................................    #",
+		"#  .                                          .    #",
+		"#  .                                          .    #",
+		"#  .                                          .    #",
+		"#  .                                          .    #",
+		"#  .                                          .    #",
+		"#  .          %     %  %    %                 .    #",
+		"#  .                                          .    #",
+		"#  ............................................    #",
 		"#__________________________________________________#",
 		"#  [ TRACK ]                                       #",
-		"#   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _    #",
+		"#   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _      #",
 		"#                                                  #",
 		"####################################################",
 	]
