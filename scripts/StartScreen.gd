@@ -1,6 +1,6 @@
 extends Control
 
-const C_AMBER    : Color = Color(0.00, 0.80, 0.38)
+const C_AMBER    : Color = Color(0.68, 0.10, 0.06)
 const C_DIM      : Color = Color(0.45, 0.38, 0.25)
 
 func _ready() -> void:

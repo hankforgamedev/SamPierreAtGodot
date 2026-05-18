@@ -13,11 +13,11 @@ const JUNK_CHAOS   := [
 ]
 
 # ── Colors ────────────────────────────────────────────────
-const C_WALL   := "#EEEEEE"
-const C_FLOOR  := "#252525"
+const C_WALL   := "#8A8270"
+const C_FLOOR  := "#141610"
 const C_JUNK   := "#4A3A1A"
 const C_DOOR   := "#CC8833"
-const C_PLAYER := "#DDCCAA"
+const C_PLAYER := "#C8B890"
 const C_GLITCH := "#FF1111"
 const C_NPC_DEFAULT := "#888888"
 
@@ -69,6 +69,7 @@ const BASE_PANEL_FONT  := 20   # scene intro panel body text
 const BASE_HINT_FONT   := 13   # scene intro "Press E" hint
 const BASE_PANEL_MARGIN := 28  # scene intro panel content margin
 const BASE_PANEL_SEP   := 20   # scene intro VBoxContainer separation
+const TYPEWRITER_SPEED := 0.035  # seconds per character
 
 var _held_dir      : Vector2i = Vector2i.ZERO
 var _move_phase    : int      = 0   # 0=idle 1=held 2=repeating 3=friction
@@ -85,10 +86,14 @@ var _ambient_label: Node = null
 var _scene_panel_open: bool = false
 var _scene_panel: Node = null
 var _panel_text_label: Node = null
+var _typewriter_tween: Tween = null
 
 # ── Interactable objects ───────────────────────────────────
 var _objects: Dictionary = {}
 var _font_size: int = 28
+
+# ── Story text (populated by each level subclass before super._ready()) ──────
+var _level_text: Dictionary = {}
 
 @onready var map_display   : RichTextLabel = $MapDisplay
 @onready var hud_label     : Label         = $HUD
@@ -145,7 +150,7 @@ func _ready() -> void:
 
 func _setup_display() -> void:
 	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0, 0, 0, 1)
+	bg.bg_color = Color(0.08, 0.09, 0.06, 1)
 	map_display.add_theme_stylebox_override("normal", bg)
 	map_display.bbcode_enabled = true
 	map_display.scroll_active  = false
@@ -160,9 +165,21 @@ func _setup_display() -> void:
 # ── Input ─────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact"):
+		if _typewriter_tween != null:
+			_typewriter_tween.kill()
+			_typewriter_tween = null
+			if _panel_text_label != null:
+				(_panel_text_label as Label).visible_characters = -1
+			get_viewport().set_input_as_handled()
+			return
 		if _scene_panel_open:
 			_close_scene_panel()
 			get_viewport().set_input_as_handled()
+			if not _in_dialogue:
+				for dir in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
+					if (_player_pos + dir) in _npcs:
+						_try_interact()
+						break
 			return
 		if _in_dialogue:
 			return
@@ -173,8 +190,8 @@ func _input(event: InputEvent) -> void:
 				break
 		if near_npc:
 			_try_interact()
-		elif not _try_interact_object():
-			_open_scene_panel()
+		else:
+			_try_interact_object()
 		get_viewport().set_input_as_handled()
 
 # ── Movement ──────────────────────────────────────────────
@@ -279,7 +296,7 @@ func _setup_scene_panel() -> void:
 	var text_lbl := Label.new()
 	text_lbl.text = intro
 	text_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
-	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / BASE_MAP_FONT)
+	text_lbl.add_theme_font_size_override("font_size", 64)
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(text_lbl)
@@ -287,8 +304,8 @@ func _setup_scene_panel() -> void:
 
 	var hint_lbl := Label.new()
 	hint_lbl.text = "Press E to interact"
-	hint_lbl.add_theme_color_override("font_color", Color(0.50, 0.36, 0.14))
-	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / BASE_MAP_FONT)
+	hint_lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
+	hint_lbl.add_theme_font_size_override("font_size", 22)
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	vbox.add_child(hint_lbl)
 
@@ -297,8 +314,18 @@ func _setup_scene_panel() -> void:
 func _show_panel_text(text: String) -> void:
 	if text == "" or _panel_text_label == null:
 		return
-	(_panel_text_label as Label).text = text
+	var lbl := _panel_text_label as Label
+	lbl.text = text
+	lbl.visible_characters = 0
 	_open_scene_panel()
+	if _typewriter_tween != null:
+		_typewriter_tween.kill()
+	_typewriter_tween = create_tween()
+	_typewriter_tween.tween_property(lbl, "visible_characters", text.length(), text.length() * TYPEWRITER_SPEED)
+	_typewriter_tween.tween_callback(func() -> void:
+		_typewriter_tween = null
+		lbl.visible_characters = -1
+	)
 
 func _open_scene_panel() -> void:
 	if _scene_panel == null:
@@ -309,6 +336,9 @@ func _open_scene_panel() -> void:
 func _close_scene_panel() -> void:
 	if _scene_panel == null:
 		return
+	if _typewriter_tween != null:
+		_typewriter_tween.kill()
+		_typewriter_tween = null
 	_scene_panel.visible = false
 	_scene_panel_open = false
 

@@ -1,32 +1,37 @@
 extends AsciiLevelBase
 
+func _ready() -> void:
+	_level_text = StoryLoader.load_level_text("res://story/levels/restaurant.md")
+	super._ready()
+
 func _get_level_name() -> String:
-	return "[ 老蕭餐館  //  深夜  //  最後一桌 ]"
+	return _level_text.get("level_name", "")
 
 func _get_level_id() -> String:
 	return "restaurant"
 
 func _get_scene_intro() -> String:
-	return "老蕭餐館。深夜。\n\n廚房早就收了，燈還開著。最後一桌沒有走。\n\n角落那個人。一直沒動。盯著杯底，或者盯著空氣。"
+	return _level_text.get("intro", "")
 
 func _get_player_spawn() -> Vector2i:
 	return Vector2i(4, 11)
 
 func _get_npcs() -> Dictionary:
+	var amb: Dictionary = _level_text.get("ambient", {})
 	return {
 		Vector2i(36, 11): {
 			"chapter_id": "ch5",
 			"start_line": 0,
 			"char_id":    "moujia",
 			"display":    "甲",
-			"ambient_a":  "角落那個人。一直沒動。盯著杯底，或者盯著空氣。",
-			"ambient_b":  "某甲說的那些話，還在耳邊轉。",
+			"ambient_a":  (amb.get("36,11", {}) as Dictionary).get("before", ""),
+			"ambient_b":  (amb.get("36,11", {}) as Dictionary).get("after", ""),
 		},
 		Vector2i(2, 11): {
 			"start_chapter": "ch6",
 			"char_id":       "narrator",
 			"display":       "<",
-			"ambient_a":     "門口。街上沒有人了。",
+			"ambient_a":     (amb.get("2,11", {}) as Dictionary).get("before", ""),
 		},
 	}
 

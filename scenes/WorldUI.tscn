@@ -34,16 +34,19 @@ theme_override_constants/margin_bottom = 18
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="SpeakerBar" type="HBoxContainer" parent="RightPanel/Margin/Inner"]
+[node name="SpeakerHeader" type="PanelContainer" parent="RightPanel/Margin/Inner"]
+layout_mode = 2
+
+[node name="SpeakerBar" type="HBoxContainer" parent="RightPanel/Margin/Inner/SpeakerHeader"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SpeakerAccent" type="ColorRect" parent="RightPanel/Margin/Inner/SpeakerBar"]
+[node name="SpeakerAccent" type="ColorRect" parent="RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar"]
 layout_mode = 2
 custom_minimum_size = Vector2(4, 20)
 color = Color(0.5, 0.36, 0.14, 1)
 
-[node name="SpeakerName" type="Label" parent="RightPanel/Margin/Inner/SpeakerBar"]
+[node name="SpeakerName" type="Label" parent="RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar"]
 layout_mode = 2
 text = "— — —"
 theme_override_font_sizes/font_size = 13
@@ -51,13 +54,16 @@ theme_override_font_sizes/font_size = 13
 [node name="Divider" type="ColorRect" parent="RightPanel/Margin/Inner"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 1)
-color = Color(0.3, 0.22, 0.10, 1)
+color = Color(0.50, 0.44, 0.33, 1)
 
-[node name="DialogueText" type="Label" parent="RightPanel/Margin/Inner"]
+[node name="DialogueText" type="RichTextLabel" parent="RightPanel/Margin/Inner"]
 layout_mode = 2
 size_flags_vertical = 3
-text = ""
-theme_override_font_sizes/font_size = 16
+bbcode_enabled = true
+scroll_active = true
+scroll_following = true
+fit_content = false
+theme_override_font_sizes/normal_font_size = 16
 
 [node name="ChoicePanel" type="VBoxContainer" parent="RightPanel/Margin/Inner"]
 layout_mode = 2
