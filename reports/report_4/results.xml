@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites id="2026-05-27" name="report_4" tests="42" failures="0" skipped="0" flaky="0" time="0.000">
+	<testsuite id="0" name="test_ambient_b" package="tests" timestamp="2026-05-26T16:21:33" hostname="localhost" tests="21" failures="0" errors="13" skipped="0" flaky="0" time="0.644">
+		<testcase name="test_station_rat_has_ambient_b" classname="test_ambient_b" time="0.015">
+			<error message="ERROR: res://tests/test_ambient_b.gd:17" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid call. Nonexistent function 'contains_key' in base 'RefCounted (GdUnitDictionaryAssertImpl.gd)'.'
+	at res://tests/test_ambient_b.gd:17
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_station_rat_ambient_b_nonempty" classname="test_ambient_b" time="0.010">
+		</testcase>
+		<testcase name="test_station_rat_ambient_a_differs_from_ambient_b" classname="test_ambient_b" time="0.010">
+		</testcase>
+		<testcase name="test_station_narrator_has_no_ambient_b" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:50" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid call. Nonexistent function 'contains_key' in base 'RefCounted (GdUnitDictionaryAssertImpl.gd)'.'
+	at res://tests/test_ambient_b.gd:50
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_station_narrator_shows_ambient_a_when_no_ambient_b" classname="test_ambient_b" time="0.015">
+			<error message="ERROR: res://tests/test_ambient_b.gd:64" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:64
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_proximity_shows_ambient_a_initially" classname="test_ambient_b" time="0.015">
+			<error message="ERROR: res://tests/test_ambient_b.gd:79" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:79
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_proximity_shows_ambient_b_after_dialogue_marked" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:98" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:98
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_proximity_switches_from_ambient_a_to_ambient_b" classname="test_ambient_b" time="0.015">
+			<error message="ERROR: res://tests/test_ambient_b.gd:112" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:112
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_dialogue_closed_marks_adjacent_npc_as_talked" classname="test_ambient_b" time="0.011">
+		</testcase>
+		<testcase name="test_dialogue_closed_multiple_directions" classname="test_ambient_b" time="0.011">
+		</testcase>
+		<testcase name="test_ambient_clears_when_far_from_npc" classname="test_ambient_b" time="0.013">
+			<error message="ERROR: res://tests/test_ambient_b.gd:172" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:172
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_office_lee_has_ambient_a" classname="test_ambient_b" time="0.015">
+			<error message="ERROR: res://tests/test_ambient_b.gd:182" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid call. Nonexistent function 'contains_key' in base 'RefCounted (GdUnitDictionaryAssertImpl.gd)'.'
+	at res://tests/test_ambient_b.gd:182
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_restaurant_moujia_has_ambient_a" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:192" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid call. Nonexistent function 'contains_key' in base 'RefCounted (GdUnitDictionaryAssertImpl.gd)'.'
+	at res://tests/test_ambient_b.gd:192
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_ambient_persists_after_moving_away_and_returning" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:214" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:214
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_npc_with_empty_ambient_a_and_no_ambient_b" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:248" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:248
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_npc_with_ambient_a_and_empty_ambient_b" classname="test_ambient_b" time="0.013">
+			<error message="ERROR: res://tests/test_ambient_b.gd:270" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:270
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_dialogue_closed_updates_ambient_to_ambient_b" classname="test_ambient_b" time="0.014">
+			<error message="ERROR: res://tests/test_ambient_b.gd:291" type="ABORT">
+<![CDATA[
+Godot Runtime Error !
+Error: 'Invalid access to property or key 'text' on a base object of type 'Nil'.'
+	at res://tests/test_ambient_b.gd:291
+]]>
+			</error>
+		</testcase>
+		<testcase name="test_get_nearby_npc_returns_adjacent_npc" classname="test_ambient_b" time="0.011">
+		</testcase>
+		<testcase name="test_get_nearby_npc_returns_invalid_when_none_adjacent" classname="test_ambient_b" time="0.009">
+		</testcase>
+		<testcase name="test_station_rat_ambient_a_text" classname="test_ambient_b" time="0.010">
+		</testcase>
+		<testcase name="test_station_rat_ambient_b_text" classname="test_ambient_b" time="0.011">
+		</testcase>
+	</testsuite>
+	<testsuite id="1" name="test_object_interaction" package="tests" timestamp="2026-05-26T16:21:34" hostname="localhost" tests="21" failures="0" errors="0" skipped="0" flaky="0" time="0.440">
+		<testcase name="test_all_level_keys_present" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_station_has_four_objects" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_office_has_four_objects" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_restaurant_has_four_objects" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_street_has_four_objects" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_station_trash_key_14_11_exists" classname="test_object_interaction" time="0.011">
+		</testcase>
+		<testcase name="test_all_objects_have_nonempty_text" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_station_level_id" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_office_level_id" classname="test_object_interaction" time="0.011">
+		</testcase>
+		<testcase name="test_restaurant_level_id" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_street_level_id" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_interact_returns_true_adjacent_right" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_interact_returns_true_adjacent_left" classname="test_object_interaction" time="0.011">
+		</testcase>
+		<testcase name="test_interact_returns_true_adjacent_above" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_interact_returns_true_adjacent_below" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_interact_returns_false_not_adjacent" classname="test_object_interaction" time="0.012">
+		</testcase>
+		<testcase name="test_interact_returns_false_no_objects" classname="test_object_interaction" time="0.009">
+		</testcase>
+		<testcase name="test_station_coords_in_map" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_office_coords_in_map" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_restaurant_coords_in_map" classname="test_object_interaction" time="0.010">
+		</testcase>
+		<testcase name="test_street_coords_in_map" classname="test_object_interaction" time="0.011">
+		</testcase>
+	</testsuite>
+</testsuites>
