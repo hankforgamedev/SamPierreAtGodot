@@ -4,13 +4,18 @@ class_name GameTheme
 static var _font_sans:       FontFile = null
 static var _font_sans_heavy: FontFile = null
 static var _font_serif:      FontFile = null
+static var _font_serif_heavy: FontFile = null
+
+
 
 static func _ensure_fonts() -> void:
 	if _font_sans != null:
 		return
 	_font_sans       = load("res://font/genyo-gothic/GenYoGothic2TW-R.otf")
 	_font_sans_heavy = load("res://font/genyo-gothic/GenYoGothic2TW-H.otf")
-	_font_serif      = load("res://font/genyo-min/GenYoMin2TW-R.otf")
+	_font_serif      = load("res://font/han-serif/SourceHanSerifTC-Regular.otf")
+	_font_serif_heavy = load("res://font/han-serif/SourceHanSerifTC-Heavy.otf")
+
 
 # ── Font sizes (edit here — these are the only knobs) ────────────────────────
 const FONT_BODY    := 30   # dialogue body, narration
@@ -48,10 +53,10 @@ static func build_scaled_theme(scale: float) -> Theme:
 	_var(t, "NarratorLabel", "Label", maxi(int(FONT_BODY    * scale), FONT_BODY),    C_NARRATOR)
 	_var(t, "StartTitle",    "Label", maxi(int(FONT_BIG     * scale), FONT_BIG),     C_TITLE_TEXT)
 	_var(t, "TagLabel",      "Label", maxi(int(FONT_DIM     * scale), FONT_DIM),     C_TAG_TEXT)
-	# Apply heavy sans to display/title variants
-	if _font_sans_heavy != null:
-		t.set_font("font", "TitleLabel", _font_sans_heavy)
-		t.set_font("font", "StartTitle", _font_sans_heavy)
+	# Apply heavy to display/title variants
+	if _font_serif_heavy != null:
+		t.set_font("font", "TitleLabel", _font_serif_heavy)
+		t.set_font("font", "StartTitle", _font_serif_heavy)
 	return t
 
 static func _var(t: Theme, name: String, base: String, size: int, color: Color) -> void:

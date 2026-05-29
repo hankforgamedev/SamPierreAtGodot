@@ -62,12 +62,12 @@ right_char: rat
 
 操！一次就好，就算只有一次也好，我想活著，真正的活著——」
 
-[narrator none sfx:tom_screaming speed:fast fx:shake]
+[narrator none speed:fast fx:shake]
 砰！子彈射穿老鼠的肺。
 
 末班車進站。皮耶爾把老鼠拽向軌道，用力一推。
 
-[narrator none fx:flash_white,glitch_spike]
+[narrator none sfx:tom_screaming fx:flash_white,glitch_spike]
 「唰，噗吱！」
 
 鮮血濺到皮耶爾的臉上和白襯衫上，朱紅的顏料渲染了好一幅抽象畫。

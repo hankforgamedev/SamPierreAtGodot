@@ -35,3 +35,4 @@ path hardcoding ("res://" is fine, that is the intended way. just nothing about 
 - [ ] dialog options that actually have consequences
   - [x] play diff sfx
   - [ ] go to a different scene/chapter
+- [ ] the dialog panel logic in ascii scenes should just reuse that of the pure dialog game scenes (chapters)

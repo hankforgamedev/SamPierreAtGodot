@@ -1,6 +1,6 @@
 extends Control
 
-const _SERIF := preload("res://font/genyo-min/GenYoMin2TW-R.otf")
+const _SERIF := preload("res://font/han-serif/SourceHanSerifTC-Regular.otf")
 
 # ── State ──────────────────────────────────────────────────────
 var chapter        : Dictionary = {}

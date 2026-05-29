@@ -49,6 +49,7 @@ func _on_dialogue_closed() -> void:
 func _transition_to_ch2() -> void:
 	_in_dialogue = true
 	trigger_flash(Color.BLACK, 1.8)
+	SoundManager.play_sfx("tv_crash_noise")
 	await get_tree().create_timer(1.9).timeout
 	if not is_inside_tree():
 		return
