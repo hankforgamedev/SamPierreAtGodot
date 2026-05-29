@@ -4,6 +4,7 @@ func _ready() -> void:
 	_apply_theme()
 	($TitleBlock/StartButton as Button).pressed.connect(_on_start)
 	($TitleBlock/QuitButton  as Button).pressed.connect(_on_quit)
+	($TitleBlock/StartButton as Button).grab_focus()
 
 func _apply_theme() -> void:
 	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))

@@ -19,6 +19,11 @@ Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of co
 
 - [x] remove obsolete scenes/scripts and deprecated files
 
+- [ ] Convert ASCII level maps to full-width (全形) characters
+  - Affects StationLevel, OfficeLevel, StreetLevel, RestaurantLevel, AsciiLevelBase
+  - BLOCKED: breaks collision logic (WALL_SYMS check) - need to handle char width correctly
+  - Include full-width spaces too (　 U+3000) for grid alignment
+
 Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of config failed.
 
 ask about GDplugin and addons (specifically that GD unit test thingy)

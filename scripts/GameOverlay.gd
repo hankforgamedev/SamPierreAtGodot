@@ -51,6 +51,8 @@ func _build() -> void:
 	quit.pressed.connect(_on_quit)
 	btn_row.add_child(quit)
 
+	retry.grab_focus()
+
 func _on_retry() -> void:
 	SoundManager.play_sfx("riser")
 	await get_tree().create_timer(0.5).timeout

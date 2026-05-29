@@ -146,3 +146,13 @@ A line with `minigame` field saves `GameManager.resume_line = index + 1`, then s
 
 Adding a new character: add to **both** `CHAR_HEX` and `CHAR_COLOR` in `GameTheme.gd`.
 
+## Design Language
+
+### Mandarin Focus & Full-Width Characters
+
+Game is **Mandarin-native** (not English with Chinese labels). ASCII map scenes use **full-width (全形) characters** exclusively for consistency — no mixing ASCII and CJK widths. Glitch overlay symbols, walls, NPCs, doors all use full-width equivalents.
+
+### Keyboard as First-Class Input
+
+Keyboard input is **not an afterthought**. Every UI/menu (start screen, game-over, choices, level HUDs) must be **fully keyboard-navigable**. Godot's built-in focus/input handling covers this without manual wiring — use it. Mouse clicks work out of the box for clickable objects; keyboard must have equal priority.
+
