@@ -50,6 +50,8 @@ func _apply_panel_style() -> void:
 	dlg_text.scroll_active    = true
 	dlg_text.scroll_following = true
 	dlg_text.fit_content      = false
+	dlg_text.focus_mode       = Control.FOCUS_NONE  # prevent stealing keyboard focus from choice buttons
+	panel.clip_contents       = true                # prevent text/choices from rendering outside panel
 	var dlg_font := SystemFont.new()
 	dlg_font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
 	dlg_text.add_theme_font_override("normal_font", dlg_font)
@@ -102,9 +104,15 @@ func _input(event: InputEvent) -> void:
 	var is_mouse    := event is InputEventMouseButton \
 		and (event as InputEventMouseButton).pressed \
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+	var is_nav_up   := event.is_action_pressed("move_up")
+	var is_nav_down := event.is_action_pressed("move_down")
 	if _has_choices:
 		if is_mouse:
 			return  # let mouse reach buttons
+		if is_nav_up or is_nav_down:
+			_navigate_choices(-1 if is_nav_up else 1)
+			get_viewport().set_input_as_handled()
+			return
 		if is_keyboard:
 			for btn: Button in choice_buttons.get_children():
 				if btn.has_focus():
@@ -120,6 +128,17 @@ func _input(event: InputEvent) -> void:
 		_finish_typing()
 	elif _can_advance:
 		_advance()
+
+func _navigate_choices(delta: int) -> void:
+	var btns := choice_buttons.get_children()
+	if btns.is_empty():
+		return
+	var idx := 0
+	for i in btns.size():
+		if (btns[i] as Button).has_focus():
+			idx = i
+			break
+	(btns[wrapi(idx + delta, 0, btns.size())] as Button).grab_focus()
 
 func _finish_typing() -> void:
 	_typed_count = _full_text.length()
@@ -230,7 +249,7 @@ func _build_choices(choices: Array) -> void:
 		btn.pressed.connect(_on_choice(goto_index))
 		choice_buttons.add_child(btn)
 	if choice_buttons.get_child_count() > 0:
-		(choice_buttons.get_child(0) as Button).grab_focus()
+		(choice_buttons.get_child(0) as Button).call_deferred("grab_focus")
 
 func _select_choice(goto_index: int) -> void:
 	SoundManager.play_type_ding()

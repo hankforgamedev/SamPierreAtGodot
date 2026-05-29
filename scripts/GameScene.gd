@@ -117,11 +117,17 @@ func _show_chapter_card() -> void:
 
 # ── Input ─────────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
-	var clicked  : bool = (event is InputEventMouseButton
+	var clicked    : bool = (event is InputEventMouseButton
 		and (event as InputEventMouseButton).pressed
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
-	var keyboard : bool = event.is_action_pressed("interact")
+	var keyboard   : bool = event.is_action_pressed("interact")
+	var is_nav_up  : bool = event.is_action_pressed("move_up")
+	var is_nav_down: bool = event.is_action_pressed("move_down")
 	if has_choices:
+		if is_nav_up or is_nav_down:
+			_navigate_choices(-1 if is_nav_up else 1)
+			get_viewport().set_input_as_handled()
+			return
 		if keyboard:
 			for btn: Button in choice_buttons.get_children():
 				if btn.has_focus():
@@ -136,6 +142,17 @@ func _input(event: InputEvent) -> void:
 			_finish_typing()
 		else:
 			_advance()
+
+func _navigate_choices(delta: int) -> void:
+	var btns := choice_buttons.get_children()
+	if btns.is_empty():
+		return
+	var idx := 0
+	for i in btns.size():
+		if (btns[i] as Button).has_focus():
+			idx = i
+			break
+	(btns[wrapi(idx + delta, 0, btns.size())] as Button).grab_focus()
 
 # ── Typewriter ────────────────────────────────────────────────
 func _process(delta: float) -> void:
@@ -153,6 +170,7 @@ func _process(delta: float) -> void:
 		if has_choices:
 			choice_panel.visible = true
 			next_hint.text = ""
+			_focus_first_choice()
 
 func _finish_typing() -> void:
 	typing        = false
@@ -161,6 +179,11 @@ func _finish_typing() -> void:
 	if has_choices:
 		choice_panel.visible = true
 		next_hint.text = ""
+		_focus_first_choice()
+
+func _focus_first_choice() -> void:
+	if choice_buttons.get_child_count() > 0:
+		(choice_buttons.get_child(0) as Button).grab_focus()
 
 # ── Advance ───────────────────────────────────────────────────
 func _advance() -> void:
@@ -265,8 +288,7 @@ func _build_choices(choices: Array) -> void:
 		btn.set_meta("goto", goto_index)
 		btn.pressed.connect(_on_choice(goto_index))
 		choice_buttons.add_child(btn)
-	if choice_buttons.get_child_count() > 0:
-		(choice_buttons.get_child(0) as Button).grab_focus()
+	pass  # focus set in _focus_first_choice() when panel becomes visible
 
 func _select_choice(goto_index: int) -> void:
 	SoundManager.play_type_ding()
