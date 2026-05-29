@@ -25,7 +25,7 @@ var _mood_lbl    : Label
 var _approve_btn : Button
 var _reject_btn  : Button
 var _stamp_lbl   : Label
-var _lee_panel   : Panel
+var _lee_panel   : PanelContainer
 var _lee_lbl     : Label
 
 
@@ -51,33 +51,49 @@ func _build_ui() -> void:
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
+	# Root: margin + vertical stack
+	var root := MarginContainer.new()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_theme_constant_override("margin_left",   24)
+	root.add_theme_constant_override("margin_right",  24)
+	root.add_theme_constant_override("margin_top",    14)
+	root.add_theme_constant_override("margin_bottom", 14)
+	add_child(root)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	root.add_child(vbox)
+
 	var hdr := Label.new()
 	hdr.text = "虎寨城警局下城總局  ─  文書處理站"
 	hdr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hdr.theme_type_variation = "DimLabel"
-	hdr.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	hdr.offset_top    = 14
-	hdr.offset_bottom = 36
-	add_child(hdr)
+	vbox.add_child(hdr)
 
 	_quota_lbl = Label.new()
 	_quota_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_quota_lbl.theme_type_variation = "SpeakerLabel"
-	_quota_lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	_quota_lbl.offset_top    = 38
-	_quota_lbl.offset_bottom = 60
-	add_child(_quota_lbl)
+	vbox.add_child(_quota_lbl)
 
-	var doc := Panel.new()
-	doc.anchor_left   = 0.5;  doc.anchor_right  = 0.5
-	doc.anchor_top    = 0.5;  doc.anchor_bottom = 0.5
-	doc.offset_left   = -255; doc.offset_right  = 255
-	doc.offset_top    = -180; doc.offset_bottom = 125
+	# Equal spacers above and below center group keep doc vertically centered
+	var spacer_top := Control.new()
+	spacer_top.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(spacer_top)
+
+	# Center group: doc card + mood line + buttons, all in one block
+	var center_group := VBoxContainer.new()
+	center_group.add_theme_constant_override("separation", 10)
+	vbox.add_child(center_group)
+
+	var doc_center := CenterContainer.new()
+	center_group.add_child(doc_center)
+
+	var doc := PanelContainer.new()
+	doc.custom_minimum_size.x = 510
 	doc.add_theme_stylebox_override("panel", _sty(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2, 22))
-	add_child(doc)
+	doc_center.add_child(doc)
 
 	var inner := VBoxContainer.new()
-	inner.set_anchors_preset(Control.PRESET_FULL_RECT)
 	inner.add_theme_constant_override("separation", 10)
 	doc.add_child(inner)
 
@@ -98,20 +114,12 @@ func _build_ui() -> void:
 
 	_mood_lbl = _lbl("", "DimLabel")
 	_mood_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_mood_lbl.anchor_left   = 0.5;  _mood_lbl.anchor_right  = 0.5
-	_mood_lbl.anchor_top    = 0.5;  _mood_lbl.anchor_bottom = 0.5
-	_mood_lbl.offset_left   = -255; _mood_lbl.offset_right  = 255
-	_mood_lbl.offset_top    = 136;  _mood_lbl.offset_bottom = 158
-	add_child(_mood_lbl)
+	center_group.add_child(_mood_lbl)
 
 	var btn_row := HBoxContainer.new()
-	btn_row.anchor_left   = 0.5;  btn_row.anchor_right  = 0.5
-	btn_row.anchor_top    = 0.5;  btn_row.anchor_bottom = 0.5
-	btn_row.offset_left   = -210; btn_row.offset_right  = 210
-	btn_row.offset_top    = 163;  btn_row.offset_bottom = 213
 	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	btn_row.add_theme_constant_override("separation", 40)
-	add_child(btn_row)
+	center_group.add_child(btn_row)
 
 	_reject_btn  = _btn("◀ 駁回", GameTheme.C_RED)
 	_approve_btn = _btn("核准 ▶", GameTheme.C_GREEN)
@@ -120,6 +128,11 @@ func _build_ui() -> void:
 	btn_row.add_child(_reject_btn)
 	btn_row.add_child(_approve_btn)
 
+	var spacer_bot := Control.new()
+	spacer_bot.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	vbox.add_child(spacer_bot)
+
+	# Stamp overlay: full-screen, drawn on top
 	_stamp_lbl = Label.new()
 	_stamp_lbl.visible = false
 	_stamp_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -128,18 +141,20 @@ func _build_ui() -> void:
 	_stamp_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_stamp_lbl)
 
-	_lee_panel = Panel.new()
+	# Lee interrupt overlay: CenterContainer covers screen, panel auto-sizes to content
+	var lee_overlay := CenterContainer.new()
+	lee_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	lee_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(lee_overlay)
+
+	_lee_panel = PanelContainer.new()
 	_lee_panel.visible = false
-	_lee_panel.anchor_left   = 0.5;  _lee_panel.anchor_right  = 0.5
-	_lee_panel.anchor_top    = 0.5;  _lee_panel.anchor_bottom = 0.5
-	_lee_panel.offset_left   = -220; _lee_panel.offset_right  = 220
-	_lee_panel.offset_top    = -85;  _lee_panel.offset_bottom = 85
+	_lee_panel.custom_minimum_size.x = 440
 	_lee_panel.add_theme_stylebox_override("panel",
 		_sty(GameTheme.C_PANEL_BG, GameTheme.CHAR_COLOR["lee"], 2, 20))
-	add_child(_lee_panel)
+	lee_overlay.add_child(_lee_panel)
 
 	var lv := VBoxContainer.new()
-	lv.set_anchors_preset(Control.PRESET_FULL_RECT)
 	lv.add_theme_constant_override("separation", 12)
 	_lee_panel.add_child(lv)
 
@@ -222,12 +237,14 @@ func _update_quota() -> void:
 func _on_approve() -> void:
 	_approve_btn.disabled = true
 	_reject_btn.disabled  = true
+	SoundManager.play_sfx("hitHurt")
 	_show_stamp("核\n准", Color(0.20, 0.65, 0.20, 0.85))  # dramatic approval green with alpha
 
 
 func _on_reject() -> void:
 	_approve_btn.disabled = true
 	_reject_btn.disabled  = true
+	SoundManager.play_sfx("hitHurt_var1")
 	_show_stamp("駁\n回", Color(0.75, 0.15, 0.15, 0.85))  # dramatic reject red with alpha
 
 

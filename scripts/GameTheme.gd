@@ -38,9 +38,9 @@ static func _var(t: Theme, name: String, base: String, size: int, color: Color) 
 	t.set_color("font_color", name, color)
 
 # ── Typewriter speeds (seconds per character) ────────────────────────────────
-const SPEED_FAST   := 0.025
-const SPEED_NORMAL := 0.050
-const SPEED_SLOW   := 0.075
+const SPEED_FAST   := 0.020
+const SPEED_NORMAL := 0.040
+const SPEED_SLOW   := 0.060
 
 # ── Dark Earth Palette ───────────────────────────────────────────────────────
 const C_BG           := Color(0.062, 0.048, 0.038)   # deepest bg (minigame, screens)
