@@ -1,6 +1,6 @@
 # restaurant
 
-level_name: [ 老蕭餐館  //  深夜  //  最後一桌 ]
+level_name: [ 老蕭餐館 // 深夜 // 最後一桌 ]
 
 ## intro
 

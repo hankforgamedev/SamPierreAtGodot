@@ -1,6 +1,6 @@
 # street
 
-level_name: [ 虎寨城  //  中環路  //  深夜 ]
+level_name: [ 虎寨城 // 中環路 // 深夜 ]
 
 ## intro
 

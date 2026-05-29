@@ -35,27 +35,27 @@ right_char: rat
 
 ### Frontmatter Fields
 
-| Field | Required | Format | Notes |
-|---|---|---|---|
-| `id` | YES | `ch1` … `ch8`, `epilogue` | Must match filename; used for cross-chapter routing |
-| `title` | YES | any string | Shown on chapter card |
-| `bg_color` | recommended | `#rrggbb` hex | Background color; crash if invalid hex format |
-| `left_char` | recommended | character key | Who appears on the left panel |
-| `right_char` | recommended | character key | Who appears on the right panel |
+| Field        | Required    | Format                    | Notes                                               |
+| ------------ | ----------- | ------------------------- | --------------------------------------------------- |
+| `id`         | YES         | `ch1` … `ch8`, `epilogue` | Must match filename; used for cross-chapter routing |
+| `title`      | YES         | any string                | Shown on chapter card                               |
+| `bg_color`   | recommended | `#rrggbb` hex             | Background color; crash if invalid hex format       |
+| `left_char`  | recommended | character key             | Who appears on the left panel                       |
+| `right_char` | recommended | character key             | Who appears on the right panel                      |
 
 **Character keys** (valid values for `left_char`, `right_char`, `speaker`):
 
-| Key | Display name | Color |
-|---|---|---|
-| `sam` | 山姆·皮耶爾 | light grey |
-| `rat` | 老鼠 | green |
-| `lee` | 李先生 | gold |
-| `rachel` | 瑞秋 | blue |
-| `sarah` | 莎拉（母） | purple |
-| `bill` | 比爾 | orange |
-| `moujia` | 某甲 | red |
-| `david` | 大衛 | teal |
-| `narrator` | (no name shown) | grey |
+| Key        | Display name    | Color      |
+| ---------- | --------------- | ---------- |
+| `sam`      | 山姆·皮耶爾     | light grey |
+| `rat`      | 老鼠            | green      |
+| `lee`      | 李先生          | gold       |
+| `rachel`   | 瑞秋            | blue       |
+| `sarah`    | 莎拉（母親）    | purple     |
+| `bill`     | 比爾            | orange     |
+| `moujia`   | 某甲            | red        |
+| `david`    | 大衛            | teal       |
+| `narrator` | (no name shown) | grey       |
 
 ---
 
@@ -91,15 +91,15 @@ Modifiers go inside `[...]` after the position, separated by spaces.
 [speaker position modifier1 modifier2]
 ```
 
-| Modifier | Format | Effect |
-|---|---|---|
-| `speed:fast` / `speed:slow` | `speed:fast` | Typewriter speed |
-| `fx:NAME,NAME` | `fx:shake,flash_white` | Visual effect(s) — **comma-separated, no spaces** |
-| `sfx:NAME` | `sfx:riser` | Sound effect from `audio/sfx/` |
-| `score:NAME` | `score:251019_001` | Non-looping score from `audio/score/` (blocks advance until finish) |
-| `next:N` | `next:14` | After this line, jump to line index N (0-based) instead of next |
-| `choices` | `choices` | Marks this line as a choice prompt — follow with `- ` choice lines |
-| `minigame` | `minigame` | Triggers the civil servant mini-game, then returns here |
+| Modifier                    | Format                 | Effect                                                              |
+| --------------------------- | ---------------------- | ------------------------------------------------------------------- |
+| `speed:fast` / `speed:slow` | `speed:fast`           | Typewriter speed                                                    |
+| `fx:NAME,NAME`              | `fx:shake,flash_white` | Visual effect(s) — **comma-separated, no spaces**                   |
+| `sfx:NAME`                  | `sfx:riser`            | Sound effect from `audio/sfx/`                                      |
+| `score:NAME`                | `score:251019_001`     | Non-looping score from `audio/score/` (blocks advance until finish) |
+| `next:N`                    | `next:14`              | After this line, jump to line index N (0-based) instead of next     |
+| `choices`                   | `choices`              | Marks this line as a choice prompt — follow with `- ` choice lines  |
+| `minigame`                  | `minigame`             | Triggers the civil servant mini-game, then returns here             |
 
 **Valid `fx` values:** `shake`, `flash_white`, `flash_black`, `glitch_spike`
 
@@ -145,17 +145,17 @@ Blank lines inside an entry are preserved. Blank lines between entries are ignor
 
 ## What Crashes or Silently Breaks
 
-| Mistake | Effect |
-|---|---|
-| Tag missing `]` — `[sam left` | Entry silently dropped, all text lost |
-| `bg_color` not valid hex — `bg_color: dark blue` | Godot error on chapter load |
-| Space in `fx:` — `fx:shake, flash_white` | `" flash_white"` not recognized, effect silently ignored |
-| Unknown speaker — `[john left]` | No name/color shown; portrait blank |
-| `next:abc` (non-integer) | Jumps to line 0, likely wrong |
-| CRLF line endings (Windows) | Speaker parsed as `"sam\r"` — no name/color shown |
-| Missing frontmatter `id` | Chapter can't be found by router; game skips it |
-| Choice missing `>>` | Choice shows but goes nowhere useful (goto -1) |
-| `sfx:missing_file` or `score:missing_file` | File not found; playback silently skipped |
+| Mistake                                          | Effect                                                   |
+| ------------------------------------------------ | -------------------------------------------------------- |
+| Tag missing `]` — `[sam left`                    | Entry silently dropped, all text lost                    |
+| `bg_color` not valid hex — `bg_color: dark blue` | Godot error on chapter load                              |
+| Space in `fx:` — `fx:shake, flash_white`         | `" flash_white"` not recognized, effect silently ignored |
+| Unknown speaker — `[john left]`                  | No name/color shown; portrait blank                      |
+| `next:abc` (non-integer)                         | Jumps to line 0, likely wrong                            |
+| CRLF line endings (Windows)                      | Speaker parsed as `"sam\r"` — no name/color shown        |
+| Missing frontmatter `id`                         | Chapter can't be found by router; game skips it          |
+| Choice missing `>>`                              | Choice shows but goes nowhere useful (goto -1)           |
+| `sfx:missing_file` or `score:missing_file`       | File not found; playback silently skipped                |
 
 ---
 

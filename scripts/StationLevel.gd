@@ -114,7 +114,7 @@ func _get_map_data() -> Array:
 	return [
 		"####################################################",
 		"#                                                  #",
-		"#  METRO LINE 3  //  NO SERVICE  //  02:47         #",
+		"#  METRO LINE F  //  NO SERVICE  //  02:47         #",
 		"#  !! STAY BEHIND THE YELLOW LINE !!               #",
 		"#                                                  #",
 		"#  ............................................    #",

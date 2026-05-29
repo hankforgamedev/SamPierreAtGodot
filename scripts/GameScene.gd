@@ -13,6 +13,7 @@ var has_choices    : bool       = false
 var full_text      : String     = ""
 var typed_so_far   : String     = ""
 var type_timer     : float      = 0.0
+var current_score  : String     = ""
 
 # ── Node refs ─────────────────────────────────────────────────
 @onready var base_color      : ColorRect    = $BG/Base
@@ -24,7 +25,7 @@ var type_timer     : float      = 0.0
 @onready var dlg_panel       : Panel        = $MainLayout/CenterCol/DialoguePanel
 @onready var speaker_accent  : ColorRect    = $MainLayout/CenterCol/DialoguePanel/DlgInner/SpeakerBar/SpeakerAccent
 @onready var spk_name        : Label        = $MainLayout/CenterCol/DialoguePanel/DlgInner/SpeakerBar/SpeakerName
-@onready var dlg_text        : Label        = $MainLayout/CenterCol/DialoguePanel/DlgInner/DialogueText
+@onready var dlg_text        : RichTextLabel = $MainLayout/CenterCol/DialoguePanel/DlgInner/DialogueText
 @onready var choice_panel    : VBoxContainer = $MainLayout/CenterCol/ChoicePanel
 @onready var choice_title    : Label        = $MainLayout/CenterCol/ChoicePanel/ChoiceTitle
 @onready var choice_buttons  : VBoxContainer = $MainLayout/CenterCol/ChoicePanel/ChoiceButtons
@@ -49,6 +50,8 @@ func _ready() -> void:
 	SoundManager.score_finished.connect(func():
 		can_advance = true
 		next_hint.visible = true
+		if current_score != "":
+			SoundManager.play_score(current_score, true)
 	)
 	if GameManager.resume_line > 0:
 		card.visible  = false
@@ -73,6 +76,7 @@ func _apply_theme() -> void:
 
 	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2))
 	dlg_panel.clip_contents = true
+	dlg_text.bbcode_enabled = true
 	dlg_text.add_theme_font_override("font", _SERIF)
 	dlg_text.add_theme_constant_override("line_separation", 13.5)
 	left_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
@@ -262,6 +266,7 @@ func _show_line(index: int) -> void:
 	var score_track: String = line.get("score", "") as String
 	if score_track != "":
 		can_advance = false
+		current_score = score_track
 		SoundManager.play_score(score_track, false)
 
 	# SFX
@@ -271,6 +276,8 @@ func _show_line(index: int) -> void:
 
 	# Typewriter
 	full_text    = line.get("text", "") as String
+	if is_inner:
+		full_text = "[i]" + full_text + "[/i]"
 	typed_so_far = ""
 	type_timer   = 0.0
 	typing       = true

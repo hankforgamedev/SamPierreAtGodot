@@ -25,6 +25,7 @@ var _map_font_size  := GameTheme.BASE_MAP_FONT
 var _log_bbcode      : String = ""
 var _cur_entry_header: String = ""
 var _cur_body_hex    : String = ""
+var _current_score  : String = ""
 
 @onready var spk_name      : Label           = $RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar/SpeakerName
 @onready var speaker_accent: ColorRect       = $RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar/SpeakerAccent
@@ -37,7 +38,11 @@ var _cur_body_hex    : String = ""
 
 func _ready() -> void:
 	_apply_panel_style()
-	SoundManager.score_finished.connect(func(): _can_advance = true)
+	SoundManager.score_finished.connect(func():
+		_can_advance = true
+		if _current_score != "":
+			SoundManager.play_score(_current_score, true)
+	)
 
 func _apply_panel_style() -> void:
 	var panel := $RightPanel as Panel
@@ -201,6 +206,7 @@ func _show_line(index: int) -> void:
 	var score_track: String = line.get("score", "") as String
 	if score_track != "":
 		_can_advance = false
+		_current_score = score_track
 		SoundManager.play_score(score_track, false)
 
 	var spd: String = line.get("speed", "normal") as String

@@ -154,10 +154,11 @@ custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 color = Color(0.28, 0.2, 0.1, 1)
 
-[node name="DialogueText" type="Label" parent="MainLayout/CenterCol/DialoguePanel/DlgInner" unique_id=1300312965]
+[node name="DialogueText" type="RichTextLabel" parent="MainLayout/CenterCol/DialoguePanel/DlgInner" unique_id=1300312965]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_vertical = 3
+bbcode_enabled = true
 autowrap_mode = 3
 
 [node name="ChoicePanel" type="VBoxContainer" parent="MainLayout/CenterCol" unique_id=1284556502]

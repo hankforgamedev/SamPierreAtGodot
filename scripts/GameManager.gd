@@ -22,7 +22,7 @@ const SPEAKER_NAMES = {
 	"rat":      "老鼠",
 	"lee":      "李先生",
 	"rachel":   "瑞秋",
-	"sarah":    "莎拉（母）",
+	"sarah":    "莎拉（母親）",
 	"bill":     "比爾",
 	"moujia":   "某甲",
 	"david":    "大衛",

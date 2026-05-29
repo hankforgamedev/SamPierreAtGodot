@@ -1,6 +1,6 @@
 # station
 
-level_name: [ 虎寨城地鐵站 // LINE F // 02:47 // NO SERVICE TONIGHT ]
+level_name: [ 虎寨城地鐵站 // LINE F // 02:47 // LAST TRAIN AT DEPOT ]
 
 ## intro
 
