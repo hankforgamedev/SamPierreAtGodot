@@ -81,6 +81,7 @@ color = Color(0.5, 0.37, 0.15, 1)
 
 [node name="Tagline" type="Label" parent="TitleBlock" unique_id=2092400882]
 modulate = Color(0.55, 0.48, 0.36, 1)
+custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
 text = "「如果真的有神，祂得向我乞求原諒。」"
 autowrap_mode = 3
@@ -103,12 +104,13 @@ flat = true
 modulate = Color(0.35, 0.3, 0.22, 1)
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.94000006
-anchor_right = 0.99000007
-anchor_bottom = 0.97300005
+anchor_top = 0.93500006
+anchor_right = 0.99100006
+anchor_bottom = 0.9850001
 offset_left = 1.0
-offset_top = -0.20007324
-offset_right = 0.1998291
-offset_bottom = 0.15991211
-text = "by Hank L. and Sam K."
+offset_top = 0.19995117
+offset_right = 0.27990723
+offset_bottom = 0.19995117
+text = "by Hank L. and Sam K.
+Scores by Shawn L."
 horizontal_alignment = 2

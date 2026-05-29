@@ -1,6 +1,7 @@
 extends Node
 
 var _ambient_player: AudioStreamPlayer = null
+var _score_player: AudioStreamPlayer = null
 
 # Typewriter SFX — pre-created players to avoid per-character allocation.
 # Three key variants at staggered pitches rotate in sequence for natural variation.
@@ -85,3 +86,26 @@ func stop_ambient() -> void:
 	if _ambient_player != null and is_instance_valid(_ambient_player):
 		_ambient_player.queue_free()
 	_ambient_player = null
+
+func play_score(track_name: String) -> void:
+	if track_name == "":
+		stop_score()
+		return
+	stop_score()
+	var path := "res://audio/score/%s.mp3" % track_name
+	if not ResourceLoader.exists(path):
+		return
+	var player := AudioStreamPlayer.new()
+	var stream := load(path) as AudioStreamMP3
+	stream.loop = true
+	player.stream = stream
+	player.bus = "Master"
+	player.autoplay = false
+	add_child(player)
+	player.play()
+	_score_player = player
+
+func stop_score() -> void:
+	if _score_player != null and is_instance_valid(_score_player):
+		_score_player.queue_free()
+	_score_player = null

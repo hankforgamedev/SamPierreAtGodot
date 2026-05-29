@@ -5,6 +5,7 @@ func _ready() -> void:
 	($TitleBlock/StartButton as Button).pressed.connect(_on_start)
 	($TitleBlock/QuitButton  as Button).pressed.connect(_on_quit)
 	($TitleBlock/StartButton as Button).grab_focus()
+	SoundManager.play_score("1017001")
 
 func _apply_theme() -> void:
 	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))
