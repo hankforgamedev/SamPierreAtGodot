@@ -17,7 +17,7 @@ Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of co
 - [ ] severe code quality issues
   - (INTEGER_DIVISION): Integer division. Decimal part will be discarded.gdscript(30)
 
-remove obsolete scenes/scripts and deprecated files
+- [x] remove obsolete scenes/scripts and deprecated files
 
 Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of config failed.
 

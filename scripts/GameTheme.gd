@@ -1,10 +1,10 @@
 class_name GameTheme
 
 # ── Font sizes (edit here — these are the only knobs) ────────────────────────
-const FONT_BODY    := 40   # dialogue body, narration
-const FONT_SPEAKER := 30   # speaker name
+const FONT_BODY    := 30   # dialogue body, narration
+const FONT_SPEAKER := 24   # speaker name
 const FONT_DIM     := 30   # hints, buttons, secondary text
-const FONT_TITLE   := 36   # chapter card title
+const FONT_TITLE   := 64   # chapter card title
 const FONT_AMBIENT := 20   # ASCII world HUD / NPC hint
 const FONT_BIG     := 96   # start screen title
 const FONT_STAMP   := 64   # civil servant approval/rejection stamp
@@ -38,9 +38,9 @@ static func _var(t: Theme, name: String, base: String, size: int, color: Color) 
 	t.set_color("font_color", name, color)
 
 # ── Typewriter speeds (seconds per character) ────────────────────────────────
-const SPEED_FAST   := 0.008
-const SPEED_NORMAL := 0.020
-const SPEED_SLOW   := 0.045
+const SPEED_FAST   := 0.025
+const SPEED_NORMAL := 0.050
+const SPEED_SLOW   := 0.075
 
 # ── Dark Earth Palette ───────────────────────────────────────────────────────
 const C_BG           := Color(0.062, 0.048, 0.038)   # deepest bg (minigame, screens)

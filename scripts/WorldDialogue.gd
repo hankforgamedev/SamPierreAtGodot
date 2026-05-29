@@ -13,7 +13,7 @@ var _lines        : Array      = []
 var _current_index: int        = 0
 var _typing       := false
 var _full_text    := ""
-var _typed_so_far := ""
+var _typed_count  := 0
 var _type_timer   := 0.0
 var _type_speed   := GameTheme.SPEED_NORMAL
 var _has_choices    := false
@@ -86,23 +86,30 @@ func _process(delta: float) -> void:
 	if not _typing:
 		return
 	_type_timer += delta
-	while _type_timer >= _type_speed and _typed_so_far.length() < _full_text.length():
+	while _type_timer >= _type_speed and _typed_count < _full_text.length():
 		_type_timer -= _type_speed
-		_typed_so_far += _full_text[_typed_so_far.length()]
-		_update_display()
-	if _typed_so_far.length() >= _full_text.length():
+		_typed_count += 1
+	if _typed_count >= _full_text.length():
 		_typing      = false
 		_can_advance = true
+	_update_display()
 
 func _input(event: InputEvent) -> void:
 	if not visible:
 		return
-	var is_keyboard := event.is_action_pressed("ui_accept")
+	var is_keyboard := event.is_action_pressed("interact")
 	var is_mouse    := event is InputEventMouseButton \
 		and (event as InputEventMouseButton).pressed \
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
-	# When choices are shown, let mouse events reach the buttons
-	if _has_choices and is_mouse:
+	if _has_choices:
+		if is_mouse:
+			return  # let mouse reach buttons
+		if is_keyboard:
+			for btn: Button in choice_buttons.get_children():
+				if btn.has_focus():
+					get_viewport().set_input_as_handled()
+					_select_choice(btn.get_meta("goto") as int)
+					return
 		return
 	var is_advance := is_keyboard or is_mouse
 	if not is_advance:
@@ -110,11 +117,11 @@ func _input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 	if _typing:
 		_finish_typing()
-	elif _can_advance and not _has_choices:
+	elif _can_advance:
 		_advance()
 
 func _finish_typing() -> void:
-	_typed_so_far = _full_text
+	_typed_count = _full_text.length()
 	_update_display()
 	_typing      = false
 	_can_advance = true
@@ -174,12 +181,12 @@ func _show_line(index: int) -> void:
 	if fx.size() > 0:
 		line_fx.emit(fx)
 
-	_full_text    = line.get("text", "") as String
+	_full_text   = line.get("text", "") as String
 	if is_inner:
 		_full_text = "[i]" + _full_text + "[/i]"
-	_typed_so_far = ""
-	_type_timer   = 0.0
-	_typing       = true
+	_typed_count = 0
+	_type_timer  = 0.0
+	_typing      = true
 	_update_display()
 
 func _commit_current_line() -> void:
@@ -189,8 +196,9 @@ func _commit_current_line() -> void:
 
 func _update_display() -> void:
 	dlg_text.text = _log_bbcode + _cur_entry_header \
-		+ "[color=" + _cur_body_hex + "]" + _typed_so_far + "[/color]"
-	dlg_text.scroll_to_line(dlg_text.get_line_count())
+		+ "[color=" + _cur_body_hex + "]" + _full_text.substr(0, _typed_count) + "[/color]"
+	if not _typing:
+		dlg_text.scroll_to_line(dlg_text.get_line_count())
 
 func _build_choices(choices: Array) -> void:
 	for child in choice_buttons.get_children():
@@ -215,12 +223,18 @@ func _build_choices(choices: Array) -> void:
 		btn.add_theme_stylebox_override("normal",  sn)
 		btn.add_theme_stylebox_override("hover",   sh)
 		btn.add_theme_stylebox_override("pressed", sh)
+		btn.add_theme_stylebox_override("focus",   sh)
 		var goto_index: int = choice["goto"] as int
+		btn.set_meta("goto", goto_index)
 		btn.pressed.connect(_on_choice(goto_index))
 		choice_buttons.add_child(btn)
+	if choice_buttons.get_child_count() > 0:
+		(choice_buttons.get_child(0) as Button).grab_focus()
+
+func _select_choice(goto_index: int) -> void:
+	choice_panel.visible = false
+	_has_choices = false
+	_show_line(goto_index)
 
 func _on_choice(goto_index: int) -> Callable:
-	return func() -> void:
-		choice_panel.visible = false
-		_has_choices = false
-		_show_line(goto_index)
+	return func() -> void: _select_choice(goto_index)

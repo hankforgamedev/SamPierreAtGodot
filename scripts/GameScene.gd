@@ -105,6 +105,7 @@ func _setup_characters() -> void:
 # ── Chapter card ──────────────────────────────────────────────
 func _show_chapter_card() -> void:
 	card.visible = true
+	SoundManager.play_sfx("riser")
 	var title  : String            = chapter["title"] as String
 	var parts  : PackedStringArray = title.split(" — ", false, 1)
 	card_line1.text = parts[0] if parts.size() > 0 else title
@@ -112,18 +113,25 @@ func _show_chapter_card() -> void:
 	can_advance = false
 	await get_tree().create_timer(2.2).timeout
 	can_advance = true
+	_advance()
 
 # ── Input ─────────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
-	if not can_advance or has_choices:
-		return
-	var clicked : bool = (event is InputEventMouseButton
+	var clicked  : bool = (event is InputEventMouseButton
 		and (event as InputEventMouseButton).pressed
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT)
-	var spaced  : bool = (event is InputEventKey
-		and (event as InputEventKey).pressed
-		and (event as InputEventKey).keycode == KEY_SPACE)
-	if clicked or spaced:
+	var keyboard : bool = event.is_action_pressed("interact")
+	if has_choices:
+		if keyboard:
+			for btn: Button in choice_buttons.get_children():
+				if btn.has_focus():
+					get_viewport().set_input_as_handled()
+					_select_choice(btn.get_meta("goto") as int)
+					return
+		return
+	if not can_advance:
+		return
+	if clicked or keyboard:
 		if typing:
 			_finish_typing()
 		else:
@@ -185,7 +193,7 @@ func _show_line(index: int) -> void:
 
 	choice_panel.visible = false
 	has_choices = false
-	next_hint.text = "[ SPACE / CLICK ]"
+	next_hint.text = "[ E / SPACE / CLICK ]"
 	var spk_key : String     = line.get("speaker", "narrator") as String
 	var active  : String     = line.get("active",  "none")     as String
 	var lc      : String     = chapter.get("left_char",  "sam")      as String
@@ -250,17 +258,23 @@ func _build_choices(choices: Array) -> void:
 		btn.add_theme_stylebox_override("normal",  style_n)
 		btn.add_theme_stylebox_override("hover",   style_h)
 		btn.add_theme_stylebox_override("pressed", style_h)
+		btn.add_theme_stylebox_override("focus",  style_h)
 
 		var goto_index : int = choice["goto"] as int
+		btn.set_meta("goto", goto_index)
 		btn.pressed.connect(_on_choice(goto_index))
 		choice_buttons.add_child(btn)
+	if choice_buttons.get_child_count() > 0:
+		(choice_buttons.get_child(0) as Button).grab_focus()
+
+func _select_choice(goto_index: int) -> void:
+	choice_panel.visible = false
+	has_choices = false
+	next_hint.text = "[ E / SPACE / CLICK ]"
+	_show_line(goto_index)
 
 func _on_choice(goto_index: int) -> Callable:
-	return func() -> void:
-		choice_panel.visible = false
-		has_choices = false
-		next_hint.text = "[ SPACE / CLICK ]"
-		_show_line(goto_index)
+	return func() -> void: _select_choice(goto_index)
 
 # ── Next chapter ──────────────────────────────────────────────
 const LEVEL_CHAPTERS := {

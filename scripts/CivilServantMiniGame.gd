@@ -113,8 +113,8 @@ func _build_ui() -> void:
 	btn_row.add_theme_constant_override("separation", 40)
 	add_child(btn_row)
 
-	_reject_btn  = _btn("◀  駁回", GameTheme.C_RED)
-	_approve_btn = _btn("核准  ▶", GameTheme.C_GREEN)
+	_reject_btn  = _btn("◀ 駁回", GameTheme.C_RED)
+	_approve_btn = _btn("核准 ▶", GameTheme.C_GREEN)
 	_reject_btn.pressed.connect(_on_reject)
 	_approve_btn.pressed.connect(_on_approve)
 	btn_row.add_child(_reject_btn)

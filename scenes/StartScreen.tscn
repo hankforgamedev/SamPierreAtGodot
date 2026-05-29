@@ -72,8 +72,7 @@ anchor_bottom = 0.78
 [node name="GameTitle" type="Label" parent="TitleBlock" unique_id=514934378]
 modulate = Color(0.92, 0.86, 0.72, 1)
 layout_mode = 2
-text = "SAM
-PIERRE"
+text = "SAM PIERRE"
 
 [node name="TitleDivider" type="ColorRect" parent="TitleBlock" unique_id=775960538]
 custom_minimum_size = Vector2(0, 2)
@@ -102,11 +101,14 @@ flat = true
 
 [node name="Credits" type="Label" parent="." unique_id=1401029724]
 modulate = Color(0.35, 0.3, 0.22, 1)
-layout_mode = 0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = -36.0
-offset_right = -20.0
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.94000006
+anchor_right = 0.99000007
+anchor_bottom = 0.97300005
+offset_left = 1.0
+offset_top = -0.20007324
+offset_right = 0.1998291
+offset_bottom = 0.15991211
 text = "by Hank L. and Sam K."
 horizontal_alignment = 2

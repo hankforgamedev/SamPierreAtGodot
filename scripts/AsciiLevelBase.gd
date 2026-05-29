@@ -31,8 +31,8 @@ var _glitch_spike_base    : float = 0.0
 var _flash_rect      : ColorRect = null
 
 # ── Movement state ────────────────────────────────────────
-const MOVE_HOLD_DELAY  := 0.25   # seconds before repeat kicks in
-const MOVE_REPEAT_RATE := 0.10   # seconds between repeat steps
+const MOVE_HOLD_DELAY  := 0.18   # seconds before repeat kicks in
+const MOVE_REPEAT_RATE := 0.07   # seconds between repeat steps
 const FRICTION_STEPS   := 0      # no slide after release — 1 press = 1 step
 const FRICTION_RATE    := 0.14
 const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
@@ -147,7 +147,10 @@ func _setup_display() -> void:
 
 # ── Input ─────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("interact"):
+	var _is_lmb := event is InputEventMouseButton \
+		and (event as InputEventMouseButton).pressed \
+		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+	if event.is_action_pressed("interact") or _is_lmb:
 		if _typewriter_tween != null:
 			_typewriter_tween.kill()
 			_typewriter_tween = null

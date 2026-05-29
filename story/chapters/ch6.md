@@ -21,12 +21,13 @@ right_char: rachel
 
 [rachel right] 「你還記得那次我們翹課去看海嗎？」
 
-[sam left] 「校長那天把我的頭發剃掉了。」
+[sam left] 「校長那天把我的頭髮剃掉了。」
 
 [rachel right] 「但海是真的很美。」
 （停頓）「你現在怎麼樣？」
 
 [sam left choices] （想了一下，該說什麼好？）
+
 - 「在警局做書記。」 >> 9
 - 「不怎麼樣。你呢？」 >> 10
 
