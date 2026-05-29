@@ -1,1 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="124" height="124" x="2" y="2" fill="#363d52" stroke="#212532" stroke-width="4" rx="14"/><g fill="#fff" transform="translate(12.322 12.322)scale(.101)"><path d="M105 673v33q407 354 814 0v-33z"/><path fill="#478cbf" d="m105 673 152 14q12 1 15 14l4 67 132 10 8-61q2-11 15-15h162q13 4 15 15l8 61 132-10 4-67q3-13 15-14l152-14V427q30-39 56-81-35-59-83-108-43 20-82 47-40-37-88-64 7-51 8-102-59-28-123-42-26 43-46 89-49-7-98 0-20-46-46-89-64 14-123 42 1 51 8 102-48 27-88 64-39-27-82-47-48 49-83 108 26 42 56 81zm0 33v39c0 276 813 276 814 0v-39l-134 12-5 69q-2 10-14 13l-162 11q-12 0-16-11l-10-65H446l-10 65q-4 11-16 11l-162-11q-12-3-14-13l-5-69z"/><path d="M483 600c0 34 58 34 58 0v-86c0-34-58-34-58 0z"/><circle cx="725" cy="526" r="90"/><circle cx="299" cy="526" r="90"/></g><g fill="#414042" transform="translate(12.322 12.322)scale(.101)"><circle cx="307" cy="532" r="60"/><circle cx="717" cy="532" r="60"/></g></svg>
+<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" width="680" height="680">
+<title>Sardonic face icon — 山姆皮耶爾</title>
+<desc>A yellow-ochre blob face with one massive void-pupil eye, one heavily-bagged teardrop eye, and a resigned sardonic smirk.</desc>
+
+<defs>
+  <radialGradient id="fg" cx="42%" cy="40%" r="58%">
+    <stop offset="0%" stop-color="#D09A0C"/>
+    <stop offset="100%" stop-color="#8A6200"/>
+  </radialGradient>
+</defs>
+
+<path d="M 340 92 C 458 84 572 192 568 338 C 572 472 510 582 340 592 C 168 582 108 472 112 338 C 108 192 222 84 340 92 Z"
+      fill="url(#fg)" stroke="#0E0600" stroke-width="6" stroke-linejoin="round"/>
+
+<ellipse cx="178" cy="368" rx="64" ry="94" fill="#7A5500" opacity="0.2"/>
+<ellipse cx="340" cy="225" rx="185" ry="42" fill="#6B4800" opacity="0.22"/>
+
+<ellipse cx="252" cy="322" rx="88" ry="82" fill="#0C0500"/>
+<ellipse cx="250" cy="315" rx="80" ry="73" fill="#C8B88A"/>
+<ellipse cx="253" cy="318" rx="63" ry="59" fill="#020000"/>
+<ellipse cx="234" cy="302" rx="14" ry="13" fill="#FFFFFF"/>
+<ellipse cx="266" cy="335" rx="5" ry="5" fill="#FFFFFF" opacity="0.32"/>
+<line x1="182" y1="298" x2="206" y2="313" stroke="#721515" stroke-width="2.8" stroke-linecap="round" opacity="0.85"/>
+<line x1="180" y1="322" x2="205" y2="320" stroke="#721515" stroke-width="2.2" stroke-linecap="round" opacity="0.72"/>
+<line x1="184" y1="346" x2="206" y2="334" stroke="#721515" stroke-width="2" stroke-linecap="round" opacity="0.68"/>
+<path d="M 176 287 C 212 264 268 258 336 279" fill="none" stroke="#0C0500" stroke-width="5.5" stroke-linecap="round"/>
+<path d="M 178 356 C 218 377 290 381 334 362" fill="none" stroke="#5E3E00" stroke-width="3.5" stroke-linecap="round"/>
+
+<path d="M 365 322 C 362 360 370 392 422 408 C 472 422 510 408 516 388 C 525 364 514 336 504 324 Z"
+      fill="#2E1C00" opacity="0.72"/>
+<path d="M 372 298 C 380 272 412 261 442 265 C 476 270 508 292 506 320 C 504 344 482 358 448 354 C 410 349 368 326 372 298 Z"
+      fill="#C8B88A" stroke="#0C0500" stroke-width="4"/>
+<ellipse cx="446" cy="312" rx="40" ry="37" fill="#020000"/>
+<ellipse cx="432" cy="300" rx="11" ry="10" fill="#FFFFFF"/>
+<path d="M 375 295 C 404 268 459 262 504 292" fill="none" stroke="#0C0500" stroke-width="4.5" stroke-linecap="round"/>
+<path d="M 366 358 C 404 380 466 382 506 362" fill="none" stroke="#2E1C00" stroke-width="4" stroke-linecap="round"/>
+<path d="M 370 372 C 408 393 464 395 504 374" fill="none" stroke="#2E1C00" stroke-width="2.8" stroke-linecap="round" opacity="0.72"/>
+<path d="M 376 385 C 412 405 462 406 502 386" fill="none" stroke="#2E1C00" stroke-width="1.8" stroke-linecap="round" opacity="0.48"/>
+<path d="M 504 356 C 509 374 507 396 502 414" fill="none" stroke="#6A8A96" stroke-width="2.8" stroke-linecap="round" opacity="0.52"/>
+
+<path d="M 320 428 C 314 442 314 453 325 458 C 338 463 352 456 350 442"
+      fill="none" stroke="#7A5C00" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+
+<path d="M 222 496 C 262 483 308 478 356 481 C 412 485 466 505 486 496"
+      fill="none" stroke="#0C0500" stroke-width="6.5" stroke-linecap="round"/>
+<path d="M 480 497 C 496 484 500 468 493 455"
+      fill="none" stroke="#0C0500" stroke-width="6" stroke-linecap="round"/>
+<path d="M 245 518 C 294 534 400 534 458 516"
+      fill="none" stroke="#8A6600" stroke-width="1.8" stroke-linecap="round" opacity="0.32"/>
+</svg>

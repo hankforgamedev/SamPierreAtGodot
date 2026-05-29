@@ -9,6 +9,7 @@ static func load_chapter(path: String) -> Dictionary:
 	var content := _read(path)
 	if content == "":
 		return {}
+	StoryLinter.lint_chapter(path, content)
 	var fm := _parse_frontmatter(content)
 	var meta: Dictionary = fm[0]
 	var body := content.substr(fm[1] as int)
