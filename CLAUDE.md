@@ -85,7 +85,6 @@ res://audio/ambient/*.ogg
 - **NPC dict format**: `{Vector2i: {chapter_id, start_line, char_id, display}}` — or include `next_level` key for door transitions
 - **Glitch system**: `_glitch_overlay` (Vector2i → String) randomly corrupts `#`/`%`/`.` chars; chaos pool uses Unicode symbols (Ψ Ω Δ ░ ▓ etc.); scales with `stress_level`
 - **Font**: `SystemFont` with Consolas/Courier New at 28px set programmatically in `_setup_display()`
-- **`BaseLevel.gd`**, **`PlayerController.gd`**, **`NPC.gd`** — superseded by ASCII system, kept but unused
 
 ### Dialogue Line Schema
 
@@ -136,6 +135,3 @@ Key groups:
 
 Adding a new character: add to **both** `CHAR_HEX` and `CHAR_COLOR` in `GameTheme.gd`.
 
-### Deprecated Files
-
-`scenes/Chapter1.tscn` and `scripts/Chapter1.gd` are unused — do not reference them.
