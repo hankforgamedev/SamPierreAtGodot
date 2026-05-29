@@ -26,6 +26,7 @@ godot --path . scenes/StartScreen.tscn  # full playthrough
 ```
 
 Audio assets (drop here when ready):
+
 - SFX: `res://audio/sfx/*.wav` (export from jsfxr as WAV)
 - Ambient: `res://audio/ambient/*.ogg`
 
@@ -71,14 +72,14 @@ Control
 
 Each subclass overrides four hooks and nothing else:
 
-| Hook | Returns | Purpose |
-|---|---|---|
-| `_get_map_data()` | `Array[String]` | ASCII art rows |
-| `_get_player_spawn()` | `Vector2i` | Starting grid cell |
-| `_get_npcs()` | `Dictionary` | `Vector2i → NPC dict` |
-| `_get_level_name()` | `String` | HUD text |
-| `_get_scene_intro()` | `String` | Panel text shown on entry (optional) |
-| `_get_level_id()` | `String` | Key into `ObjectData.OBJECTS` |
+| Hook                  | Returns         | Purpose                              |
+| --------------------- | --------------- | ------------------------------------ |
+| `_get_map_data()`     | `Array[String]` | ASCII art rows                       |
+| `_get_player_spawn()` | `Vector2i`      | Starting grid cell                   |
+| `_get_npcs()`         | `Dictionary`    | `Vector2i → NPC dict`                |
+| `_get_level_name()`   | `String`        | HUD text                             |
+| `_get_scene_intro()`  | `String`        | Panel text shown on entry (optional) |
+| `_get_level_id()`     | `String`        | Key into `ObjectData.OBJECTS`        |
 
 **NPC dict format** (value in `_get_npcs()` dictionary):
 
@@ -86,7 +87,7 @@ Each subclass overrides four hooks and nothing else:
 {
     "chapter_id":  "ch1",     # opens WorldDialogue on interact
     "start_line":  0,
-    "char_id":     "rat",     # key into GameManager.CHAR_COLORS / SPEAKER_NAMES
+    "char_id":     "rat",     # key into GameTheme.CHAR_COLOR / GameManager.SPEAKER_NAMES
     "display":     "?",       # character shown on map
     "ambient_a":   "...",     # hint text before talking
     "ambient_b":   "...",     # hint text after talking
@@ -119,25 +120,43 @@ GameScene.tscn  (root: Control / GameScene)
 
 ## Global Singletons (Autoload)
 
+### `GameTheme` (`scripts/GameTheme.gd`)
+
+Global constants. `class_name` — no autoload needed. Access as `GameTheme.C_PANEL_BG`, etc.
+
+**All palette colors, character colors, base font sizes, and typewriter speeds live here. Do not hardcode these values anywhere else.**
+
+| What                                                   | Type         | Purpose                                    |
+| ------------------------------------------------------ | ------------ | ------------------------------------------ |
+| `C_BG`, `C_BG_MAP`, `C_PANEL_BG`, …                    | `Color`      | Dark Earth palette                         |
+| `C_BODY_TEXT`, `C_SPEAKER_TEXT`, `C_NARRATOR`, `C_DIM` | `Color`      | Text hierarchy                             |
+| `C_CHOICE_*`                                           | `Color`      | Choice button scheme                       |
+| `CHAR_HEX`                                             | `Dictionary` | `"rat" → "#66CC66"` — BBCode map rendering |
+| `CHAR_COLOR`                                           | `Dictionary` | `"rat" → Color(...)` — UI theme overrides  |
+| `BASE_MAP_FONT`                                        | `int`        | Root design font (28px)                    |
+| `SPEED_FAST/NORMAL/SLOW`                               | `float`      | Typewriter seconds/char                    |
+
+Adding a character: add to **both** `CHAR_HEX` and `CHAR_COLOR`.
+
 ### `GameManager`
 
-State and character data. Always available.
+State and character labels. Always available.
 
-| What | Type | Purpose |
-|---|---|---|
-| `current_chapter_id` | `String` | Which chapter to load in GameScene |
-| `resume_line` | `int` | Line index to resume at after a mini-game |
-| `CHAR_COLORS` | `Dictionary` | `"rat" → Color(...)` |
-| `SPEAKER_NAMES` | `Dictionary` | `"rat" → "老鼠"` |
-| `CHAR_LABELS` | `Dictionary` | `"rat" → "[鼠]"` |
-| `start_chapter(id)` | method | Sets `current_chapter_id`, goes to GameScene |
-| `go_to_level(path)` | method | Direct scene change |
+| What                 | Type         | Purpose                                      |
+| -------------------- | ------------ | -------------------------------------------- |
+| `current_chapter_id` | `String`     | Which chapter to load in GameScene           |
+| `resume_line`        | `int`        | Line index to resume at after a mini-game    |
+| `SPEAKER_NAMES`      | `Dictionary` | `"rat" → "老鼠"`                             |
+| `CHAR_LABELS`        | `Dictionary` | `"rat" → "[鼠]"`                             |
+| `start_chapter(id)`  | method       | Sets `current_chapter_id`, goes to GameScene |
+| `go_to_level(path)`  | method       | Direct scene change                          |
 
 ### `DialogueData`
 
 Pure data. All story content lives here as `CHAPTERS: Array[Dictionary]`.
 
 **Chapter dict:**
+
 ```gdscript
 {
     "id":         "ch1",
@@ -150,6 +169,7 @@ Pure data. All story content lives here as `CHAPTERS: Array[Dictionary]`.
 ```
 
 **Line dict:**
+
 ```gdscript
 {
     "speaker": "rat",           # key into GameManager lookups
@@ -212,7 +232,7 @@ GameScene  (ch6)
 
 ### Font scaling
 
-All UI sizes derive from a single constant `BASE_MAP_FONT = 28` (the original design font size). At startup, `AsciiLevelBase._compute_font_size()` fits the map into the viewport and produces `_font_size`. Every other element — HUD, ambient labels, dialogue panel, choice buttons — divides by `BASE_MAP_FONT` and multiplies by `_font_size` to scale proportionally.
+All UI sizes derive from `GameTheme.BASE_MAP_FONT = 28` (the root design font size). At startup, `AsciiLevelBase._compute_font_size()` fits the map into the viewport and produces `_font_size`. Every other element — HUD, ambient labels, dialogue panel, choice buttons — divides by `GameTheme.BASE_MAP_FONT` and multiplies by `_font_size` to scale proportionally.
 
 ---
 
@@ -238,7 +258,8 @@ Add an entry to `ObjectData.OBJECTS["level_id"]` at the desired `Vector2i` posit
 
 ```
 scripts/
-  GameManager.gd       — autoload: state + character constants
+  GameTheme.gd         — global palette, character colors, BASE_MAP_FONT, typewriter speeds
+  GameManager.gd       — autoload: state + character name/label mapping constants
   DialogueData.gd      — autoload: all story content
   ObjectData.gd        — autoload: world interactables
   AsciiLevelBase.gd    — base class for all ASCII world levels

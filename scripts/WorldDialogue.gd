@@ -1,26 +1,10 @@
 extends Control
 
-const C_PANEL_BG     := Color(0.10, 0.078, 0.060, 1.0)
-const C_PANEL_BORDER := Color(0.50, 0.36,  0.14,  1.0)
-const C_HEADER_BG    := Color(0.06, 0.05,  0.04,  1.0)
-const C_SPEAKER_TEXT := Color(0.96, 0.80,  0.38,  1.0)
-const C_BODY_TEXT    := Color(0.88, 0.84,  0.74,  1.0)
-const C_NARRATOR     := Color(0.62, 0.58,  0.48,  1.0)
-const C_CHOICE_BG    := Color(0.14, 0.12,  0.09,  1.0)
-const C_CHOICE_HVR   := Color(0.22, 0.18,  0.12,  1.0)
-const C_CHOICE_TXT   := Color(0.88, 0.84,  0.74,  1.0)
-const C_CHOICE_HVTXT := Color(1.00, 0.96,  0.84,  1.0)
-const C_STAMP_BORDER := Color(0.60, 0.08,  0.05,  1.0)
-const SPEED_FAST   := 0.008
-const SPEED_NORMAL := 0.020
-const SPEED_SLOW   := 0.045
-
-# ── Original design sizes (must match AsciiLevelBase.BASE_MAP_FONT) ───
-const BASE_MAP_FONT   := 28
-const BASE_SPK_FONT   := 13
-const BASE_DLG_FONT   := 16
-const BASE_BTN_FONT   := 14
-const BASE_TITLE_FONT := 12
+# ── Original design sizes ────────────────────────────────────────────────────
+const BASE_SPK_FONT   := 16
+const BASE_DLG_FONT   := 20
+const BASE_BTN_FONT   := 17
+const BASE_TITLE_FONT := 14
 const BASE_MARGIN     := 18
 const BASE_ACCENT_H   := 20
 const BASE_BTN_MARGIN := 8
@@ -35,10 +19,10 @@ var _typing       := false
 var _full_text    := ""
 var _typed_so_far := ""
 var _type_timer   := 0.0
-var _type_speed   := SPEED_NORMAL
+var _type_speed   := GameTheme.SPEED_NORMAL
 var _has_choices    := false
 var _can_advance    := false
-var _map_font_size  := BASE_MAP_FONT
+var _map_font_size  := GameTheme.BASE_MAP_FONT
 var _log_bbcode      : String = ""
 var _cur_entry_header: String = ""
 var _cur_body_hex    : String = ""
@@ -58,12 +42,12 @@ func _ready() -> void:
 func _apply_panel_style() -> void:
 	var panel := $RightPanel as Panel
 	var sty   := StyleBoxFlat.new()
-	sty.bg_color = C_PANEL_BG
-	sty.border_color = C_PANEL_BORDER
+	sty.bg_color = GameTheme.C_PANEL_BG
+	sty.border_color = GameTheme.C_PANEL_BORDER
 	sty.set_border_width_all(3)
 	panel.add_theme_stylebox_override("panel", sty)
 	var hdr := StyleBoxFlat.new()
-	hdr.bg_color = C_HEADER_BG
+	hdr.bg_color = GameTheme.C_HEADER_BG
 	hdr.set_content_margin_all(6)
 	speaker_header.add_theme_stylebox_override("panel", hdr)
 	dlg_text.bbcode_enabled   = true
@@ -76,15 +60,15 @@ func _apply_panel_style() -> void:
 
 func apply_scale(map_font_size: int) -> void:
 	_map_font_size = map_font_size
-	var m := BASE_MARGIN * map_font_size / BASE_MAP_FONT
+	var m := BASE_MARGIN * map_font_size / GameTheme.BASE_MAP_FONT
 	margin_box.add_theme_constant_override("margin_left",   m)
 	margin_box.add_theme_constant_override("margin_right",  m)
 	margin_box.add_theme_constant_override("margin_top",    m)
 	margin_box.add_theme_constant_override("margin_bottom", m)
-	speaker_accent.custom_minimum_size = Vector2(4.0, float(BASE_ACCENT_H * map_font_size) / float(BASE_MAP_FONT))
-	spk_name.add_theme_font_size_override("font_size",        BASE_SPK_FONT * map_font_size / BASE_MAP_FONT)
-	dlg_text.add_theme_font_size_override("normal_font_size", BASE_DLG_FONT * map_font_size / BASE_MAP_FONT)
-	choice_title.add_theme_font_size_override("font_size",    BASE_BTN_FONT * map_font_size / BASE_MAP_FONT)
+	speaker_accent.custom_minimum_size = Vector2(4.0, float(BASE_ACCENT_H * map_font_size) / float(GameTheme.BASE_MAP_FONT))
+	spk_name.add_theme_font_size_override("font_size",        BASE_SPK_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
+	dlg_text.add_theme_font_size_override("normal_font_size", BASE_DLG_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
+	choice_title.add_theme_font_size_override("font_size",    BASE_BTN_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
 
 func open(chapter_id: String, start_line: int = 0) -> void:
 	_chapter = DialogueData.get_chapter(chapter_id)
@@ -167,13 +151,13 @@ func _show_line(index: int) -> void:
 	var spk_key  : String = line.get("speaker", "narrator") as String
 	var display  : String = GameManager.SPEAKER_NAMES.get(spk_key, "") as String
 	spk_name.text = display.to_upper() if display != "" else "— — —"
-	var spk_color: Color  = GameManager.CHAR_COLORS.get(spk_key, C_SPEAKER_TEXT) as Color
+	var spk_color: Color  = GameTheme.CHAR_COLOR.get(spk_key, GameTheme.C_SPEAKER_TEXT) as Color
 	spk_name.add_theme_color_override("font_color", spk_color)
 	speaker_accent.color = spk_color.darkened(0.3)
 
 	var is_narr     : bool   = spk_key == "narrator"
 	var is_inner    : bool   = spk_key == "inner"
-	var body_color  : Color  = C_NARRATOR if is_narr else (spk_color if is_inner else C_BODY_TEXT)
+	var body_color  : Color  = GameTheme.C_NARRATOR if is_narr else (spk_color if is_inner else GameTheme.C_BODY_TEXT)
 	_cur_body_hex            = "#" + body_color.to_html(false)
 	var disp_upper  : String = display.to_upper() if display != "" else ""
 	if disp_upper != "":
@@ -187,9 +171,9 @@ func _show_line(index: int) -> void:
 
 	var spd: String = line.get("speed", "normal") as String
 	match spd:
-		"fast":  _type_speed = SPEED_FAST
-		"slow":  _type_speed = SPEED_SLOW
-		_:       _type_speed = SPEED_NORMAL
+		"fast":  _type_speed = GameTheme.SPEED_FAST
+		"slow":  _type_speed = GameTheme.SPEED_SLOW
+		_:       _type_speed = GameTheme.SPEED_NORMAL
 
 	var fx: Array = line.get("fx", []) as Array
 	if fx.size() > 0:
@@ -223,20 +207,20 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ► " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", BASE_BTN_FONT * _map_font_size / BASE_MAP_FONT)
-		btn.add_theme_color_override("font_color",         C_CHOICE_TXT)
-		btn.add_theme_color_override("font_hover_color",   C_CHOICE_HVTXT)
+		btn.add_theme_font_size_override("font_size", BASE_BTN_FONT * _map_font_size / GameTheme.BASE_MAP_FONT)
+		btn.add_theme_color_override("font_color",         GameTheme.C_CHOICE_TXT)
+		btn.add_theme_color_override("font_hover_color",   GameTheme.C_CHOICE_HVTXT)
 		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
 		var sn := StyleBoxFlat.new()
-		sn.bg_color = C_CHOICE_BG
-		sn.border_color = Color(0.35, 0.30, 0.22)
+		sn.bg_color = GameTheme.C_CHOICE_BG
+		sn.border_color = GameTheme.C_CHOICE_BORDER_HVR
 		sn.set_border_width_all(1)
-		sn.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(BASE_MAP_FONT))
+		sn.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(GameTheme.BASE_MAP_FONT))
 		var sh := StyleBoxFlat.new()
-		sh.bg_color = C_CHOICE_HVR
-		sh.border_color = C_STAMP_BORDER
+		sh.bg_color = GameTheme.C_CHOICE_HVR
+		sh.border_color = GameTheme.C_STAMP_BORDER
 		sh.set_border_width_all(1)
-		sh.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(BASE_MAP_FONT))
+		sh.set_content_margin_all(float(BASE_BTN_MARGIN * _map_font_size) / float(GameTheme.BASE_MAP_FONT))
 		btn.add_theme_stylebox_override("normal",  sn)
 		btn.add_theme_stylebox_override("hover",   sh)
 		btn.add_theme_stylebox_override("pressed", sh)

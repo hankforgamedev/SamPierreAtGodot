@@ -74,7 +74,7 @@ res://audio/ambient/*.ogg
 
 ### Global Singletons (Autoload)
 
-- **`GameManager`** (`scripts/GameManager.gd`) — character color/name constants, `current_chapter_id`, `resume_line` (for mini-game return), `start_chapter()`, `go_to_level()`
+- **`GameManager`** (`scripts/GameManager.gd`) — character name/label constants (`SPEAKER_NAMES`, `CHAR_LABELS`), `current_chapter_id`, `resume_line` (for mini-game return), `start_chapter()`, `go_to_level()`. Character *colors* live in `GameTheme.CHAR_COLOR` and `GameTheme.CHAR_HEX`.
 - **`DialogueData`** (`scripts/DialogueData.gd`) — all story content as `CHAPTERS` array; pure data, no logic
 
 ### ASCII World System (grid-based, no physics)
@@ -113,12 +113,28 @@ A line with `minigame` field saves `GameManager.resume_line = index + 1`, then s
 | `Street.tscn`            | `StreetLevel.gd`     | Door `>` @ (47,13) → 老蕭餐館                           |
 | `LaoxiaoRestaurant.tscn` | `RestaurantLevel.gd` | Moujia `甲` @ (36,11) → ch5; Door `<` @ (2,11) → Street |
 
-### Color Palette (Dark Earth)
+### GameTheme — global constants (`scripts/GameTheme.gd`)
 
-All UI uses the same constants (defined per-script, not in a shared file):
+Single source of truth for all palette colors, character colors, and base font sizes. Access anywhere via `GameTheme.*` — no autoload needed (`class_name GameTheme`).
 
-- Panel BG: `Color(0.10, 0.078, 0.060)` — Panel border: `Color(0.50, 0.36, 0.14)`
-- Speaker name: `Color(0.96, 0.80, 0.38)` — Body text: `Color(0.88, 0.84, 0.74)`
+**Never hardcode palette values or character colors inline.** Use `GameTheme.*` constants. The only allowed exceptions are one-off dramatic-effect colors (e.g., stamp overlay alphas) which must have an inline comment explaining why.
+
+Key groups:
+
+| Prefix | Contents |
+|--------|----------|
+| `C_BG*` | Background depths (`C_BG`, `C_BG_MAP`) |
+| `C_PANEL_*` | Panel fill + border |
+| `C_BODY_TEXT`, `C_SPEAKER_TEXT`, `C_NARRATOR`, `C_DIM` | Text hierarchy |
+| `C_CHOICE_*` | Choice button scheme |
+| `C_HINT_TEXT`, `C_AMBIENT_TEXT` | World UI labels |
+| `C_RED`, `C_GREEN`, `C_TITLE_TEXT`, etc. | One-off named colors |
+| `CHAR_HEX` | BBCode hex strings per character |
+| `CHAR_COLOR` | `Color` objects per character for `add_theme_color_override` |
+| `BASE_MAP_FONT` | Root design font (28px); all UI scales from this |
+| `SPEED_FAST/NORMAL/SLOW` | Typewriter speeds in seconds/char |
+
+Adding a new character: add to **both** `CHAR_HEX` and `CHAR_COLOR` in `GameTheme.gd`.
 
 ### Deprecated Files
 

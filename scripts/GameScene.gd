@@ -1,20 +1,5 @@
 extends Control
 
-# ── DE Colour Palette ─────────────────────────────────────────
-const C_PANEL_BG     : Color = Color(0.10, 0.078, 0.060)
-const C_PANEL_BORDER : Color = Color(0.50, 0.36, 0.14)
-const C_CHAR_BORDER  : Color = Color(0.32, 0.24, 0.10)
-const C_SPEAKER_TEXT : Color = Color(0.96, 0.80, 0.38)
-const C_BODY_TEXT    : Color = Color(0.88, 0.84, 0.74)
-const C_NARRATOR     : Color = Color(0.60, 0.56, 0.46)
-const C_DIM          : Color = Color(0.36, 0.30, 0.20)
-const C_ICON_DIM     : Color = Color(0.25, 0.25, 0.25, 0.40)
-const C_CHOICE_BG    : Color = Color(0.08, 0.062, 0.048)
-const C_CHOICE_HVR   : Color = Color(0.16, 0.12, 0.07)
-const C_CHOICE_TXT   : Color = Color(0.70, 0.60, 0.38)
-const C_CHOICE_HVTXT : Color = Color(0.96, 0.82, 0.42)
-const TYPE_SPEED     : float = 0.020
-
 # ── State ──────────────────────────────────────────────────────
 var chapter        : Dictionary = {}
 var lines          : Array      = []
@@ -71,41 +56,44 @@ func _ready() -> void:
 
 # ── Theme ─────────────────────────────────────────────────────
 func _apply_theme() -> void:
-	var mood : Color = chapter.get("bg_color", Color(0.07, 0.055, 0.045)) as Color
+	var mood : Color = chapter.get("bg_color", GameTheme.C_BG) as Color
 	base_color.color = mood.darkened(0.08)
 	sky_strip.color  = mood.lightened(0.05)
 
+	var s := get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)
+	var fs := func(base: int) -> int: return maxi(int(base * s), base)
+
 	chapter_lbl.text = (chapter["title"] as String).to_upper()
-	chapter_lbl.add_theme_color_override("font_color", C_DIM)
-	chapter_lbl.add_theme_font_size_override("font_size", 11)
+	chapter_lbl.add_theme_color_override("font_color", GameTheme.C_DIM)
+	chapter_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAPTER_LBL))
 
-	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(C_PANEL_BG, C_PANEL_BORDER, 2))
-	left_panel.add_theme_stylebox_override("panel",  _panel_style(C_PANEL_BG, C_CHAR_BORDER,  1))
-	right_panel.add_theme_stylebox_override("panel", _panel_style(C_PANEL_BG, C_CHAR_BORDER,  1))
+	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2))
+	left_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
+	right_panel.add_theme_stylebox_override("panel", _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 
-	spk_name.add_theme_color_override("font_color",   C_SPEAKER_TEXT)
-	spk_name.add_theme_font_size_override("font_size", 13)
-	dlg_text.add_theme_color_override("font_color",    C_BODY_TEXT)
-	dlg_text.add_theme_font_size_override("font_size", 15)
+	spk_name.add_theme_color_override("font_color",   GameTheme.C_SPEAKER_TEXT)
+	spk_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_SPK_FONT))
+	dlg_text.add_theme_color_override("font_color",    GameTheme.C_BODY_TEXT)
+	dlg_text.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_DLG_FONT))
 
-	left_name.add_theme_color_override("font_color",   C_DIM)
-	left_name.add_theme_font_size_override("font_size", 11)
-	right_name.add_theme_color_override("font_color",  C_DIM)
-	right_name.add_theme_font_size_override("font_size", 11)
+	left_name.add_theme_color_override("font_color",   GameTheme.C_DIM)
+	left_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAR_NAME))
+	right_name.add_theme_color_override("font_color",  GameTheme.C_DIM)
+	right_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAR_NAME))
 
-	choice_title.add_theme_color_override("font_color",   C_DIM)
-	choice_title.add_theme_font_size_override("font_size", 11)
+	choice_title.add_theme_color_override("font_color",   GameTheme.C_DIM)
+	choice_title.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHOICE_TITLE))
 
-	next_hint.add_theme_color_override("font_color",    C_DIM)
-	next_hint.add_theme_font_size_override("font_size",  12)
-	progress_lbl.add_theme_color_override("font_color", C_DIM)
-	progress_lbl.add_theme_font_size_override("font_size", 12)
+	next_hint.add_theme_color_override("font_color",    GameTheme.C_DIM)
+	next_hint.add_theme_font_size_override("font_size",  fs.call(GameTheme.BASE_GS_HINT_FONT))
+	progress_lbl.add_theme_color_override("font_color", GameTheme.C_DIM)
+	progress_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_HINT_FONT))
 
-	card_line1.add_theme_color_override("font_color",   C_DIM)
-	card_line1.add_theme_font_size_override("font_size", 13)
-	card_line2.add_theme_color_override("font_color",   C_BODY_TEXT)
-	card_line2.add_theme_font_size_override("font_size", 28)
-	card_accent.color = C_PANEL_BORDER
+	card_line1.add_theme_color_override("font_color",   GameTheme.C_DIM)
+	card_line1.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CARD1_FONT))
+	card_line2.add_theme_color_override("font_color",   GameTheme.C_BODY_TEXT)
+	card_line2.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CARD2_FONT))
+	card_accent.color = GameTheme.C_PANEL_BORDER
 
 func _panel_style(bg: Color, border: Color, width: int) -> StyleBoxFlat:
 	var s : StyleBoxFlat = StyleBoxFlat.new()
@@ -125,12 +113,13 @@ func _setup_characters() -> void:
 	right_icon.text = GameManager.CHAR_LABELS.get(rc,  "[?]") as String
 	right_name.text = GameManager.SPEAKER_NAMES.get(rc, "")   as String
 
+	var icon_fs := maxi(int(GameTheme.BASE_GS_ICON_FONT * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_GS_ICON_FONT)
 	left_icon.add_theme_color_override("font_color",
-		GameManager.CHAR_COLORS.get(lc, Color.WHITE) as Color)
-	left_icon.add_theme_font_size_override("font_size", 22)
+		GameTheme.CHAR_COLOR.get(lc, Color.WHITE) as Color)
+	left_icon.add_theme_font_size_override("font_size", icon_fs)
 	right_icon.add_theme_color_override("font_color",
-		GameManager.CHAR_COLORS.get(rc, Color.WHITE) as Color)
-	right_icon.add_theme_font_size_override("font_size", 22)
+		GameTheme.CHAR_COLOR.get(rc, Color.WHITE) as Color)
+	right_icon.add_theme_font_size_override("font_size", icon_fs)
 
 # ── Chapter card ──────────────────────────────────────────────
 func _show_chapter_card() -> void:
@@ -164,9 +153,9 @@ func _process(delta: float) -> void:
 	if not typing:
 		return
 	type_timer += delta
-	while type_timer >= TYPE_SPEED and typed_so_far.length() < full_text.length():
+	while type_timer >= GameTheme.SPEED_NORMAL and typed_so_far.length() < full_text.length():
 		typed_so_far  += full_text[typed_so_far.length()]
-		type_timer    -= TYPE_SPEED
+		type_timer    -= GameTheme.SPEED_NORMAL
 		dlg_text.text  = typed_so_far
 	if typed_so_far.length() >= full_text.length():
 		typing        = false
@@ -224,7 +213,7 @@ func _show_line(index: int) -> void:
 	# Speaker name
 	var display : String = GameManager.SPEAKER_NAMES.get(spk_key, "") as String
 	spk_name.text = display.to_upper() if display != "" else "— — —"
-	var spk_color : Color = GameManager.CHAR_COLORS.get(spk_key, C_SPEAKER_TEXT) as Color
+	var spk_color : Color = GameTheme.CHAR_COLOR.get(spk_key, GameTheme.C_SPEAKER_TEXT) as Color
 	spk_name.add_theme_color_override("font_color", spk_color)
 	speaker_accent.color = spk_color.darkened(0.3)
 
@@ -233,16 +222,16 @@ func _show_line(index: int) -> void:
 	var right_lit : bool = (active == "right" or active == rc)
 	var is_narr   : bool = (active == "none"  or spk_key == "narrator")
 
-	left_icon.modulate  = Color.WHITE if (left_lit  and not is_narr) else C_ICON_DIM
-	left_name.modulate  = Color.WHITE if (left_lit  and not is_narr) else C_ICON_DIM
-	right_icon.modulate = Color.WHITE if (right_lit and not is_narr) else C_ICON_DIM
-	right_name.modulate = Color.WHITE if (right_lit and not is_narr) else C_ICON_DIM
+	left_icon.modulate  = Color.WHITE if (left_lit  and not is_narr) else GameTheme.C_ICON_DIM
+	left_name.modulate  = Color.WHITE if (left_lit  and not is_narr) else GameTheme.C_ICON_DIM
+	right_icon.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
+	right_name.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
 
 	# Text colour
 	if is_narr:
-		dlg_text.add_theme_color_override("font_color", C_NARRATOR)
+		dlg_text.add_theme_color_override("font_color", GameTheme.C_NARRATOR)
 	else:
-		dlg_text.add_theme_color_override("font_color", C_BODY_TEXT)
+		dlg_text.add_theme_color_override("font_color", GameTheme.C_BODY_TEXT)
 
 	# Check for choices
 	if line.has("choices"):
@@ -270,19 +259,19 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ›  " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", 14)
-		btn.add_theme_color_override("font_color",         C_CHOICE_TXT)
-		btn.add_theme_color_override("font_hover_color",   C_CHOICE_HVTXT)
+		btn.add_theme_font_size_override("font_size", maxi(int(GameTheme.BASE_GS_BTN_FONT * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_GS_BTN_FONT))
+		btn.add_theme_color_override("font_color",         GameTheme.C_CHOICE_TXT)
+		btn.add_theme_color_override("font_hover_color",   GameTheme.C_CHOICE_HVTXT)
 		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
 
 		var style_n : StyleBoxFlat = StyleBoxFlat.new()
-		style_n.bg_color = C_CHOICE_BG
-		style_n.border_color = Color(0.30, 0.22, 0.10)
+		style_n.bg_color = GameTheme.C_CHOICE_BG
+		style_n.border_color = GameTheme.C_CHOICE_BORDER
 		style_n.set_border_width_all(1)
 		style_n.set_content_margin_all(8)
 		var style_h : StyleBoxFlat = StyleBoxFlat.new()
-		style_h.bg_color = C_CHOICE_HVR
-		style_h.border_color = C_PANEL_BORDER
+		style_h.bg_color = GameTheme.C_CHOICE_HVR
+		style_h.border_color = GameTheme.C_PANEL_BORDER
 		style_h.set_border_width_all(1)
 		style_h.set_content_margin_all(8)
 		btn.add_theme_stylebox_override("normal",  style_n)

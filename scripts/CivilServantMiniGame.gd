@@ -1,14 +1,5 @@
 extends Control
 
-const C_BG       := Color(0.062, 0.048, 0.038)
-const C_PANEL    := Color(0.10,  0.078, 0.060)
-const C_BORDER   := Color(0.50,  0.36,  0.14)
-const C_AMBER    := Color(0.96,  0.80,  0.38)
-const C_BODY     := Color(0.88,  0.84,  0.74)
-const C_DIM      := Color(0.50,  0.42,  0.30)
-const C_RED      := Color(0.85,  0.25,  0.20)
-const C_GREEN    := Color(0.30,  0.72,  0.30)
-
 const QUOTA      := 6
 const LEE_CHANCE := 0.35
 
@@ -53,16 +44,19 @@ func _ready() -> void:
 
 
 func _build_ui() -> void:
+	var s := get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)
+	var fs := func(base: int) -> int: return maxi(int(base * s), base)
+
 	var bg := ColorRect.new()
-	bg.color = C_BG
+	bg.color = GameTheme.C_BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
 	var hdr := Label.new()
 	hdr.text = "虎寨城警局下城總局  ─  文書處理站"
 	hdr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hdr.add_theme_color_override("font_color", C_DIM)
-	hdr.add_theme_font_size_override("font_size", 12)
+	hdr.add_theme_color_override("font_color", GameTheme.C_DIM)
+	hdr.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_MG_HEADER))
 	hdr.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	hdr.offset_top    = 14
 	hdr.offset_bottom = 36
@@ -70,8 +64,8 @@ func _build_ui() -> void:
 
 	_quota_lbl = Label.new()
 	_quota_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_quota_lbl.add_theme_color_override("font_color", C_AMBER)
-	_quota_lbl.add_theme_font_size_override("font_size", 13)
+	_quota_lbl.add_theme_color_override("font_color", GameTheme.C_SPEAKER_TEXT)
+	_quota_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_MG_QUOTA))
 	_quota_lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_quota_lbl.offset_top    = 38
 	_quota_lbl.offset_bottom = 60
@@ -82,7 +76,7 @@ func _build_ui() -> void:
 	doc.anchor_top    = 0.5;  doc.anchor_bottom = 0.5
 	doc.offset_left   = -255; doc.offset_right  = 255
 	doc.offset_top    = -180; doc.offset_bottom = 125
-	doc.add_theme_stylebox_override("panel", _sty(C_PANEL, C_BORDER, 2, 22))
+	doc.add_theme_stylebox_override("panel", _sty(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2, 22))
 	add_child(doc)
 
 	var inner := VBoxContainer.new()
@@ -90,11 +84,11 @@ func _build_ui() -> void:
 	inner.add_theme_constant_override("separation", 10)
 	doc.add_child(inner)
 
-	_case_num    = _lbl("", 11, C_DIM)
-	_name_lbl    = _lbl("", 16, C_BODY)
-	_charge_lbl  = _lbl("", 14, C_AMBER)
-	_officer_lbl = _lbl("", 12, C_DIM)
-	_note_lbl    = _lbl("", 12, C_DIM)
+	_case_num    = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
+	_name_lbl    = _lbl("", fs.call(GameTheme.BASE_MG_NAME),   GameTheme.C_BODY_TEXT)
+	_charge_lbl  = _lbl("", fs.call(GameTheme.BASE_MG_CHARGE), GameTheme.C_SPEAKER_TEXT)
+	_officer_lbl = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
+	_note_lbl    = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
 	_charge_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_note_lbl.autowrap_mode   = TextServer.AUTOWRAP_WORD_SMART
 
@@ -105,7 +99,7 @@ func _build_ui() -> void:
 	inner.add_child(_officer_lbl)
 	inner.add_child(_note_lbl)
 
-	_mood_lbl = _lbl("", 11, C_DIM)
+	_mood_lbl = _lbl("", fs.call(GameTheme.BASE_MG_LABEL), GameTheme.C_DIM)
 	_mood_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_mood_lbl.anchor_left   = 0.5;  _mood_lbl.anchor_right  = 0.5
 	_mood_lbl.anchor_top    = 0.5;  _mood_lbl.anchor_bottom = 0.5
@@ -122,8 +116,8 @@ func _build_ui() -> void:
 	btn_row.add_theme_constant_override("separation", 40)
 	add_child(btn_row)
 
-	_reject_btn  = _btn("◀  駁回", C_RED)
-	_approve_btn = _btn("核准  ▶", C_GREEN)
+	_reject_btn  = _btn("◀  駁回", GameTheme.C_RED)
+	_approve_btn = _btn("核准  ▶", GameTheme.C_GREEN)
 	_reject_btn.pressed.connect(_on_reject)
 	_approve_btn.pressed.connect(_on_approve)
 	btn_row.add_child(_reject_btn)
@@ -144,7 +138,7 @@ func _build_ui() -> void:
 	_lee_panel.offset_left   = -220; _lee_panel.offset_right  = 220
 	_lee_panel.offset_top    = -85;  _lee_panel.offset_bottom = 85
 	_lee_panel.add_theme_stylebox_override("panel",
-		_sty(Color(0.12, 0.09, 0.07), Color(0.9, 0.75, 0.2), 2, 20))
+		_sty(GameTheme.C_PANEL_BG, GameTheme.CHAR_COLOR["lee"], 2, 20))
 	add_child(_lee_panel)
 
 	var lv := VBoxContainer.new()
@@ -152,11 +146,11 @@ func _build_ui() -> void:
 	lv.add_theme_constant_override("separation", 12)
 	_lee_panel.add_child(lv)
 
-	lv.add_child(_lbl("李先生", 12, Color(0.9, 0.75, 0.2)))
-	_lee_lbl = _lbl("", 14, C_BODY)
+	lv.add_child(_lbl("李先生", 12, GameTheme.CHAR_COLOR["lee"]))
+	_lee_lbl = _lbl("", 14, GameTheme.C_BODY_TEXT)
 	_lee_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lv.add_child(_lee_lbl)
-	var ok := _btn("（點頭）", C_DIM)
+	var ok := _btn("（點頭）", GameTheme.C_DIM)
 	ok.pressed.connect(_dismiss_lee)
 	lv.add_child(ok)
 
@@ -182,9 +176,9 @@ func _btn(txt: String, color: Color) -> Button:
 	var b := Button.new()
 	b.text = txt
 	b.add_theme_color_override("font_color", color)
-	b.add_theme_font_size_override("font_size", 15)
+	b.add_theme_font_size_override("font_size", maxi(int(GameTheme.BASE_MG_BTN * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_MG_BTN))
 	b.add_theme_stylebox_override("normal",
-		_sty(C_PANEL, color.darkened(0.4), 1, 12))
+		_sty(GameTheme.C_PANEL_BG, color.darkened(0.4), 1, 12))
 	b.add_theme_stylebox_override("hover",
 		_sty(color.darkened(0.55), color, 1, 12))
 	b.add_theme_stylebox_override("pressed",
@@ -231,13 +225,13 @@ func _update_quota() -> void:
 func _on_approve() -> void:
 	_approve_btn.disabled = true
 	_reject_btn.disabled  = true
-	_show_stamp("核\n准", Color(0.20, 0.65, 0.20, 0.85))
+	_show_stamp("核\n准", Color(0.20, 0.65, 0.20, 0.85))  # dramatic approval green with alpha
 
 
 func _on_reject() -> void:
 	_approve_btn.disabled = true
 	_reject_btn.disabled  = true
-	_show_stamp("駁\n回", Color(0.75, 0.15, 0.15, 0.85))
+	_show_stamp("駁\n回", Color(0.75, 0.15, 0.15, 0.85))  # dramatic reject red with alpha
 
 
 func _show_stamp(text: String, color: Color) -> void:

@@ -13,21 +13,9 @@ const CHAR_LABELS = {
 	"moujia":   "[甲]",
 	"david":    "[衛]",
 	"narrator": "[  ]",
-	"inner":    "[内]",
+	"inner":    "[心]",
 }
 
-const CHAR_COLORS = {
-	"sam":      Color(0.85, 0.85, 0.85),
-	"rat":      Color(0.4, 0.8, 0.4),
-	"lee":      Color(0.9, 0.75, 0.2),
-	"rachel":   Color(0.5, 0.7, 0.95),
-	"sarah":    Color(0.8, 0.5, 0.85),
-	"bill":     Color(0.9, 0.5, 0.2),
-	"moujia":   Color(0.9, 0.3, 0.3),
-	"david":    Color(0.5, 0.7, 0.8),
-	"narrator": Color(0.5, 0.5, 0.5),
-	"inner":    Color(0.55, 0.58, 0.72),
-}
 
 const SPEAKER_NAMES = {
 	"sam":      "山姆·皮耶爾",

@@ -11,7 +11,7 @@ signal level_transition_requested(scene_path: String)
 func _ready() -> void:
 	add_to_group("npc")
 	var vis := $Visual as ColorRect
-	vis.color = GameManager.CHAR_COLORS.get(char_id, Color(0.6, 0.6, 0.6))
+	vis.color = GameTheme.CHAR_COLOR.get(char_id, Color(0.6, 0.6, 0.6))
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 

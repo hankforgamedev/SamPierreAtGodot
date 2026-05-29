@@ -12,26 +12,6 @@ const JUNK_CHAOS   := [
 	"¿", "ß", "ñ", "‡", "¡", "Ж", "Ш", "ξ", "∂", "∑"
 ]
 
-# ── Colors ────────────────────────────────────────────────
-const C_WALL   := "#8A8270"
-const C_FLOOR  := "#141610"
-const C_JUNK   := "#4A3A1A"
-const C_DOOR   := "#CC8833"
-const C_PLAYER := "#C8B890"
-const C_GLITCH := "#FF1111"
-const C_NPC_DEFAULT := "#888888"
-
-const CHAR_HEX := {
-	"sam":      "#D9D9D9",
-	"rat":      "#66CC66",
-	"lee":      "#E6BF33",
-	"rachel":   "#80B3F2",
-	"sarah":    "#CC80D9",
-	"bill":     "#E68033",
-	"moujia":   "#E64D4D",
-	"david":    "#80B3CC",
-	"narrator": "#888888",
-}
 
 # ── State ─────────────────────────────────────────────────
 var _map_base      : Array      = []
@@ -58,15 +38,14 @@ const FRICTION_RATE    := 0.14
 const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
 
 # ── Original design font sizes (all UI derives from these) ────────────
-const BASE_MAP_FONT    := 28   # map RichTextLabel font at design resolution
-const BASE_HUD_FONT    := 18   # HUD label font (matches scene file default)
+const BASE_HUD_FONT    := 20   # HUD label font (matches scene file default)
 const BASE_HUD_HEIGHT  := 28   # HUD label height (offset_top magnitude in scene)
-const BASE_AMB_FONT    := 16   # ambient NPC hint label font
+const BASE_AMB_FONT    := 18   # ambient NPC hint label font
 const BASE_AMB_TOP     := 44   # ambient label offset_top magnitude in scene
 const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
 const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
-const BASE_PANEL_FONT  := 20   # scene intro panel body text
-const BASE_HINT_FONT   := 13   # scene intro "Press E" hint
+const BASE_PANEL_FONT  := 24   # scene intro panel body text
+const BASE_HINT_FONT   := 15   # scene intro "E / Space to interact" hint
 const BASE_PANEL_MARGIN := 28  # scene intro panel content margin
 const BASE_PANEL_SEP   := 20   # scene intro VBoxContainer separation
 const TYPEWRITER_SPEED := 0.035  # seconds per character
@@ -118,12 +97,12 @@ func _compute_font_size() -> int:
 	var vp   := get_viewport().get_visible_rect().size
 	var rows := _map_base.size()
 	if rows == 0:
-		return BASE_MAP_FONT
+		return GameTheme.BASE_MAP_FONT
 	var cols := 0
 	for row in _map_base:
 		cols = max(cols, (row as String).length())
 	if cols == 0:
-		return BASE_MAP_FONT
+		return GameTheme.BASE_MAP_FONT
 	# 0.65 = WorldUI anchor_left; subtract offset_left(24) from each side
 	var map_w := vp.x * 0.65 - 48.0
 	# subtract MapDisplay offset_top(24) + abs(offset_bottom(-40))
@@ -141,9 +120,9 @@ func _ready() -> void:
 	world_dialogue.line_fx.connect(_on_line_fx)
 	world_dialogue.visible = false
 	_font_size = _compute_font_size()
-	var hud_fs := BASE_HUD_FONT * _font_size / BASE_MAP_FONT
+	var hud_fs := BASE_HUD_FONT * _font_size / GameTheme.BASE_MAP_FONT
 	hud_label.add_theme_font_size_override("font_size", hud_fs)
-	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(BASE_MAP_FONT)
+	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(GameTheme.BASE_MAP_FONT)
 	world_dialogue.apply_scale(_font_size)
 	_setup_display()
 	_draw_map()
@@ -158,7 +137,7 @@ func _ready() -> void:
 
 func _setup_display() -> void:
 	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0.08, 0.09, 0.06, 1)
+	bg.bg_color = GameTheme.C_BG_MAP
 	map_display.add_theme_stylebox_override("normal", bg)
 	map_display.bbcode_enabled = true
 	map_display.scroll_active  = false
@@ -265,16 +244,16 @@ func _on_player_moved() -> void:
 # ── Ambient text ──────────────────────────────────────────
 func _setup_ambient() -> void:
 	var lbl    := Label.new()
-	var amb_fs := BASE_AMB_FONT * _font_size / BASE_MAP_FONT
+	var amb_fs := BASE_AMB_FONT * _font_size / GameTheme.BASE_MAP_FONT
 	lbl.add_theme_font_size_override("font_size", amb_fs)
-	lbl.add_theme_color_override("font_color", Color(0.68, 0.62, 0.50))
+	lbl.add_theme_color_override("font_color", GameTheme.C_AMBIENT_TEXT)
 	lbl.anchor_left   = 0.0
 	lbl.anchor_right  = 0.62
 	lbl.anchor_top    = 1.0
 	lbl.anchor_bottom = 1.0
-	lbl.offset_top    = -float(BASE_AMB_TOP    * _font_size) / float(BASE_MAP_FONT)
-	lbl.offset_bottom = -float(BASE_AMB_BOTTOM * _font_size) / float(BASE_MAP_FONT)
-	lbl.offset_left   =  float(BASE_AMB_LEFT   * _font_size) / float(BASE_MAP_FONT)
+	lbl.offset_top    = -float(BASE_AMB_TOP    * _font_size) / float(GameTheme.BASE_MAP_FONT)
+	lbl.offset_bottom = -float(BASE_AMB_BOTTOM * _font_size) / float(GameTheme.BASE_MAP_FONT)
+	lbl.offset_left   =  float(BASE_AMB_LEFT   * _font_size) / float(GameTheme.BASE_MAP_FONT)
 	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl.z_index = 50
 	add_child(lbl)
@@ -288,10 +267,10 @@ func _setup_scene_panel() -> void:
 
 	var panel := Panel.new()
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.10, 0.078, 0.060)
-	style.border_color = Color(0.50, 0.36, 0.14)
+	style.bg_color = GameTheme.C_PANEL_BG
+	style.border_color = GameTheme.C_PANEL_BORDER
 	style.set_border_width_all(2)
-	style.set_content_margin_all(float(BASE_PANEL_MARGIN * _font_size) / float(BASE_MAP_FONT))
+	style.set_content_margin_all(float(BASE_PANEL_MARGIN * _font_size) / float(GameTheme.BASE_MAP_FONT))
 	panel.add_theme_stylebox_override("panel", style)
 	panel.anchor_left   = 0.15
 	panel.anchor_right  = 0.85
@@ -303,13 +282,13 @@ func _setup_scene_panel() -> void:
 
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", BASE_PANEL_SEP * _font_size / BASE_MAP_FONT)
+	vbox.add_theme_constant_override("separation", BASE_PANEL_SEP * _font_size / GameTheme.BASE_MAP_FONT)
 	panel.add_child(vbox)
 
 	var text_lbl := Label.new()
 	text_lbl.text = intro
-	text_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
-	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / BASE_MAP_FONT)
+	text_lbl.add_theme_color_override("font_color", GameTheme.C_BODY_TEXT)
+	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / GameTheme.BASE_MAP_FONT)
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(text_lbl)
@@ -317,8 +296,8 @@ func _setup_scene_panel() -> void:
 
 	var hint_lbl := Label.new()
 	hint_lbl.text = "E / Space to interact"
-	hint_lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
-	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / BASE_MAP_FONT)
+	hint_lbl.add_theme_color_override("font_color", GameTheme.C_HINT_TEXT)
+	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / GameTheme.BASE_MAP_FONT)
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	vbox.add_child(hint_lbl)
 
@@ -390,7 +369,7 @@ func _update_ambient() -> void:
 
 func _setup_flash() -> void:
 	_flash_rect = ColorRect.new()
-	_flash_rect.color = Color(1, 1, 1, 0)
+	_flash_rect.color = Color.TRANSPARENT
 	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_flash_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_flash_rect.z_index = 100
@@ -548,23 +527,23 @@ func _draw_map() -> void:
 		for x in row.length():
 			var pos := Vector2i(x, y)
 			if pos == _player_pos:
-				out += "[color=%s]@[/color]" % C_PLAYER
+				out += "[color=%s]@[/color]" % GameTheme.C_PLAYER
 			elif pos == _dialogue_npc_pos and _npc_anim_offset != 0:
 				out += _sym_bbcode(row[x])
 			elif _dialogue_npc_pos.x != -1 and _npc_anim_offset != 0 \
 					and pos == _dialogue_npc_pos + Vector2i(_npc_anim_offset, 0) \
 					and not (pos in _npcs):
 				var npc  := _npcs[_dialogue_npc_pos] as Dictionary
-				var col  := CHAR_HEX.get(npc.get("char_id", "narrator"), C_NPC_DEFAULT) as String
+				var col  := GameTheme.CHAR_HEX.get(npc.get("char_id", "narrator"), GameTheme.C_NPC_DEFAULT) as String
 				var disp := npc.get("display", "?") as String
 				out += "[color=%s]%s[/color]" % [col, disp]
 			elif pos in _npcs:
 				var npc  := _npcs[pos] as Dictionary
-				var col  := CHAR_HEX.get(npc.get("char_id", "narrator"), C_NPC_DEFAULT) as String
+				var col  := GameTheme.CHAR_HEX.get(npc.get("char_id", "narrator"), GameTheme.C_NPC_DEFAULT) as String
 				var disp := npc.get("display", "?") as String
 				out += "[color=%s]%s[/color]" % [col, disp]
 			elif pos in _glitch_overlay:
-				out += "[color=%s]%s[/color]" % [C_GLITCH, _glitch_overlay[pos]]
+				out += "[color=%s]%s[/color]" % [GameTheme.C_GLITCH, _glitch_overlay[pos]]
 			else:
 				out += _sym_bbcode(row[x])
 		out += "\n"
@@ -574,7 +553,7 @@ func _draw_map() -> void:
 func _sym_bbcode(sym: String) -> String:
 	match sym:
 		"#", "I":
-			return "[color=%s]%s[/color]" % [C_WALL, sym]
+			return "[color=%s]%s[/color]" % [GameTheme.C_WALL, sym]
 		"|":
 			return "[color=#AAAAAA]|[/color]"
 		"[":
@@ -584,13 +563,13 @@ func _sym_bbcode(sym: String) -> String:
 		"-", "_":
 			return "[color=#666666]%s[/color]" % sym
 		".", ",":
-			return "[color=%s]%s[/color]" % [C_FLOOR, sym]
+			return "[color=%s]%s[/color]" % [GameTheme.C_FLOOR, sym]
 		" ":
 			return " "
 		"%":
-			return "[color=%s]%%[/color]" % C_JUNK
+			return "[color=%s]%%[/color]" % GameTheme.C_JUNK
 		">":
-			return "[color=%s]>[/color]" % C_DOOR
+			return "[color=%s]>[/color]" % GameTheme.C_DOOR
 		"~":
 			return "[color=#1A2A3A]~[/color]"
 		"?":
