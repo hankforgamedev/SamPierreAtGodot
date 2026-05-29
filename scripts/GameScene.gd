@@ -74,6 +74,7 @@ func _apply_theme() -> void:
 	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2))
 	dlg_panel.clip_contents = true
 	dlg_text.add_theme_font_override("font", _SERIF)
+	dlg_text.add_theme_constant_override("line_separation", 13.5)
 	left_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 	right_panel.add_theme_stylebox_override("panel", _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 	dlg_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

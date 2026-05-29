@@ -25,10 +25,11 @@ right_char: bill
 車輪的尖嘯聲愈發刺耳。
 
 ——那個念頭又來了。
+
 - 動手。 >> 7
 - 忍住。走開。 >> 8
 
-[narrator none next:9] 他動手了。
+[narrator none sfx:tom_screaming next:9] 他動手了。
 
 媒體的標題隔天出現：「警察英雄殉職——比爾先生，疑遭仇人推落月台。」
 

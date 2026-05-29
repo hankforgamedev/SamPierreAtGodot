@@ -26,8 +26,12 @@ Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of co
 
 Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of config failed.
 
-ask about GDplugin and addons (specifically that GD unit test thingy)
+ask about GDaddons (specifically that GD unit test thingy)
 
-ask about GD MCP for claude, or can it read from the GD language server (offered by official godot extension for VScode)
+- [x] ask about GD MCP for claude, or can it read from the GD language server (offered by official godot extension for VScode)
 
 path hardcoding ("res://" is fine, that is the intended way. just nothing about device-specific path, especially considering that the developers use different OS and devices to access this repo)
+
+- [ ] dialog options that actually have consequences
+  - [x] play diff sfx
+  - [ ] go to a different scene/chapter

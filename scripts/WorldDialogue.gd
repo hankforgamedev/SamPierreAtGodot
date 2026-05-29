@@ -20,6 +20,7 @@ var _type_timer   := 0.0
 var _type_speed   := GameTheme.SPEED_NORMAL
 var _has_choices    := false
 var _can_advance    := false
+var _is_player_line := false
 var _map_font_size  := GameTheme.BASE_MAP_FONT
 var _log_bbcode      : String = ""
 var _cur_entry_header: String = ""
@@ -36,6 +37,7 @@ var _cur_body_hex    : String = ""
 
 func _ready() -> void:
 	_apply_panel_style()
+	SoundManager.score_finished.connect(func(): _can_advance = true)
 
 func _apply_panel_style() -> void:
 	var panel := $RightPanel as Panel
@@ -55,6 +57,7 @@ func _apply_panel_style() -> void:
 	dlg_text.focus_mode       = Control.FOCUS_NONE  # prevent stealing keyboard focus from choice buttons
 	panel.clip_contents       = true                # prevent text/choices from rendering outside panel
 	dlg_text.add_theme_font_override("normal_font", _SERIF)
+	dlg_text.add_theme_constant_override("line_separation", 13.5)
 	spk_name.theme_type_variation    = "SpeakerLabel"
 	choice_title.theme_type_variation = "DimLabel"
 
@@ -95,6 +98,8 @@ func _process(delta: float) -> void:
 	if _typed_count >= _full_text.length():
 		_typing      = false
 		_can_advance = true
+		if _is_player_line:
+			_advance()
 	_update_display()
 
 func _input(event: InputEvent) -> void:
@@ -171,6 +176,7 @@ func _show_line(index: int) -> void:
 		return
 
 	var spk_key  : String = line.get("speaker", "narrator") as String
+	_is_player_line = spk_key == "sam"
 	var display  : String = GameManager.SPEAKER_NAMES.get(spk_key, "") as String
 	spk_name.text = display.to_upper() if display != "" else "— — —"
 	var spk_color: Color  = GameTheme.CHAR_COLOR.get(spk_key, GameTheme.C_SPEAKER_TEXT) as Color
@@ -192,11 +198,20 @@ func _show_line(index: int) -> void:
 		_has_choices = true
 		_build_choices(line["choices"] as Array)
 
+	var score_track: String = line.get("score", "") as String
+	if score_track != "":
+		_can_advance = false
+		SoundManager.play_score(score_track, false)
+
 	var spd: String = line.get("speed", "normal") as String
 	match spd:
 		"fast":  _type_speed = GameTheme.SPEED_FAST
 		"slow":  _type_speed = GameTheme.SPEED_SLOW
 		_:       _type_speed = GameTheme.SPEED_NORMAL
+
+	var sfx_name: String = line.get("sfx", "") as String
+	if sfx_name != "":
+		SoundManager.play_sfx(sfx_name)
 
 	var fx: Array = line.get("fx", []) as Array
 	if fx.size() > 0:
@@ -233,6 +248,7 @@ func _build_choices(choices: Array) -> void:
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.custom_minimum_size = Vector2(0, 0)
 		btn.clip_text = true
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var sn := StyleBoxFlat.new()
 		sn.bg_color = GameTheme.C_CHOICE_BG
 		sn.border_color = GameTheme.C_CHOICE_BORDER_HVR

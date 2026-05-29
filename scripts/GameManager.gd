@@ -33,6 +33,7 @@ const SPEAKER_NAMES = {
 func start_chapter(chapter_id: String) -> void:
 	current_chapter_id = chapter_id
 	SoundManager.stop_score()
+	SoundManager.stop_ambient()
 	get_tree().change_scene_to_file("res://scenes/GameScene.tscn")
 
 func go_to_level(scene_path: String) -> void:

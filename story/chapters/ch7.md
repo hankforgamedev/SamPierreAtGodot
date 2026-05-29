@@ -21,11 +21,12 @@ right_char: sarah
 
 [sam left] 「你把錢花在哪了？」
 
-[narrator none] 公寓裡有新的電視機、新的沙發。床頭櫃上兔頭牌伏特加換成了更貴的洋酒。
+[narrator none sfx:mouse_click] 公寓裡有新的電視機、新的沙發。床頭櫃上兔頭牌伏特加換成了更貴的洋酒。
 
 [sarah right] （哭）「我以為你死了！一個母親能怎麼辦……」
 
 [sam left choices] （看著那瓶洋酒，看著母親，有些話堵在喉嚨裡）
+
 - 「媽，你知道我小時候說的第一個字是什麼嗎？」 >> 9
 - （什麼也沒說，走進房間，關上門） >> 11
 
@@ -35,7 +36,7 @@ right_char: sarah
 
 我不知道那算不算你的錯，媽。但我記得。
 
-[narrator none] 窗外是十樓的夜空。
+[narrator none sfx:metal_pipe] 窗外是十樓的夜空。
 
 皮耶爾轉過身，聽到了一聲他再也無法聽見第二次的聲音。
 

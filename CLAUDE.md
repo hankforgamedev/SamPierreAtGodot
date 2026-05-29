@@ -156,3 +156,30 @@ Game is **Mandarin-native** (not English with Chinese labels). ASCII map scenes 
 
 Keyboard input is **not an afterthought**. Every UI/menu (start screen, game-over, choices, level HUDs) must be **fully keyboard-navigable**. Godot's built-in focus/input handling covers this without manual wiring — use it. Mouse clicks work out of the box for clickable objects; keyboard must have equal priority.
 
+## Known Issues — Dialogue Choice Behavior
+
+**Status:** Unstable. Scheduled for full fix 2026-05-31.
+
+**Symptoms:**
+- Choice button text wrapping inconsistent (multi-line clipping with long CJK text)
+- Player response auto-advance timing frame-dependent (sometimes skips, sometimes waits)
+- WorldDialogue vs GameScene choice flow differ (inconsistent behavior across scenes)
+
+**Root Cause:**
+Partial fixes layered without unified design:
+1. `custom_minimum_size = Vector2(0, 0)` + `clip_text = true` (commit 6bdd1ae) — prevents overflow but breaks text flow
+2. `size_flags_horizontal = Control.SIZE_EXPAND_FILL` — helps width but doesn't solve clipping
+3. `_is_player_line` flag + `_advance()` in `_process()` — timing unsafe, depends on frame rate
+
+**Affected Files:**
+- `scripts/WorldDialogue.gd` — `_build_choices()` L:240-265, `_process()` L:92-101, `_show_line()` L:176
+- `scripts/GameScene.gd` — `_build_choices()` L:282-313 (no auto-advance — inconsistent)
+
+**Fix Scope (TODO):**
+- Decouple choice flow from typewriter timing (use signal, not frame-based advance)
+- Set explicit button dimensions instead of clip_text
+- Unify GameScene + WorldDialogue choice behavior
+- Test with long Mandarin choice text (full-width chars break differently than ASCII)
+
+**Do Not Touch Until:** Ready to fix all three points in single session.
+

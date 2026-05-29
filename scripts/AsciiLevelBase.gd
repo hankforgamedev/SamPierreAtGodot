@@ -39,7 +39,8 @@ const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
 
 # ── Layout scale roots (font sizes come from GameTheme; these are pixel offsets) ──
 const BASE_HUD_HEIGHT  := 28   # HUD label offset_top magnitude in scene
-const BASE_AMB_TOP     := 44   # ambient label offset_top magnitude in scene
+const STATUSLINE_ROWS  := 3    # height of status bar at bottom of map (in grid rows)
+const BASE_AMB_TOP     := 32 + (STATUSLINE_ROWS * 8)  # padding above statusline
 const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
 const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
 const BASE_PANEL_MARGIN := 28  # scene intro panel content margin

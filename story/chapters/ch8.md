@@ -38,7 +38,7 @@ right_char: lee
 
 最後一次。
 
-[narrator none] 「唰，噗吱！」
+[narrator sfx:tom_screaming none] 「唰，噗吱！」
 
 這一次，血也染到了皮耶爾自己。
 
