@@ -1,5 +1,17 @@
 class_name GameTheme
 
+# ── Custom fonts (loaded once, cached) ───────────────────────────────────────
+static var _font_sans:       FontFile = null
+static var _font_sans_heavy: FontFile = null
+static var _font_serif:      FontFile = null
+
+static func _ensure_fonts() -> void:
+	if _font_sans != null:
+		return
+	_font_sans       = load("res://font/genyo-gothic/GenYoGothic2TW-R.otf")
+	_font_sans_heavy = load("res://font/genyo-gothic/GenYoGothic2TW-H.otf")
+	_font_serif      = load("res://font/genyo-min/GenYoMin2TW-R.otf")
+
 # ── Font sizes (edit here — these are the only knobs) ────────────────────────
 const FONT_BODY    := 30   # dialogue body, narration
 const FONT_SPEAKER := 24   # speaker name
@@ -14,7 +26,13 @@ const BASE_MAP_FONT   := 28    # map grid font at design resolution
 const BASE_VIEWPORT_H := 1080  # full-screen design viewport height
 
 static func build_scaled_theme(scale: float) -> Theme:
+	_ensure_fonts()
 	var t := Theme.new()
+	if _font_sans != null:
+		t.set_font("font",        "Label",         _font_sans)
+		t.set_font("font",        "Button",        _font_sans)
+	if _font_serif != null:
+		t.set_font("normal_font", "RichTextLabel", _font_serif)
 	t.set_font_size("font_size",        "Label",        maxi(int(FONT_BODY    * scale), FONT_BODY))
 	t.set_color(    "font_color",       "Label",        C_BODY_TEXT)
 	t.set_font_size("normal_font_size", "RichTextLabel",maxi(int(FONT_BODY    * scale), FONT_BODY))
@@ -30,6 +48,10 @@ static func build_scaled_theme(scale: float) -> Theme:
 	_var(t, "NarratorLabel", "Label", maxi(int(FONT_BODY    * scale), FONT_BODY),    C_NARRATOR)
 	_var(t, "StartTitle",    "Label", maxi(int(FONT_BIG     * scale), FONT_BIG),     C_TITLE_TEXT)
 	_var(t, "TagLabel",      "Label", maxi(int(FONT_DIM     * scale), FONT_DIM),     C_TAG_TEXT)
+	# Apply heavy sans to display/title variants
+	if _font_sans_heavy != null:
+		t.set_font("font", "TitleLabel", _font_sans_heavy)
+		t.set_font("font", "StartTitle", _font_sans_heavy)
 	return t
 
 static func _var(t: Theme, name: String, base: String, size: int, color: Color) -> void:
@@ -55,6 +77,7 @@ const C_NARRATOR     := Color(0.62,  0.58,  0.48)    # narrator text
 const C_HINT_TEXT    := Color(0.52,  0.48,  0.38)    # "E / Space to interact"
 const C_AMBIENT_TEXT := Color(0.68,  0.62,  0.50)    # ambient label
 const C_DIM          := Color(0.50,  0.42,  0.30)    # secondary / dim UI text
+const C_INNER        := Color(0.50, 0.48, 0.42, 0.65)  # inner monologue: muted, lower opacity
 const C_ICON_DIM     := Color(0.25,  0.25,  0.25, 0.40)  # portrait icon inactive
 const C_STAMP_BORDER := Color(0.60,  0.08,  0.05)    # red stamp border
 const C_RED          := Color(0.85,  0.25,  0.20)    # reject / danger

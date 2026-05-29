@@ -1,6 +1,5 @@
 extends Control
 
-const QUOTA      := 6
 const LEE_CHANCE := 0.35
 
 var NAMES    : Array = []
@@ -12,7 +11,10 @@ var MOODS    : Array = []
 var _finish_text: String = ""
 
 var _rng        := RandomNumberGenerator.new()
+var _quota      := 0
 var _processed  := 0
+
+const _DISMISS_SFX := ["thud", "car-horn", "metal_pipe"]
 var _used_names := []
 
 var _quota_lbl   : Label
@@ -39,6 +41,7 @@ func _ready() -> void:
 	MOODS        = mg.get("moods",       [])
 	_finish_text = mg.get("finish_text", "")
 	_rng.randomize()
+	_quota = _rng.randi_range(10, 20)
 	_build_ui()
 	_next_case()
 
@@ -198,6 +201,24 @@ func _btn(txt: String, color: Color) -> Button:
 	return b
 
 
+func _input(event: InputEvent) -> void:
+	if _lee_panel.visible:
+		if event.is_action_pressed("interact") \
+				or event.is_action_pressed("ui_accept") \
+				or event.is_action_pressed("ui_select"):
+			_dismiss_lee()
+			get_viewport().set_input_as_handled()
+		return
+	if event.is_action_pressed("move_left") or event.is_action_pressed("ui_left"):
+		if not _reject_btn.disabled:
+			_on_reject()
+			get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("move_right") or event.is_action_pressed("ui_right"):
+		if not _approve_btn.disabled:
+			_on_approve()
+			get_viewport().set_input_as_handled()
+
+
 func _next_case() -> void:
 	_update_quota()
 	var charge  : String = CHARGES[_rng.randi() % CHARGES.size()]
@@ -231,7 +252,7 @@ func _pick_name() -> String:
 
 
 func _update_quota() -> void:
-	_quota_lbl.text = "今日配額：%d / %d  份已處理" % [_processed, QUOTA]
+	_quota_lbl.text = "今日配額：%d / %d  份已處理" % [_processed, _quota]
 
 
 func _on_approve() -> void:
@@ -255,7 +276,7 @@ func _show_stamp(text: String, color: Color) -> void:
 	await get_tree().create_timer(0.65).timeout
 	_stamp_lbl.visible = false
 	_processed += 1
-	if _processed >= QUOTA:
+	if _processed >= _quota:
 		_finish_game()
 	elif _rng.randf() < LEE_CHANCE:
 		_show_lee()
@@ -271,6 +292,7 @@ func _show_lee() -> void:
 
 
 func _dismiss_lee() -> void:
+	SoundManager.play_sfx(_DISMISS_SFX[_rng.randi() % _DISMISS_SFX.size()])
 	_lee_panel.visible = false
 	_next_case()
 

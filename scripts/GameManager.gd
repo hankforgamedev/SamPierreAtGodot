@@ -27,7 +27,7 @@ const SPEAKER_NAMES = {
 	"moujia":   "某甲",
 	"david":    "大衛",
 	"narrator": "",
-	"inner":    "（心裡）",
+	"inner":    "",
 }
 
 func start_chapter(chapter_id: String) -> void:

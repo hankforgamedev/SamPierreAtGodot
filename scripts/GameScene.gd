@@ -1,5 +1,7 @@
 extends Control
 
+const _SERIF := preload("res://font/genyo-min/GenYoMin2TW-R.otf")
+
 # ── State ──────────────────────────────────────────────────────
 var chapter        : Dictionary = {}
 var lines          : Array      = []
@@ -66,8 +68,11 @@ func _apply_theme() -> void:
 	chapter_lbl.theme_type_variation = "DimLabel"
 
 	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2))
+	dlg_panel.clip_contents = true
+	dlg_text.add_theme_font_override("font", _SERIF)
 	left_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 	right_panel.add_theme_stylebox_override("panel", _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
+	dlg_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 	spk_name.theme_type_variation   = "SpeakerLabel"
 	left_name.theme_type_variation  = "DimLabel"
@@ -234,13 +239,14 @@ func _show_line(index: int) -> void:
 	var left_lit  : bool = (active == "left"  or active == lc)
 	var right_lit : bool = (active == "right" or active == rc)
 	var is_narr   : bool = (active == "none"  or spk_key == "narrator")
+	var is_inner  : bool = spk_key == "inner"
 
-	left_icon.modulate  = Color.WHITE if (left_lit  and not is_narr) else GameTheme.C_ICON_DIM
-	left_name.modulate  = Color.WHITE if (left_lit  and not is_narr) else GameTheme.C_ICON_DIM
-	right_icon.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
-	right_name.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
+	left_icon.modulate  = Color.WHITE if (left_lit  and not is_narr and not is_inner) else GameTheme.C_ICON_DIM
+	left_name.modulate  = Color.WHITE if (left_lit  and not is_narr and not is_inner) else GameTheme.C_ICON_DIM
+	right_icon.modulate = Color.WHITE if (right_lit and not is_narr and not is_inner) else GameTheme.C_ICON_DIM
+	right_name.modulate = Color.WHITE if (right_lit and not is_narr and not is_inner) else GameTheme.C_ICON_DIM
 
-	dlg_text.theme_type_variation = "NarratorLabel" if is_narr else ""
+	dlg_text.theme_type_variation = "NarratorLabel" if (is_narr or is_inner) else ""
 
 	# Check for choices
 	if line.has("choices"):

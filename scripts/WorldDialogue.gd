@@ -1,5 +1,7 @@
 extends Control
 
+const _SERIF := preload("res://font/genyo-min/GenYoMin2TW-R.otf")
+
 # ── Layout scale roots (font sizes come from GameTheme) ──────────────────────
 const BASE_MARGIN     := 18
 const BASE_ACCENT_H   := 20
@@ -52,9 +54,7 @@ func _apply_panel_style() -> void:
 	dlg_text.fit_content      = false
 	dlg_text.focus_mode       = Control.FOCUS_NONE  # prevent stealing keyboard focus from choice buttons
 	panel.clip_contents       = true                # prevent text/choices from rendering outside panel
-	var dlg_font := SystemFont.new()
-	dlg_font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
-	dlg_text.add_theme_font_override("normal_font", dlg_font)
+	dlg_text.add_theme_font_override("normal_font", _SERIF)
 	spk_name.theme_type_variation    = "SpeakerLabel"
 	choice_title.theme_type_variation = "DimLabel"
 
@@ -179,7 +179,8 @@ func _show_line(index: int) -> void:
 
 	var is_narr     : bool   = spk_key == "narrator"
 	var is_inner    : bool   = spk_key == "inner"
-	var body_color  : Color  = GameTheme.C_NARRATOR if is_narr else (spk_color if is_inner else GameTheme.C_BODY_TEXT)
+	var body_color  : Color  = GameTheme.C_NARRATOR if is_narr \
+		else (GameTheme.C_INNER if is_inner else GameTheme.C_BODY_TEXT)
 	_cur_body_hex            = "#" + body_color.to_html(false)
 	var disp_upper  : String = display.to_upper() if display != "" else ""
 	if disp_upper != "":
@@ -230,6 +231,8 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ► " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.custom_minimum_size = Vector2(0, 0)
+		btn.clip_text = true
 		var sn := StyleBoxFlat.new()
 		sn.bg_color = GameTheme.C_CHOICE_BG
 		sn.border_color = GameTheme.C_CHOICE_BORDER_HVR

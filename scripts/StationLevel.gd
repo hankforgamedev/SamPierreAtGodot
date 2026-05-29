@@ -95,7 +95,9 @@ func _trigger_train_death() -> void:
 
 	trigger_flash(Color.BLACK, 2.0)
 	await get_tree().create_timer(2.1).timeout
-	get_tree().change_scene_to_file("res://scenes/StartScreen.tscn")
+	if not is_inside_tree():
+		return
+	GameOverlay.show_overlay(self, "——末班車——")
 
 func _make_narration(text: String) -> Label:
 	var lbl := Label.new()

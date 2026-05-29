@@ -48,8 +48,13 @@ func play_type_ding() -> void:
 	_ding_cooldown = _DING_MUTE_DURATION
 
 func play_sfx(sfx_name: String) -> void:
-	var path := "res://audio/sfx/%s.wav" % sfx_name
-	if not ResourceLoader.exists(path):
+	var path := ""
+	for ext: String in ["wav", "mp3"]:
+		var try_path := "res://audio/sfx/%s.%s" % [sfx_name, ext]
+		if ResourceLoader.exists(try_path):
+			path = try_path
+			break
+	if path == "":
 		return
 	var player := AudioStreamPlayer.new()
 	player.stream = load(path)

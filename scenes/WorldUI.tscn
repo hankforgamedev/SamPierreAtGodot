@@ -70,7 +70,7 @@ theme_override_constants/separation = 6
 
 [node name="ChoiceTitle" type="Label" parent="RightPanel/Margin/Inner/ChoicePanel"]
 layout_mode = 2
-text = "選擇："
+text = "─── 你的回應 ───"
 
 [node name="ChoiceButtons" type="VBoxContainer" parent="RightPanel/Margin/Inner/ChoicePanel"]
 layout_mode = 2

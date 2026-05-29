@@ -67,7 +67,10 @@ var _ambient_label: Node = null
 var _scene_panel_open: bool = false
 var _scene_panel: Node = null
 var _panel_text_label: Node = null
-var _typewriter_tween: Tween = null
+var _panel_typing:       bool   = false
+var _panel_typed_count:  int    = 0
+var _panel_type_timer:   float  = 0.0
+var _panel_full_text:    String = ""
 
 # ── Interactable objects ───────────────────────────────────
 var _objects: Dictionary = {}
@@ -151,9 +154,8 @@ func _input(event: InputEvent) -> void:
 		and (event as InputEventMouseButton).pressed \
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
 	if event.is_action_pressed("interact") or _is_lmb:
-		if _typewriter_tween != null:
-			_typewriter_tween.kill()
-			_typewriter_tween = null
+		if _panel_typing:
+			_panel_typing = false
 			if _panel_text_label != null:
 				(_panel_text_label as Label).visible_characters = -1
 			get_viewport().set_input_as_handled()
@@ -178,6 +180,8 @@ func _input(event: InputEvent) -> void:
 			_try_interact()
 		else:
 			_try_interact_object()
+		if not is_inside_tree():
+			return
 		get_viewport().set_input_as_handled()
 
 # ── Movement ──────────────────────────────────────────────
@@ -303,15 +307,11 @@ func _show_panel_text(text: String) -> void:
 	var lbl := _panel_text_label as Label
 	lbl.text = text
 	lbl.visible_characters = 0
+	_panel_full_text   = text
+	_panel_typed_count = 0
+	_panel_type_timer  = 0.0
+	_panel_typing      = true
 	_open_scene_panel()
-	if _typewriter_tween != null:
-		_typewriter_tween.kill()
-	_typewriter_tween = create_tween()
-	_typewriter_tween.tween_property(lbl, "visible_characters", text.length(), text.length() * TYPEWRITER_SPEED)
-	_typewriter_tween.tween_callback(func() -> void:
-		_typewriter_tween = null
-		lbl.visible_characters = -1
-	)
 
 func _open_scene_panel() -> void:
 	if _scene_panel == null:
@@ -322,11 +322,23 @@ func _open_scene_panel() -> void:
 func _close_scene_panel() -> void:
 	if _scene_panel == null:
 		return
-	if _typewriter_tween != null:
-		_typewriter_tween.kill()
-		_typewriter_tween = null
+	_panel_typing = false
 	_scene_panel.visible = false
 	_scene_panel_open = false
+
+func _tick_panel_typewriter(delta: float) -> void:
+	_panel_type_timer += delta
+	while _panel_type_timer >= TYPEWRITER_SPEED and _panel_typed_count < _panel_full_text.length():
+		_panel_type_timer -= TYPEWRITER_SPEED
+		_panel_typed_count += 1
+		if _panel_text_label != null:
+			(_panel_text_label as Label).visible_characters = _panel_typed_count
+		SoundManager.play_type_click()
+	if _panel_typed_count >= _panel_full_text.length():
+		_panel_typing = false
+		if _panel_text_label != null:
+			(_panel_text_label as Label).visible_characters = -1
+
 
 func _try_interact_object() -> bool:
 	for dir in [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]:
@@ -398,6 +410,8 @@ func _on_line_fx(effects: Array) -> void:
 # ── Glitch ────────────────────────────────────────────────
 func _process(delta: float) -> void:
 	_tick_shake(delta)
+	if _panel_typing:
+		_tick_panel_typewriter(delta)
 	if _in_dialogue:
 		_tick_npc_anim(delta)
 		return
