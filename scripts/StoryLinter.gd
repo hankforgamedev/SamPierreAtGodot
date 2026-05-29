@@ -1,7 +1,7 @@
 class_name StoryLinter
 
 const VALID_SPEAKERS: PackedStringArray = [
-	"sam", "rat", "lee", "rachel", "sarah", "bill", "moujia", "david", "narrator", "_none"
+	"sam", "rat", "lee", "rachel", "sarah", "bill", "moujia", "david", "narrator", "_none", "inner"
 ]
 const VALID_POSITIONS: PackedStringArray = ["left", "right", "none"]
 const VALID_CHARS: PackedStringArray = [

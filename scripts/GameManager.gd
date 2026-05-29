@@ -13,6 +13,7 @@ const CHAR_LABELS = {
 	"moujia":   "[甲]",
 	"david":    "[衛]",
 	"narrator": "[  ]",
+	"inner":    "[内]",
 }
 
 const CHAR_COLORS = {
@@ -25,6 +26,7 @@ const CHAR_COLORS = {
 	"moujia":   Color(0.9, 0.3, 0.3),
 	"david":    Color(0.5, 0.7, 0.8),
 	"narrator": Color(0.5, 0.5, 0.5),
+	"inner":    Color(0.55, 0.58, 0.72),
 }
 
 const SPEAKER_NAMES = {
@@ -37,6 +39,7 @@ const SPEAKER_NAMES = {
 	"moujia":   "某甲",
 	"david":    "大衛",
 	"narrator": "",
+	"inner":    "（心裡）",
 }
 
 func start_chapter(chapter_id: String) -> void:

@@ -59,9 +59,9 @@ const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
 
 # ── Original design font sizes (all UI derives from these) ────────────
 const BASE_MAP_FONT    := 28   # map RichTextLabel font at design resolution
-const BASE_HUD_FONT    := 13   # HUD label font (matches scene file default)
+const BASE_HUD_FONT    := 18   # HUD label font (matches scene file default)
 const BASE_HUD_HEIGHT  := 28   # HUD label height (offset_top magnitude in scene)
-const BASE_AMB_FONT    := 14   # ambient NPC hint label font
+const BASE_AMB_FONT    := 16   # ambient NPC hint label font
 const BASE_AMB_TOP     := 44   # ambient label offset_top magnitude in scene
 const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
 const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
@@ -77,6 +77,12 @@ var _move_timer    : float    = 0.0
 var _friction_dir  : Vector2i = Vector2i.ZERO
 var _friction_count: int      = 0
 var _last_dialogue_chapter: String = ""
+
+# ── NPC oscillation during dialogue ───────────────────────
+var _dialogue_npc_pos : Vector2i = Vector2i(-1, -1)
+var _npc_anim_timer   : float    = 0.0
+var _npc_anim_offset  : int      = 0
+var _npc_anim_phase   : int      = 0
 
 # ── Ambient text state ────────────────────────────────────
 var _talked_npcs   := {}
@@ -100,12 +106,13 @@ var _level_text: Dictionary = {}
 @onready var world_dialogue                = $WorldUI
 
 # ── Override in each level ────────────────────────────────
-func _get_map_data()     -> Array      : return []
-func _get_player_spawn() -> Vector2i   : return Vector2i(4, 4)
-func _get_npcs()         -> Dictionary : return {}
-func _get_level_name()   -> String     : return ""
-func _get_scene_intro()  -> String     : return ""
-func _get_level_id()     -> String     : return ""
+func _get_map_data()       -> Array      : return []
+func _get_player_spawn()   -> Vector2i   : return Vector2i(4, 4)
+func _get_npcs()           -> Dictionary : return {}
+func _get_level_name()     -> String     : return ""
+func _get_scene_intro()    -> String     : return ""
+func _get_level_id()       -> String     : return ""
+func _get_ambient_track()  -> String     : return ""
 
 func _compute_font_size() -> int:
 	var vp   := get_viewport().get_visible_rect().size
@@ -147,6 +154,7 @@ func _ready() -> void:
 	_objects = ObjectData.OBJECTS.get(_get_level_id(), {})
 	_setup_scene_panel()
 	_show_panel_text(_get_scene_intro())
+	SoundManager.play_ambient(_get_ambient_track())
 
 func _setup_display() -> void:
 	var bg := StyleBoxFlat.new()
@@ -224,9 +232,11 @@ func _try_interact() -> void:
 			get_tree().change_scene_to_file(npc["next_level"] as String)
 			return
 		if npc.has("start_chapter"):
+			_in_dialogue = true
 			GameManager.start_chapter(npc["start_chapter"] as String)
 			return
 		_in_dialogue = true
+		_dialogue_npc_pos = check
 		_last_dialogue_chapter = npc.get("chapter_id", "") as String
 		world_dialogue.open(
 			_last_dialogue_chapter,
@@ -236,6 +246,9 @@ func _try_interact() -> void:
 
 func _on_dialogue_closed() -> void:
 	_in_dialogue = false
+	_dialogue_npc_pos = Vector2i(-1, -1)
+	_npc_anim_offset  = 0
+	_npc_anim_phase   = 0
 	var check_dirs := [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
 	for d in check_dirs:
 		var chk: Vector2i = _player_pos + d
@@ -254,7 +267,7 @@ func _setup_ambient() -> void:
 	var lbl    := Label.new()
 	var amb_fs := BASE_AMB_FONT * _font_size / BASE_MAP_FONT
 	lbl.add_theme_font_size_override("font_size", amb_fs)
-	lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
+	lbl.add_theme_color_override("font_color", Color(0.68, 0.62, 0.50))
 	lbl.anchor_left   = 0.0
 	lbl.anchor_right  = 0.62
 	lbl.anchor_top    = 1.0
@@ -296,16 +309,16 @@ func _setup_scene_panel() -> void:
 	var text_lbl := Label.new()
 	text_lbl.text = intro
 	text_lbl.add_theme_color_override("font_color", Color(0.88, 0.84, 0.74))
-	text_lbl.add_theme_font_size_override("font_size", 64)
+	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / BASE_MAP_FONT)
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(text_lbl)
 	_panel_text_label = text_lbl
 
 	var hint_lbl := Label.new()
-	hint_lbl.text = "Press E to interact"
+	hint_lbl.text = "E / Space to interact"
 	hint_lbl.add_theme_color_override("font_color", Color(0.52, 0.48, 0.38))
-	hint_lbl.add_theme_font_size_override("font_size", 22)
+	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / BASE_MAP_FONT)
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	vbox.add_child(hint_lbl)
 
@@ -412,7 +425,10 @@ func _on_line_fx(effects: Array) -> void:
 # ── Glitch ────────────────────────────────────────────────
 func _process(delta: float) -> void:
 	_tick_shake(delta)
-	if _in_dialogue or _scene_panel_open:
+	if _in_dialogue:
+		_tick_npc_anim(delta)
+		return
+	if _scene_panel_open:
 		return
 	_tick_movement(delta)
 	_tick_glitch_spike(delta)
@@ -423,16 +439,30 @@ func _process(delta: float) -> void:
 		_apply_glitch()
 		_draw_map()
 
+func _tick_npc_anim(delta: float) -> void:
+	if _dialogue_npc_pos.x == -1:
+		return
+	const CYCLE := [-1, 0, 1, 0]
+	_npc_anim_timer += delta
+	if _npc_anim_timer >= 0.4:
+		_npc_anim_timer  = 0.0
+		_npc_anim_phase  = (_npc_anim_phase + 1) % 4
+		_npc_anim_offset = CYCLE[_npc_anim_phase]
+		_draw_map()
+
+func _try_move_dir(dir: Vector2i) -> bool:
+	if dir.x != 0 and dir.y != 0:
+		if _try_move(Vector2i(dir.x, 0)):
+			return true
+		return _try_move(Vector2i(0, dir.y))
+	return _try_move(dir)
+
 func _tick_movement(delta: float) -> void:
 	var dir := Vector2i.ZERO
-	if Input.is_action_pressed("move_left"):
-		dir = Vector2i(-1, 0)
-	elif Input.is_action_pressed("move_right"):
-		dir = Vector2i(1, 0)
-	elif Input.is_action_pressed("jump"):
-		dir = Vector2i(0, -1)
-	elif Input.is_action_pressed("move_down"):
-		dir = Vector2i(0, 1)
+	if Input.is_action_pressed("move_left"):  dir.x -= 1
+	if Input.is_action_pressed("move_right"): dir.x += 1
+	if Input.is_action_pressed("move_up"):    dir.y -= 1
+	if Input.is_action_pressed("move_down"):  dir.y += 1
 
 	if dir != Vector2i.ZERO:
 		_friction_dir   = dir
@@ -441,7 +471,7 @@ func _tick_movement(delta: float) -> void:
 			_held_dir   = dir
 			_move_timer = 0.0
 			_move_phase = 1
-			if _try_move(dir):
+			if _try_move_dir(dir):
 				_draw_map()
 				_update_ambient()
 				_on_player_moved()
@@ -455,7 +485,7 @@ func _tick_movement(delta: float) -> void:
 				2:
 					if _move_timer >= MOVE_REPEAT_RATE:
 						_move_timer = 0.0
-						if _try_move(dir):
+						if _try_move_dir(dir):
 							_draw_map()
 							_update_ambient()
 							_on_player_moved()
@@ -469,7 +499,7 @@ func _tick_movement(delta: float) -> void:
 			if _friction_count > 0 and _move_timer >= FRICTION_RATE:
 				_move_timer      = 0.0
 				_friction_count -= 1
-				if _try_move(_friction_dir):
+				if _try_move_dir(_friction_dir):
 					_draw_map()
 					_update_ambient()
 			elif _friction_count <= 0:
@@ -519,6 +549,15 @@ func _draw_map() -> void:
 			var pos := Vector2i(x, y)
 			if pos == _player_pos:
 				out += "[color=%s]@[/color]" % C_PLAYER
+			elif pos == _dialogue_npc_pos and _npc_anim_offset != 0:
+				out += _sym_bbcode(row[x])
+			elif _dialogue_npc_pos.x != -1 and _npc_anim_offset != 0 \
+					and pos == _dialogue_npc_pos + Vector2i(_npc_anim_offset, 0) \
+					and not (pos in _npcs):
+				var npc  := _npcs[_dialogue_npc_pos] as Dictionary
+				var col  := CHAR_HEX.get(npc.get("char_id", "narrator"), C_NPC_DEFAULT) as String
+				var disp := npc.get("display", "?") as String
+				out += "[color=%s]%s[/color]" % [col, disp]
 			elif pos in _npcs:
 				var npc  := _npcs[pos] as Dictionary
 				var col  := CHAR_HEX.get(npc.get("char_id", "narrator"), C_NPC_DEFAULT) as String

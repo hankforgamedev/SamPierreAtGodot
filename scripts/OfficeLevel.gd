@@ -43,7 +43,7 @@ func _get_map_data() -> Array:
 	return [
 		"####################################################",
 		"#                                                  #",
-		"#  TIGER FORTRESS CITY POLICE DEPT                #",
+		"#  HUK-ZAI CITY POLICE DEPT                       #",
 		"#  FLOOR 3  //  HOMICIDE & PUBLIC ORDER           #",
 		"#                                                  #",
 		"#  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  #",

@@ -82,9 +82,9 @@ func apply_scale(map_font_size: int) -> void:
 	margin_box.add_theme_constant_override("margin_top",    m)
 	margin_box.add_theme_constant_override("margin_bottom", m)
 	speaker_accent.custom_minimum_size = Vector2(4.0, float(BASE_ACCENT_H * map_font_size) / float(BASE_MAP_FONT))
-	spk_name.add_theme_font_size_override("font_size",        32)
-	dlg_text.add_theme_font_size_override("normal_font_size", 40)
-	choice_title.add_theme_font_size_override("font_size",    26)
+	spk_name.add_theme_font_size_override("font_size",        BASE_SPK_FONT * map_font_size / BASE_MAP_FONT)
+	dlg_text.add_theme_font_size_override("normal_font_size", BASE_DLG_FONT * map_font_size / BASE_MAP_FONT)
+	choice_title.add_theme_font_size_override("font_size",    BASE_BTN_FONT * map_font_size / BASE_MAP_FONT)
 
 func open(chapter_id: String, start_line: int = 0) -> void:
 	_chapter = DialogueData.get_chapter(chapter_id)
@@ -172,7 +172,8 @@ func _show_line(index: int) -> void:
 	speaker_accent.color = spk_color.darkened(0.3)
 
 	var is_narr     : bool   = spk_key == "narrator"
-	var body_color  : Color  = C_NARRATOR if is_narr else C_BODY_TEXT
+	var is_inner    : bool   = spk_key == "inner"
+	var body_color  : Color  = C_NARRATOR if is_narr else (spk_color if is_inner else C_BODY_TEXT)
 	_cur_body_hex            = "#" + body_color.to_html(false)
 	var disp_upper  : String = display.to_upper() if display != "" else ""
 	if disp_upper != "":
@@ -195,6 +196,8 @@ func _show_line(index: int) -> void:
 		line_fx.emit(fx)
 
 	_full_text    = line.get("text", "") as String
+	if is_inner:
+		_full_text = "[i]" + _full_text + "[/i]"
 	_typed_so_far = ""
 	_type_timer   = 0.0
 	_typing       = true
@@ -208,6 +211,7 @@ func _commit_current_line() -> void:
 func _update_display() -> void:
 	dlg_text.text = _log_bbcode + _cur_entry_header \
 		+ "[color=" + _cur_body_hex + "]" + _typed_so_far + "[/color]"
+	dlg_text.scroll_to_line(dlg_text.get_line_count())
 
 func _build_choices(choices: Array) -> void:
 	for child in choice_buttons.get_children():
@@ -219,7 +223,7 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ► " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", 32)
+		btn.add_theme_font_size_override("font_size", BASE_BTN_FONT * _map_font_size / BASE_MAP_FONT)
 		btn.add_theme_color_override("font_color",         C_CHOICE_TXT)
 		btn.add_theme_color_override("font_hover_color",   C_CHOICE_HVTXT)
 		btn.add_theme_color_override("font_pressed_color", Color.WHITE)

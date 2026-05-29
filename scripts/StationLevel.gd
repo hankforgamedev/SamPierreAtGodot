@@ -1,6 +1,6 @@
 extends AsciiLevelBase
 
-const TRACK_ROW       := 15  # map row index of the train track
+const TRACK_ROW       := 15  # map row index of the train track (rail row)
 const BASE_TRAIN_FONT := 36  # train label font at BASE_MAP_FONT resolution
 const BASE_NARR_FONT  := 22  # narration label font at BASE_MAP_FONT resolution
 
@@ -52,25 +52,29 @@ func _transition_to_ch2() -> void:
 	_in_dialogue = true
 	trigger_flash(Color.BLACK, 1.8)
 	await get_tree().create_timer(1.9).timeout
+	if not is_inside_tree():
+		return
 	GameManager.start_chapter("ch2")
 
 func _on_player_moved() -> void:
-	if not _train_triggered and _player_pos.y >= 16:
+	if not _train_triggered and _player_pos.y >= TRACK_ROW:
 		_train_triggered = true
 		_trigger_train_death()
 
+# [DEBUG] train y postion wrong
 func _trigger_train_death() -> void:
 	_in_dialogue = true
 
 	var narr := _make_narration("隆隆聲——")
 	add_child(narr)
-	await get_tree().create_timer(0.9).timeout
+	SoundManager.play_sfx("riser")
+	await get_tree().create_timer(1.2).timeout
 
 	# 火車從右邊衝入
 	var train := Label.new()
 	train.text = "══════════════╗▶"
 	train.add_theme_font_size_override("font_size", BASE_TRAIN_FONT * _font_size / BASE_MAP_FONT)
-	train.add_theme_color_override("font_color", Color(0.95, 0.95, 0.95))
+	train.add_theme_color_override("font_color", Color("#ffbf00"))
 	var vp_size := get_viewport().get_visible_rect().size
 	var track_y  := _base_map_pos.y + float(TRACK_ROW) * float(_font_size)
 	train.position = Vector2(vp_size.x + 40.0, track_y)
@@ -85,6 +89,7 @@ func _trigger_train_death() -> void:
 	trigger_shake(22.0, 0.7)
 	trigger_flash(Color.WHITE, 0.35)
 	narr.text = "——末班車從黑暗中衝出——"
+	SoundManager.play_sfx("explosion")
 
 	await get_tree().create_timer(0.8).timeout
 	train.queue_free()
