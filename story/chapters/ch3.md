@@ -16,9 +16,9 @@ right_char: lee
 
 [narrator none] 皮耶爾盯著他看了一會，沒有回應。
 
-[sam left choices]
-（心裡）
+[inner none choices]
 這個死胖子……
+
 - 「是，李先生。對不起。」（低頭） >> 5
 - （沉默，走回桌子） >> 5
 - 「您說得是。」（心裡想把他從窗口扔出去） >> 5
@@ -29,7 +29,7 @@ right_char: lee
 
 [narrator none minigame]
 
-[sam left] （心裡）
-身而為人苦難無盡。
+[inner none]
+身而為人，苦難無盡。
 
 我們所能做的，最多就是追求快樂。

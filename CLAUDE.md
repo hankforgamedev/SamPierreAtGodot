@@ -28,14 +28,42 @@ For multi-step tasks, state a brief plan:
 3. [Step] → verify: [check]
 ```
 
+## 5. Verification Before Claims
+
+- NEVER claim work is complete, tests pass, or issues are fixed without running the actual verification command and showing output
+- Use case-insensitive search by default (grep -i) unless specified otherwise
+- When user provides a spec with N items, verify each one individually and report [Unverified] for any you couldn't confirm
+
 ## Running the Project
 
-Open in **Godot 4.6** editor and press F5, or run a specific scene with F6. There is no CLI build step — GDScript is interpreted.
+Open in **Godot 4.6** editor and press F5 (runs DevMenu — chapter/level picker), or F6 to run the current scene. No CLI build step — GDScript is interpreted.
 
 To run from terminal (project root):
 
 ```
-godot --path . scenes/StartScreen.tscn
+godot --path .                           # DevMenu (main scene)
+godot --path . scenes/StartScreen.tscn  # full playthrough
+```
+
+### Dev Environment
+
+Requirements:
+
+- Godot 4.6 binary (no compilation — GDScript is interpreted)
+- Download: https://godotengine.org/download
+
+Run:
+
+```
+godot --path . scenes/DevMenu.tscn       # dev mode — chapter/level picker
+godot --path . scenes/StartScreen.tscn  # full playthrough
+```
+
+Audio assets (drop here when ready):
+
+```
+res://audio/sfx/*.wav       (export from jsfxr as WAV)
+res://audio/ambient/*.ogg
 ```
 
 ## Architecture

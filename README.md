@@ -16,6 +16,19 @@ godot --path . scenes/StartScreen.tscn
 
 No build step — GDScript is interpreted.
 
+### Dev Environment
+
+Requirements: Godot 4.6 binary — [download here](https://godotengine.org/download). No compilation, no plugins.
+
+```
+godot --path . scenes/DevMenu.tscn       # dev mode — chapter/level picker
+godot --path . scenes/StartScreen.tscn  # full playthrough
+```
+
+Audio assets (drop here when ready):
+- SFX: `res://audio/sfx/*.wav` (export from jsfxr as WAV)
+- Ambient: `res://audio/ambient/*.ogg`
+
 ---
 
 ## Architecture
