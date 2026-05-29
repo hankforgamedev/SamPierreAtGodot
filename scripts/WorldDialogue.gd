@@ -89,6 +89,7 @@ func _process(delta: float) -> void:
 	while _type_timer >= _type_speed and _typed_count < _full_text.length():
 		_type_timer -= _type_speed
 		_typed_count += 1
+		SoundManager.play_type_click()
 	if _typed_count >= _full_text.length():
 		_typing      = false
 		_can_advance = true
@@ -232,6 +233,7 @@ func _build_choices(choices: Array) -> void:
 		(choice_buttons.get_child(0) as Button).grab_focus()
 
 func _select_choice(goto_index: int) -> void:
+	SoundManager.play_type_ding()
 	choice_panel.visible = false
 	_has_choices = false
 	_show_line(goto_index)

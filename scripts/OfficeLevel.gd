@@ -10,6 +10,9 @@ func _get_level_name() -> String:
 func _get_level_id() -> String:
 	return "office"
 
+func _get_ambient_track() -> String:
+	return "big-office-1961"
+
 func _get_scene_intro() -> String:
 	return _level_text.get("intro", "")
 

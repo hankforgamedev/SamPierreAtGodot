@@ -7,6 +7,8 @@ layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1")
 
 [node name="BG" type="Control" parent="." unique_id=24920911]
@@ -92,6 +94,8 @@ offset_left = 10.0
 offset_top = 12.0
 offset_right = -10.0
 offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 8
 
 [node name="LeftCharIcon" type="Label" parent="MainLayout/LeftCharPanel/LeftInner" unique_id=1409641082]
@@ -125,6 +129,8 @@ offset_left = 16.0
 offset_top = 14.0
 offset_right = -16.0
 offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 10
 
 [node name="SpeakerBar" type="HBoxContainer" parent="MainLayout/CenterCol/DialoguePanel/DlgInner" unique_id=2002080818]
@@ -183,6 +189,8 @@ offset_left = 10.0
 offset_top = 12.0
 offset_right = -10.0
 offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 8
 
 [node name="RightCharIcon" type="Label" parent="MainLayout/RightCharPanel/RightInner" unique_id=881918980]

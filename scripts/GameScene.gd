@@ -146,6 +146,7 @@ func _process(delta: float) -> void:
 		typed_so_far  += full_text[typed_so_far.length()]
 		type_timer    -= GameTheme.SPEED_NORMAL
 		dlg_text.text  = typed_so_far
+		SoundManager.play_type_click()
 	if typed_so_far.length() >= full_text.length():
 		typing        = false
 		dlg_text.text = full_text
@@ -268,6 +269,7 @@ func _build_choices(choices: Array) -> void:
 		(choice_buttons.get_child(0) as Button).grab_focus()
 
 func _select_choice(goto_index: int) -> void:
+	SoundManager.play_type_ding()
 	choice_panel.visible = false
 	has_choices = false
 	next_hint.text = "[ E / SPACE / CLICK ]"
