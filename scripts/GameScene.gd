@@ -60,39 +60,23 @@ func _apply_theme() -> void:
 	base_color.color = mood.darkened(0.08)
 	sky_strip.color  = mood.lightened(0.05)
 
-	var s := get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)
-	var fs := func(base: int) -> int: return maxi(int(base * s), base)
+	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))
 
 	chapter_lbl.text = (chapter["title"] as String).to_upper()
-	chapter_lbl.add_theme_color_override("font_color", GameTheme.C_DIM)
-	chapter_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAPTER_LBL))
+	chapter_lbl.theme_type_variation = "DimLabel"
 
 	dlg_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_PANEL_BORDER, 2))
 	left_panel.add_theme_stylebox_override("panel",  _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 	right_panel.add_theme_stylebox_override("panel", _panel_style(GameTheme.C_PANEL_BG, GameTheme.C_CHAR_BORDER,  1))
 
-	spk_name.add_theme_color_override("font_color",   GameTheme.C_SPEAKER_TEXT)
-	spk_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_SPK_FONT))
-	dlg_text.add_theme_color_override("font_color",    GameTheme.C_BODY_TEXT)
-	dlg_text.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_DLG_FONT))
-
-	left_name.add_theme_color_override("font_color",   GameTheme.C_DIM)
-	left_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAR_NAME))
-	right_name.add_theme_color_override("font_color",  GameTheme.C_DIM)
-	right_name.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHAR_NAME))
-
-	choice_title.add_theme_color_override("font_color",   GameTheme.C_DIM)
-	choice_title.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CHOICE_TITLE))
-
-	next_hint.add_theme_color_override("font_color",    GameTheme.C_DIM)
-	next_hint.add_theme_font_size_override("font_size",  fs.call(GameTheme.BASE_GS_HINT_FONT))
-	progress_lbl.add_theme_color_override("font_color", GameTheme.C_DIM)
-	progress_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_HINT_FONT))
-
-	card_line1.add_theme_color_override("font_color",   GameTheme.C_DIM)
-	card_line1.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CARD1_FONT))
-	card_line2.add_theme_color_override("font_color",   GameTheme.C_BODY_TEXT)
-	card_line2.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_GS_CARD2_FONT))
+	spk_name.theme_type_variation   = "SpeakerLabel"
+	left_name.theme_type_variation  = "DimLabel"
+	right_name.theme_type_variation = "DimLabel"
+	choice_title.theme_type_variation = "DimLabel"
+	next_hint.theme_type_variation    = "DimLabel"
+	progress_lbl.theme_type_variation = "DimLabel"
+	card_line1.theme_type_variation   = "DimLabel"
+	card_line2.theme_type_variation   = "TitleLabel"
 	card_accent.color = GameTheme.C_PANEL_BORDER
 
 func _panel_style(bg: Color, border: Color, width: int) -> StyleBoxFlat:
@@ -113,13 +97,10 @@ func _setup_characters() -> void:
 	right_icon.text = GameManager.CHAR_LABELS.get(rc,  "[?]") as String
 	right_name.text = GameManager.SPEAKER_NAMES.get(rc, "")   as String
 
-	var icon_fs := maxi(int(GameTheme.BASE_GS_ICON_FONT * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_GS_ICON_FONT)
 	left_icon.add_theme_color_override("font_color",
 		GameTheme.CHAR_COLOR.get(lc, Color.WHITE) as Color)
-	left_icon.add_theme_font_size_override("font_size", icon_fs)
 	right_icon.add_theme_color_override("font_color",
 		GameTheme.CHAR_COLOR.get(rc, Color.WHITE) as Color)
-	right_icon.add_theme_font_size_override("font_size", icon_fs)
 
 # ── Chapter card ──────────────────────────────────────────────
 func _show_chapter_card() -> void:
@@ -227,11 +208,7 @@ func _show_line(index: int) -> void:
 	right_icon.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
 	right_name.modulate = Color.WHITE if (right_lit and not is_narr) else GameTheme.C_ICON_DIM
 
-	# Text colour
-	if is_narr:
-		dlg_text.add_theme_color_override("font_color", GameTheme.C_NARRATOR)
-	else:
-		dlg_text.add_theme_color_override("font_color", GameTheme.C_BODY_TEXT)
+	dlg_text.theme_type_variation = "NarratorLabel" if is_narr else ""
 
 	# Check for choices
 	if line.has("choices"):
@@ -259,10 +236,6 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ›  " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", maxi(int(GameTheme.BASE_GS_BTN_FONT * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_GS_BTN_FONT))
-		btn.add_theme_color_override("font_color",         GameTheme.C_CHOICE_TXT)
-		btn.add_theme_color_override("font_hover_color",   GameTheme.C_CHOICE_HVTXT)
-		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
 
 		var style_n : StyleBoxFlat = StyleBoxFlat.new()
 		style_n.bg_color = GameTheme.C_CHOICE_BG

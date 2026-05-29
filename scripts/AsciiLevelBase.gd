@@ -37,15 +37,11 @@ const FRICTION_STEPS   := 0      # no slide after release — 1 press = 1 step
 const FRICTION_RATE    := 0.14
 const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
 
-# ── Original design font sizes (all UI derives from these) ────────────
-const BASE_HUD_FONT    := 20   # HUD label font (matches scene file default)
-const BASE_HUD_HEIGHT  := 28   # HUD label height (offset_top magnitude in scene)
-const BASE_AMB_FONT    := 18   # ambient NPC hint label font
+# ── Layout scale roots (font sizes come from GameTheme; these are pixel offsets) ──
+const BASE_HUD_HEIGHT  := 28   # HUD label offset_top magnitude in scene
 const BASE_AMB_TOP     := 44   # ambient label offset_top magnitude in scene
 const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
 const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
-const BASE_PANEL_FONT  := 24   # scene intro panel body text
-const BASE_HINT_FONT   := 15   # scene intro "E / Space to interact" hint
 const BASE_PANEL_MARGIN := 28  # scene intro panel content margin
 const BASE_PANEL_SEP   := 20   # scene intro VBoxContainer separation
 const TYPEWRITER_SPEED := 0.035  # seconds per character
@@ -120,8 +116,8 @@ func _ready() -> void:
 	world_dialogue.line_fx.connect(_on_line_fx)
 	world_dialogue.visible = false
 	_font_size = _compute_font_size()
-	var hud_fs := BASE_HUD_FONT * _font_size / GameTheme.BASE_MAP_FONT
-	hud_label.add_theme_font_size_override("font_size", hud_fs)
+	theme = GameTheme.build_scaled_theme(float(_font_size) / float(GameTheme.BASE_MAP_FONT))
+	hud_label.theme_type_variation = "AmbientLabel"
 	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(GameTheme.BASE_MAP_FONT)
 	world_dialogue.apply_scale(_font_size)
 	_setup_display()
@@ -147,7 +143,7 @@ func _setup_display() -> void:
 	var font := SystemFont.new()
 	font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
 	map_display.add_theme_font_override("normal_font", font)
-	map_display.add_theme_font_size_override("normal_font_size", _font_size)
+	# map grid font size set per-frame via [font_size=N] BBCode in _draw_map()
 
 # ── Input ─────────────────────────────────────────────────
 func _input(event: InputEvent) -> void:
@@ -244,9 +240,7 @@ func _on_player_moved() -> void:
 # ── Ambient text ──────────────────────────────────────────
 func _setup_ambient() -> void:
 	var lbl    := Label.new()
-	var amb_fs := BASE_AMB_FONT * _font_size / GameTheme.BASE_MAP_FONT
-	lbl.add_theme_font_size_override("font_size", amb_fs)
-	lbl.add_theme_color_override("font_color", GameTheme.C_AMBIENT_TEXT)
+	lbl.theme_type_variation = "AmbientLabel"
 	lbl.anchor_left   = 0.0
 	lbl.anchor_right  = 0.62
 	lbl.anchor_top    = 1.0
@@ -287,8 +281,6 @@ func _setup_scene_panel() -> void:
 
 	var text_lbl := Label.new()
 	text_lbl.text = intro
-	text_lbl.add_theme_color_override("font_color", GameTheme.C_BODY_TEXT)
-	text_lbl.add_theme_font_size_override("font_size", BASE_PANEL_FONT * _font_size / GameTheme.BASE_MAP_FONT)
 	text_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	vbox.add_child(text_lbl)
@@ -296,8 +288,7 @@ func _setup_scene_panel() -> void:
 
 	var hint_lbl := Label.new()
 	hint_lbl.text = "E / Space to interact"
-	hint_lbl.add_theme_color_override("font_color", GameTheme.C_HINT_TEXT)
-	hint_lbl.add_theme_font_size_override("font_size", BASE_HINT_FONT * _font_size / GameTheme.BASE_MAP_FONT)
+	hint_lbl.theme_type_variation = "HintLabel"
 	hint_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	vbox.add_child(hint_lbl)
 

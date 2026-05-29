@@ -112,13 +112,24 @@ A line with `minigame` field saves `GameManager.resume_line = index + 1`, then s
 | `Street.tscn`            | `StreetLevel.gd`     | Door `>` @ (47,13) → 老蕭餐館                           |
 | `LaoxiaoRestaurant.tscn` | `RestaurantLevel.gd` | Moujia `甲` @ (36,11) → ch5; Door `<` @ (2,11) → Street |
 
-### GameTheme — global constants (`scripts/GameTheme.gd`)
+### GameTheme — palette + font system
 
-Single source of truth for all palette colors, character colors, and base font sizes. Access anywhere via `GameTheme.*` — no autoload needed (`class_name GameTheme`).
+**Everything lives in `scripts/GameTheme.gd`.** Edit there, changes propagate everywhere — no Godot editor, no CLI tool, no .tres.
+
+**Font sizes** — 6 consts at the top of `GameTheme.gd`:
+
+| Const | Default | Consumers |
+|---|---|---|
+| `FONT_BODY` | 32 | dialogue text, narration, DevMenu labels |
+| `FONT_SPEAKER` | 28 | speaker names |
+| `FONT_DIM` | 24 | hints, buttons, choice titles, secondary text |
+| `FONT_TITLE` | 36 | chapter card big title |
+| `FONT_AMBIENT` | 18 | ASCII world HUD, NPC ambient hint |
+| `FONT_BIG` | 64 | start screen title |
+
+**Palette colors** — `scripts/GameTheme.gd` (`class_name GameTheme`, no autoload needed).
 
 **Never hardcode palette values or character colors inline.** Use `GameTheme.*` constants. The only allowed exceptions are one-off dramatic-effect colors (e.g., stamp overlay alphas) which must have an inline comment explaining why.
-
-Key groups:
 
 | Prefix | Contents |
 |--------|----------|
@@ -130,7 +141,7 @@ Key groups:
 | `C_RED`, `C_GREEN`, `C_TITLE_TEXT`, etc. | One-off named colors |
 | `CHAR_HEX` | BBCode hex strings per character |
 | `CHAR_COLOR` | `Color` objects per character for `add_theme_color_override` |
-| `BASE_MAP_FONT` | Root design font (28px); all UI scales from this |
+| `BASE_MAP_FONT` | Root design font (28px); ASCII map grid scales from this |
 | `SPEED_FAST/NORMAL/SLOW` | Typewriter speeds in seconds/char |
 
 Adding a new character: add to **both** `CHAR_HEX` and `CHAR_COLOR` in `GameTheme.gd`.

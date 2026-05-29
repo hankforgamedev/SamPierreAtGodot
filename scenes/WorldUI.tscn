@@ -49,7 +49,6 @@ color = Color(0.5, 0.36, 0.14, 1)
 [node name="SpeakerName" type="Label" parent="RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar"]
 layout_mode = 2
 text = "— — —"
-theme_override_font_sizes/font_size = 13
 
 [node name="Divider" type="ColorRect" parent="RightPanel/Margin/Inner"]
 layout_mode = 2
@@ -63,7 +62,6 @@ bbcode_enabled = true
 scroll_active = true
 scroll_following = true
 fit_content = false
-theme_override_font_sizes/normal_font_size = 16
 
 [node name="ChoicePanel" type="VBoxContainer" parent="RightPanel/Margin/Inner"]
 layout_mode = 2
@@ -73,7 +71,6 @@ theme_override_constants/separation = 6
 [node name="ChoiceTitle" type="Label" parent="RightPanel/Margin/Inner/ChoicePanel"]
 layout_mode = 2
 text = "選擇："
-theme_override_font_sizes/font_size = 12
 
 [node name="ChoiceButtons" type="VBoxContainer" parent="RightPanel/Margin/Inner/ChoicePanel"]
 layout_mode = 2

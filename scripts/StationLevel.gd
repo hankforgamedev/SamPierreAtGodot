@@ -1,8 +1,6 @@
 extends AsciiLevelBase
 
-const TRACK_ROW       := 15  # map row index of the train track (rail row)
-const BASE_TRAIN_FONT := 36  # train label font at GameTheme.BASE_MAP_FONT resolution
-const BASE_NARR_FONT  := 22  # narration label font at GameTheme.BASE_MAP_FONT resolution
+const TRACK_ROW := 15  # map row index of the train track (rail row)
 
 var _train_triggered: bool = false
 
@@ -73,7 +71,7 @@ func _trigger_train_death() -> void:
 	# 火車從右邊衝入
 	var train := Label.new()
 	train.text = "══════════════╗▶"
-	train.add_theme_font_size_override("font_size", BASE_TRAIN_FONT * _font_size / GameTheme.BASE_MAP_FONT)
+	train.theme_type_variation = "TitleLabel"
 	train.add_theme_color_override("font_color", Color(GameTheme.C_TRAIN))
 	var vp_size := get_viewport().get_visible_rect().size
 	var track_y  := _base_map_pos.y + float(TRACK_ROW) * float(_font_size)
@@ -102,8 +100,6 @@ func _trigger_train_death() -> void:
 func _make_narration(text: String) -> Label:
 	var lbl := Label.new()
 	lbl.text = text
-	lbl.add_theme_font_size_override("font_size", BASE_NARR_FONT * _font_size / GameTheme.BASE_MAP_FONT)
-	lbl.add_theme_color_override("font_color", GameTheme.C_BODY_TEXT)
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	lbl.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
 	lbl.set_anchors_and_offsets_preset(Control.PRESET_CENTER)

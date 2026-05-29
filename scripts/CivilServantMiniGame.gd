@@ -44,8 +44,7 @@ func _ready() -> void:
 
 
 func _build_ui() -> void:
-	var s := get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)
-	var fs := func(base: int) -> int: return maxi(int(base * s), base)
+	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))
 
 	var bg := ColorRect.new()
 	bg.color = GameTheme.C_BG
@@ -55,8 +54,7 @@ func _build_ui() -> void:
 	var hdr := Label.new()
 	hdr.text = "虎寨城警局下城總局  ─  文書處理站"
 	hdr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hdr.add_theme_color_override("font_color", GameTheme.C_DIM)
-	hdr.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_MG_HEADER))
+	hdr.theme_type_variation = "DimLabel"
 	hdr.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	hdr.offset_top    = 14
 	hdr.offset_bottom = 36
@@ -64,8 +62,7 @@ func _build_ui() -> void:
 
 	_quota_lbl = Label.new()
 	_quota_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_quota_lbl.add_theme_color_override("font_color", GameTheme.C_SPEAKER_TEXT)
-	_quota_lbl.add_theme_font_size_override("font_size", fs.call(GameTheme.BASE_MG_QUOTA))
+	_quota_lbl.theme_type_variation = "SpeakerLabel"
 	_quota_lbl.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	_quota_lbl.offset_top    = 38
 	_quota_lbl.offset_bottom = 60
@@ -84,11 +81,11 @@ func _build_ui() -> void:
 	inner.add_theme_constant_override("separation", 10)
 	doc.add_child(inner)
 
-	_case_num    = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
-	_name_lbl    = _lbl("", fs.call(GameTheme.BASE_MG_NAME),   GameTheme.C_BODY_TEXT)
-	_charge_lbl  = _lbl("", fs.call(GameTheme.BASE_MG_CHARGE), GameTheme.C_SPEAKER_TEXT)
-	_officer_lbl = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
-	_note_lbl    = _lbl("", fs.call(GameTheme.BASE_MG_LABEL),  GameTheme.C_DIM)
+	_case_num    = _lbl("", "DimLabel")
+	_name_lbl    = _lbl("", "")
+	_charge_lbl  = _lbl("", "SpeakerLabel")
+	_officer_lbl = _lbl("", "DimLabel")
+	_note_lbl    = _lbl("", "DimLabel")
 	_charge_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_note_lbl.autowrap_mode   = TextServer.AUTOWRAP_WORD_SMART
 
@@ -99,7 +96,7 @@ func _build_ui() -> void:
 	inner.add_child(_officer_lbl)
 	inner.add_child(_note_lbl)
 
-	_mood_lbl = _lbl("", fs.call(GameTheme.BASE_MG_LABEL), GameTheme.C_DIM)
+	_mood_lbl = _lbl("", "DimLabel")
 	_mood_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_mood_lbl.anchor_left   = 0.5;  _mood_lbl.anchor_right  = 0.5
 	_mood_lbl.anchor_top    = 0.5;  _mood_lbl.anchor_bottom = 0.5
@@ -127,7 +124,7 @@ func _build_ui() -> void:
 	_stamp_lbl.visible = false
 	_stamp_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_stamp_lbl.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
-	_stamp_lbl.add_theme_font_size_override("font_size", 56)
+	_stamp_lbl.add_theme_font_size_override("font_size", GameTheme.FONT_STAMP)
 	_stamp_lbl.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_stamp_lbl)
 
@@ -146,8 +143,10 @@ func _build_ui() -> void:
 	lv.add_theme_constant_override("separation", 12)
 	_lee_panel.add_child(lv)
 
-	lv.add_child(_lbl("李先生", 12, GameTheme.CHAR_COLOR["lee"]))
-	_lee_lbl = _lbl("", 14, GameTheme.C_BODY_TEXT)
+	var lee_name := _lbl("李先生", "")
+	lee_name.add_theme_color_override("font_color", GameTheme.CHAR_COLOR["lee"])
+	lv.add_child(lee_name)
+	_lee_lbl = _lbl("", "")
 	_lee_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lv.add_child(_lee_lbl)
 	var ok := _btn("（點頭）", GameTheme.C_DIM)
@@ -164,11 +163,10 @@ func _sty(bg: Color, border: Color, bw: int, mg: int) -> StyleBoxFlat:
 	return s
 
 
-func _lbl(txt: String, size: int, color: Color) -> Label:
+func _lbl(txt: String, variation: String) -> Label:
 	var l := Label.new()
 	l.text = txt
-	l.add_theme_color_override("font_color", color)
-	l.add_theme_font_size_override("font_size", size)
+	l.theme_type_variation = variation
 	return l
 
 
@@ -176,7 +174,6 @@ func _btn(txt: String, color: Color) -> Button:
 	var b := Button.new()
 	b.text = txt
 	b.add_theme_color_override("font_color", color)
-	b.add_theme_font_size_override("font_size", maxi(int(GameTheme.BASE_MG_BTN * get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_GS_VIEWPORT_H)), GameTheme.BASE_MG_BTN))
 	b.add_theme_stylebox_override("normal",
 		_sty(GameTheme.C_PANEL_BG, color.darkened(0.4), 1, 12))
 	b.add_theme_stylebox_override("hover",

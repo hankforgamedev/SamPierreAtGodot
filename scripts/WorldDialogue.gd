@@ -1,10 +1,6 @@
 extends Control
 
-# ── Original design sizes ────────────────────────────────────────────────────
-const BASE_SPK_FONT   := 16
-const BASE_DLG_FONT   := 20
-const BASE_BTN_FONT   := 17
-const BASE_TITLE_FONT := 14
+# ── Layout scale roots (font sizes come from GameTheme) ──────────────────────
 const BASE_MARGIN     := 18
 const BASE_ACCENT_H   := 20
 const BASE_BTN_MARGIN := 8
@@ -57,6 +53,8 @@ func _apply_panel_style() -> void:
 	var dlg_font := SystemFont.new()
 	dlg_font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
 	dlg_text.add_theme_font_override("normal_font", dlg_font)
+	spk_name.theme_type_variation    = "SpeakerLabel"
+	choice_title.theme_type_variation = "DimLabel"
 
 func apply_scale(map_font_size: int) -> void:
 	_map_font_size = map_font_size
@@ -66,9 +64,6 @@ func apply_scale(map_font_size: int) -> void:
 	margin_box.add_theme_constant_override("margin_top",    m)
 	margin_box.add_theme_constant_override("margin_bottom", m)
 	speaker_accent.custom_minimum_size = Vector2(4.0, float(BASE_ACCENT_H * map_font_size) / float(GameTheme.BASE_MAP_FONT))
-	spk_name.add_theme_font_size_override("font_size",        BASE_SPK_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
-	dlg_text.add_theme_font_size_override("normal_font_size", BASE_DLG_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
-	choice_title.add_theme_font_size_override("font_size",    BASE_BTN_FONT * map_font_size / GameTheme.BASE_MAP_FONT)
 
 func open(chapter_id: String, start_line: int = 0) -> void:
 	_chapter = DialogueData.get_chapter(chapter_id)
@@ -207,10 +202,6 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ► " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.add_theme_font_size_override("font_size", BASE_BTN_FONT * _map_font_size / GameTheme.BASE_MAP_FONT)
-		btn.add_theme_color_override("font_color",         GameTheme.C_CHOICE_TXT)
-		btn.add_theme_color_override("font_hover_color",   GameTheme.C_CHOICE_HVTXT)
-		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
 		var sn := StyleBoxFlat.new()
 		sn.bg_color = GameTheme.C_CHOICE_BG
 		sn.border_color = GameTheme.C_CHOICE_BORDER_HVR

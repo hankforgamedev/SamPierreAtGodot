@@ -6,20 +6,19 @@ func _ready() -> void:
 	($TitleBlock/QuitButton  as Button).pressed.connect(_on_quit)
 
 func _apply_theme() -> void:
+	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))
+
 	var title_lbl : Label = $TitleBlock/GameTitle as Label
-	title_lbl.add_theme_color_override("font_color", GameTheme.C_TITLE_TEXT)
-	title_lbl.add_theme_font_size_override("font_size", GameTheme.BASE_SS_TITLE)
+	title_lbl.theme_type_variation = "StartTitle"
 
 	var tag_lbl : Label = $TitleBlock/Tagline as Label
-	tag_lbl.add_theme_color_override("font_color", GameTheme.C_TAG_TEXT)
-	tag_lbl.add_theme_font_size_override("font_size", GameTheme.BASE_SS_TAGLINE)
+	tag_lbl.theme_type_variation = "TagLabel"
 
 	for btn_name: String in ["StartButton", "QuitButton"]:
 		var btn : Button = $TitleBlock.get_node(btn_name) as Button
 		btn.add_theme_color_override("font_color",         GameTheme.C_DIM)
 		btn.add_theme_color_override("font_hover_color",   GameTheme.C_HOVER_RED)
 		btn.add_theme_color_override("font_pressed_color", Color.WHITE)
-		btn.add_theme_font_size_override("font_size", GameTheme.BASE_SS_BTN)
 		var style : StyleBoxFlat = StyleBoxFlat.new()
 		style.bg_color = Color.TRANSPARENT
 		btn.add_theme_stylebox_override("normal",  style)

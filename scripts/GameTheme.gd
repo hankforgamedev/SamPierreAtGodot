@@ -1,35 +1,41 @@
 class_name GameTheme
 
+# ── Font sizes (edit here — these are the only knobs) ────────────────────────
+const FONT_BODY    := 40   # dialogue body, narration
+const FONT_SPEAKER := 30   # speaker name
+const FONT_DIM     := 30   # hints, buttons, secondary text
+const FONT_TITLE   := 36   # chapter card title
+const FONT_AMBIENT := 20   # ASCII world HUD / NPC hint
+const FONT_BIG     := 96   # start screen title
+const FONT_STAMP   := 64   # civil servant approval/rejection stamp
+
 # ── Design roots ─────────────────────────────────────────────────────────────
-# ASCII world: target_font * _font_size / BASE_MAP_FONT  (AsciiLevelBase._compute_font_size)
-# GameScene / minigame: target_font * viewport.y / BASE_GS_VIEWPORT_H
-const BASE_MAP_FONT      := 28    # map grid font at design resolution
-const BASE_GS_VIEWPORT_H := 1080  # GameScene / minigame design viewport height
+const BASE_MAP_FONT   := 28    # map grid font at design resolution
+const BASE_VIEWPORT_H := 1080  # full-screen design viewport height
 
-# ── GameScene font sizes (scaled by viewport.y / BASE_GS_VIEWPORT_H at runtime) ──
-const BASE_GS_CHAPTER_LBL  := 13
-const BASE_GS_SPK_FONT     := 19
-const BASE_GS_DLG_FONT     := 23
-const BASE_GS_CHAR_NAME    := 14
-const BASE_GS_HINT_FONT    := 14
-const BASE_GS_CARD1_FONT   := 16
-const BASE_GS_CARD2_FONT   := 36
-const BASE_GS_ICON_FONT    := 28
-const BASE_GS_BTN_FONT     := 18
-const BASE_GS_CHOICE_TITLE := 13
+static func build_scaled_theme(scale: float) -> Theme:
+	var t := Theme.new()
+	t.set_font_size("font_size",        "Label",        maxi(int(FONT_BODY    * scale), FONT_BODY))
+	t.set_color(    "font_color",       "Label",        C_BODY_TEXT)
+	t.set_font_size("normal_font_size", "RichTextLabel",maxi(int(FONT_BODY    * scale), FONT_BODY))
+	t.set_font_size("font_size",        "Button",       maxi(int(FONT_DIM     * scale), FONT_DIM))
+	t.set_color(    "font_color",       "Button",       C_CHOICE_TXT)
+	t.set_color(    "font_hover_color", "Button",       C_CHOICE_HVTXT)
+	t.set_color(    "font_pressed_color","Button",      Color.WHITE)
+	_var(t, "SpeakerLabel",  "Label", maxi(int(FONT_SPEAKER * scale), FONT_SPEAKER), C_SPEAKER_TEXT)
+	_var(t, "HintLabel",     "Label", maxi(int(FONT_DIM     * scale), FONT_DIM),     C_HINT_TEXT)
+	_var(t, "DimLabel",      "Label", maxi(int(FONT_DIM     * scale), FONT_DIM),     C_DIM)
+	_var(t, "TitleLabel",    "Label", maxi(int(FONT_TITLE   * scale), FONT_TITLE),   C_BODY_TEXT)
+	_var(t, "AmbientLabel",  "Label", maxi(int(FONT_AMBIENT * scale), FONT_AMBIENT), C_AMBIENT_TEXT)
+	_var(t, "NarratorLabel", "Label", maxi(int(FONT_BODY    * scale), FONT_BODY),    C_NARRATOR)
+	_var(t, "StartTitle",    "Label", maxi(int(FONT_BIG     * scale), FONT_BIG),     C_TITLE_TEXT)
+	_var(t, "TagLabel",      "Label", maxi(int(FONT_DIM     * scale), FONT_DIM),     C_TAG_TEXT)
+	return t
 
-# ── Minigame font sizes (scaled by same formula) ──────────────────────────────
-const BASE_MG_HEADER := 15
-const BASE_MG_QUOTA  := 17
-const BASE_MG_NAME   := 21
-const BASE_MG_CHARGE := 17
-const BASE_MG_LABEL  := 15
-const BASE_MG_BTN    := 18
-
-# ── StartScreen font sizes ───────────────────────────────────────────────────
-const BASE_SS_TITLE   := 64
-const BASE_SS_TAGLINE := 18
-const BASE_SS_BTN     := 22
+static func _var(t: Theme, name: String, base: String, size: int, color: Color) -> void:
+	t.set_type_variation(name, base)
+	t.set_font_size("font_size", name, size)
+	t.set_color("font_color", name, color)
 
 # ── Typewriter speeds (seconds per character) ────────────────────────────────
 const SPEED_FAST   := 0.008
