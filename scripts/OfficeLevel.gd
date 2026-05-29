@@ -26,7 +26,7 @@ func _get_npcs() -> Dictionary:
 			"chapter_id": "ch3",
 			"start_line": 0,
 			"char_id":    "lee",
-			"display":    "L",
+			"display":    "李",
 			"ambient_a":  (amb.get("41,10", {}) as Dictionary).get("before", ""),
 			"ambient_b":  (amb.get("41,10", {}) as Dictionary).get("after", ""),
 		},

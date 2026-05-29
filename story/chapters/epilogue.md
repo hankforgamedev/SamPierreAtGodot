@@ -26,8 +26,8 @@ right_char: sam
 
 ——
 
-[narrator none] 《SAM PIERRE》
+[narrator score:251019_001 none] 《SAM PIERRE》
 
-by Hank L. and Sam K.
+Story/Game by Hank L. and Sam K.
 
-版權所有，翻印必究。
+Scores by Shawn L.

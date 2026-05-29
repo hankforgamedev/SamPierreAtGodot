@@ -27,7 +27,7 @@ func _get_npcs() -> Dictionary:
 			"chapter_id": "ch1",
 			"start_line": 0,
 			"char_id":    "rat",
-			"display":    "?",
+			"display":    "鼠",
 			"ambient_a":  (amb.get("44,9", {}) as Dictionary).get("before", ""),
 			"ambient_b":  (amb.get("44,9", {}) as Dictionary).get("after", ""),
 		},
@@ -89,6 +89,7 @@ func _trigger_train_death() -> void:
 	narr.text = "——末班車從黑暗中衝出——"
 	SoundManager.play_sfx("explosion")
 
+	SoundManager.play_sfx("tom_screaming")
 	await get_tree().create_timer(0.8).timeout
 	train.queue_free()
 	narr.queue_free()

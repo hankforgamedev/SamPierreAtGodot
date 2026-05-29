@@ -62,7 +62,7 @@ right_char: rat
 
 操！一次就好，就算只有一次也好，我想活著，真正的活著——」
 
-[narrator none speed:fast fx:shake]
+[narrator none sfx:tom_screaming speed:fast fx:shake]
 砰！子彈射穿老鼠的肺。
 
 末班車進站。皮耶爾把老鼠拽向軌道，用力一推。
@@ -79,3 +79,6 @@ right_char: rat
 他的身體越來越輕。
 
 一片黑，最後什麼都沒有了。
+
+[narrator none speed:fast sfx:tv_crash_noise]
+……

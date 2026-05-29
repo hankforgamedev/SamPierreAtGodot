@@ -201,6 +201,10 @@ static func _apply_tag(entry: Dictionary, tag: String) -> void:
 			for s in p.substr(3).split(","):
 				fx.append(s)
 			entry["fx"] = fx
+		elif p.begins_with("score:"):
+			entry["score"] = p.substr(6)
+		elif p.begins_with("sfx:"):
+			entry["sfx"] = p.substr(4)
 
 
 static func _join_lines(lines: Array) -> String:

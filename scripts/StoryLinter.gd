@@ -97,6 +97,14 @@ static func lint_chapter(path: String, content: String) -> void:
 						var fx_clean := fx.strip_edges()
 						if fx_clean != "" and fx_clean not in VALID_FX:
 							push_error("StoryLinter [%s:%d]: Unknown fx '%s'" % [path, ln, fx_clean])
+				elif p.begins_with("sfx:"):
+					var val := p.substr(4)
+					if val == "":
+						push_error("StoryLinter [%s:%d]: sfx: must have a value" % [path, ln])
+				elif p.begins_with("score:"):
+					var val := p.substr(6)
+					if val == "":
+						push_error("StoryLinter [%s:%d]: score: must have a value" % [path, ln])
 				else:
 					push_error("StoryLinter [%s:%d]: Unknown tag modifier '%s'" % [path, ln, p])
 

@@ -1,5 +1,7 @@
 extends Node
 
+signal score_finished
+
 var _ambient_player: AudioStreamPlayer = null
 var _score_player: AudioStreamPlayer = null
 
@@ -87,7 +89,7 @@ func stop_ambient() -> void:
 		_ambient_player.queue_free()
 	_ambient_player = null
 
-func play_score(track_name: String) -> void:
+func play_score(track_name: String, loop: bool = true) -> void:
 	if track_name == "":
 		stop_score()
 		return
@@ -97,12 +99,14 @@ func play_score(track_name: String) -> void:
 		return
 	var player := AudioStreamPlayer.new()
 	var stream := load(path) as AudioStreamMP3
-	stream.loop = true
+	stream.loop = loop
 	player.stream = stream
 	player.bus = "Master"
 	player.autoplay = false
 	add_child(player)
 	player.play()
+	if not loop:
+		player.finished.connect(func(): score_finished.emit())
 	_score_player = player
 
 func stop_score() -> void:

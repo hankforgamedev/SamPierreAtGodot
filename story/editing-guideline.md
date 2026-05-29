@@ -95,18 +95,25 @@ Modifiers go inside `[...]` after the position, separated by spaces.
 |---|---|---|
 | `speed:fast` / `speed:slow` | `speed:fast` | Typewriter speed |
 | `fx:NAME,NAME` | `fx:shake,flash_white` | Visual effect(s) — **comma-separated, no spaces** |
+| `sfx:NAME` | `sfx:riser` | Sound effect from `audio/sfx/` |
+| `score:NAME` | `score:251019_001` | Non-looping score from `audio/score/` (blocks advance until finish) |
 | `next:N` | `next:14` | After this line, jump to line index N (0-based) instead of next |
 | `choices` | `choices` | Marks this line as a choice prompt — follow with `- ` choice lines |
 | `minigame` | `minigame` | Triggers the civil servant mini-game, then returns here |
 
 **Valid `fx` values:** `shake`, `flash_white`, `flash_black`, `glitch_spike`
 
+**`sfx` and `score` values** — filenames without extension from their respective directories. SFX files can be `.wav` or `.mp3`; score files must be `.mp3`.
+
 ```
-[narrator none speed:fast fx:shake,flash_white]
+[narrator none speed:fast fx:shake,flash_white sfx:riser]
 老鼠從皮靴內側抽出一把蝴蝶刀，衝向皮耶爾。
 
 [narrator none speed:slow fx:glitch_spike]
 「最可悲的是，在我死之前……」
+
+[narrator score:251019_001 none]
+《SAM PIERRE》
 ```
 
 ### Choices
@@ -148,6 +155,7 @@ Blank lines inside an entry are preserved. Blank lines between entries are ignor
 | CRLF line endings (Windows) | Speaker parsed as `"sam\r"` — no name/color shown |
 | Missing frontmatter `id` | Chapter can't be found by router; game skips it |
 | Choice missing `>>` | Choice shows but goes nowhere useful (goto -1) |
+| `sfx:missing_file` or `score:missing_file` | File not found; playback silently skipped |
 
 ---
 

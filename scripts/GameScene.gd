@@ -46,6 +46,10 @@ func _ready() -> void:
 	lines = chapter["lines"] as Array
 	_apply_theme()
 	_setup_characters()
+	SoundManager.score_finished.connect(func():
+		can_advance = true
+		next_hint.visible = true
+	)
 	if GameManager.resume_line > 0:
 		card.visible  = false
 		showing_card  = false
@@ -253,6 +257,17 @@ func _show_line(index: int) -> void:
 		has_choices = true
 		_build_choices(line["choices"] as Array)
 
+	# Score
+	var score_track: String = line.get("score", "") as String
+	if score_track != "":
+		can_advance = false
+		SoundManager.play_score(score_track, false)
+
+	# SFX
+	var sfx_name: String = line.get("sfx", "") as String
+	if sfx_name != "":
+		SoundManager.play_sfx(sfx_name)
+
 	# Typewriter
 	full_text    = line.get("text", "") as String
 	typed_so_far = ""
@@ -261,6 +276,7 @@ func _show_line(index: int) -> void:
 	dlg_text.text = ""
 
 	progress_lbl.text = "%d / %d" % [index + 1, lines.size()]
+	next_hint.visible = can_advance
 
 # ── Choices ───────────────────────────────────────────────────
 func _build_choices(choices: Array) -> void:
