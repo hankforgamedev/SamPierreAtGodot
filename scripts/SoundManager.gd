@@ -3,15 +3,28 @@ extends Node
 var _ambient_player: AudioStreamPlayer = null
 
 # Typewriter SFX — pre-created players to avoid per-character allocation.
-# Three key variants rotate in sequence for natural variation.
+# Three key variants at staggered pitches rotate in sequence for natural variation.
 var _type_clicks: Array[AudioStreamPlayer] = []
 var _click_index: int = 0
 var _type_ding: AudioStreamPlayer = null
+var _ding_cooldown: float = 0.0  # blocks clicks briefly after ding
+
+const _CLICK_PITCHES    := [1.0, 1.02, 0.98]  # slight pitch variation for interest
+const _CLICK_PATTERN    := [0, 1, 2, 0, 2, 1]  # rhythm
+const _CLICK_JITTER     := 0.03
+const _DING_MUTE_DURATION := 0.8
 
 func _ready() -> void:
-	for fname in ["typewriter-single-key-type-1", "typewriter-single-key-type-2", "typewriter-single-key-type-3"]:
-		_type_clicks.append(_make_sfx_player("res://audio/sfx/%s.wav" % fname, -6.0))
+	var fnames := ["typewriter-single-key-type-1", "typewriter-single-key-type-2", "typewriter-single-key-type-3"]
+	for i in fnames.size():
+		var p := _make_sfx_player("res://audio/sfx/%s.wav" % fnames[i], -6.0)
+		p.pitch_scale = _CLICK_PITCHES[i]
+		_type_clicks.append(p)
 	_type_ding = _make_sfx_player("res://audio/sfx/typewriter-return-bell.wav", 0.0)
+
+func _process(delta: float) -> void:
+	if _ding_cooldown > 0.0:
+		_ding_cooldown -= delta
 
 func _make_sfx_player(path: String, volume_db: float) -> AudioStreamPlayer:
 	var p := AudioStreamPlayer.new()
@@ -23,13 +36,16 @@ func _make_sfx_player(path: String, volume_db: float) -> AudioStreamPlayer:
 	return p
 
 func play_type_click() -> void:
-	if _type_clicks.is_empty():
+	if _type_clicks.is_empty() or _ding_cooldown > 0.0:
 		return
-	_type_clicks[_click_index].play()
-	_click_index = (_click_index + 1) % _type_clicks.size()
+	var player := _type_clicks[_CLICK_PATTERN[_click_index]]
+	player.pitch_scale = _CLICK_PITCHES[_CLICK_PATTERN[_click_index]] + randf_range(-_CLICK_JITTER, _CLICK_JITTER)
+	player.play()
+	_click_index = (_click_index + 1) % _CLICK_PATTERN.size()
 
 func play_type_ding() -> void:
 	_type_ding.play()
+	_ding_cooldown = _DING_MUTE_DURATION
 
 func play_sfx(sfx_name: String) -> void:
 	var path := "res://audio/sfx/%s.wav" % sfx_name
@@ -44,6 +60,7 @@ func play_sfx(sfx_name: String) -> void:
 
 func play_ambient(track_name: String) -> void:
 	if track_name == "":
+		stop_ambient()
 		return
 	stop_ambient()
 	var path := "res://audio/ambient/%s.ogg" % track_name
