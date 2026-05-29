@@ -1,7 +1,7 @@
 ---
 id: ch4
 title: Chapter 4 — 追殺比爾
-bg_color: #140808
+bg_color: #ffab00
 left_char: sam
 right_char: bill
 ---

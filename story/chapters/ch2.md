@@ -6,7 +6,7 @@ left_char: sam
 right_char: sarah
 ---
 
-[narrator none] 六點半。早上的鬧鐘響了。
+[narrator none] 六點半。早上的鬧鐘又響了。
 
 [sam left] 「……」
 （看著自己的雙手）
@@ -22,7 +22,7 @@ right_char: sarah
 
 包裡：一個酒壺、一把左輪槍。
 
-[narrator none] 新聞大聲播著：「犯罪集團『鼠黨』一名成員陳屍於碼頭廣場，全身四十多處中彈……」
+[narrator none] 晨間新聞大聲播著：「犯罪集團『鼠黨』一名成員陳屍於碼頭廣場，全身四十多處中彈……」
 
 [sarah right] 「這簡直沒有天理，太殘忍了。」
 

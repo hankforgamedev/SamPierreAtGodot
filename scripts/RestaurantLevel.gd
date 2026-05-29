@@ -13,6 +13,9 @@ func _get_level_id() -> String:
 func _get_scene_intro() -> String:
 	return _level_text.get("intro", "")
 
+func _get_ambient_track() -> String:
+	return "tavern_bar"
+
 func _get_player_spawn() -> Vector2i:
 	return Vector2i(4, 11)
 
