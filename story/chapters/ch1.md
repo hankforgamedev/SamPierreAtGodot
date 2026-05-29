@@ -50,7 +50,7 @@ right_char: rat
 
 [sam left] 「滾開。」
 
-[narrator none speed:fast fx:shake,flash_white]
+[narrator none sfx:hitHurt_var1 speed:fast fx:shake,flash_white]
 老鼠從皮靴內側抽出一把蝴蝶刀，衝向皮耶爾。
 
 皮耶爾反應過來掏槍時，下腹已經被刺中了。
@@ -60,10 +60,12 @@ right_char: rat
 
 操！一次就好，就算只有一次也好，我想活著，真正的活著——」
 
-[narrator none speed:fast fx:shake]
+[narrator sfx:gunshot none speed:fast fx:shake]
 砰！子彈射穿老鼠的肺。
 
-末班車進站。皮耶爾把老鼠拽向軌道，用力一推。
+皮耶爾把老鼠拽向軌道，用力一推。
+
+末班車進站。
 
 [narrator none sfx:tom_screaming fx:flash_white,glitch_spike]
 「唰，噗吱！」
