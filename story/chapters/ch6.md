@@ -1,7 +1,7 @@
 ---
 id: ch6
 title: Chapter 6 — 多愁善感
-bg_color: #0d0d17
+bg_color: #0a83c8
 left_char: sam
 right_char: rachel
 ---

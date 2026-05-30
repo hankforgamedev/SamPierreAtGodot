@@ -1,7 +1,7 @@
 ---
 id: ch5
 title: Chapter 5 — 某甲
-bg_color: #0a120a
+bg_color: #f41797a3
 left_char: sam
 right_char: moujia
 ---

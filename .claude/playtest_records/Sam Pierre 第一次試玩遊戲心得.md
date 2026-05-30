@@ -1,0 +1,45 @@
+Reply : [[Sam Pierre 遊戲可行性評估]]
+
+- Dialogue system  
+   There are ABC 3 options, how every choice shows the corresponding consequence, then go back to main story line?  
+   ---> Maybe ask Claude how to edit every md  
+   攻擊的決策太倉促
+   
+- Edit at [[Sam Pierre 目錄]]  
+  釐清劇情 at [[Sam Pierre 輿圖計畫]]
+
+- Assets Problem  
+  Maybe finish by myself, then throw to AI. 
+
+- 他會亂改劇本 很討厭
+	- Prompt : don't change any text. 
+	- → DON'T use prompt engineering to solve what can be solved by deterministic methods. And so, don't even bother asking AI agent to touch the story, just ask it to help us ***design a format/container/vessel*** in which we can fill the dialogues and text.
+
+- 原作者之一：不要做成視覺小說
+
+
+4.11 Sam
+1. need scroll-up/go back function
+2. is the content and format (namely, text story and code) decoupled? 
+3. claude 在搞
+
+Hank  
+interchapter intrachapter?  
+每個章節算獨立，但還是保留一些跨章影響劇情的手段
+
+
+關鍵影響
+- 有無跟老媽吵架?
+- 有無推人、濫殺無辜
+- 有無跟某甲等人瞎混
+
+
+- 選擇不跳脫輪迴：玩公務員小遊戲
+
+# 希望小改小修可以很容易編輯 我在 Obsidian 編輯，AI 可以直接匯入並修改遊戲內文字
+
+HTML or Godot? that is the question 
+
+- text contained in: markdown 
+- or at least, YAML
+

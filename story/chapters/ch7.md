@@ -1,7 +1,7 @@
 ---
 id: ch7
 title: Chapter 7 — 阿母，拍謝啦！
-bg_color: #120a12
+bg_color: #2c0239
 left_char: sam
 right_char: sarah
 ---
