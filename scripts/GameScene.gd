@@ -276,8 +276,10 @@ func _show_line(index: int) -> void:
 
 	# Typewriter
 	full_text    = line.get("text", "") as String
-	if is_inner:
-		full_text = "[i]" + full_text + "[/i]"
+	if is_inner: # has bug with web export [DEBUG]
+		# full_text = "[i]" + full_text + "[/i]"
+		full_text =  full_text  
+
 	typed_so_far = ""
 	type_timer   = 0.0
 	typing       = true

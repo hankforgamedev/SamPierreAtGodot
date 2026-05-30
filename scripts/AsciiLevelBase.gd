@@ -107,9 +107,9 @@ func _compute_font_size() -> int:
 	if cols == 0:
 		return BASE_MAP_FONT
 	# 0.65 = WorldUI anchor_left; subtract offset_left(24) from each side
-	var map_w := vp.x * 0.65 - 48.0
+	var map_w := vp.x * 0.65 
 	# subtract MapDisplay offset_top(24) + abs(offset_bottom(-40))
-	var map_h := vp.y 
+	var map_h := vp.y -64.0
 	var sz_w  := int(map_w / (cols * CHAR_ASPECT))
 	var sz_h  := int(map_h / rows)
 	return clampi(mini(sz_w, sz_h), 14, 200)
