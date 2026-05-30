@@ -48,7 +48,7 @@ right_char: rat
 
 [narrator none] 皮耶爾站起來，想要從這場鬧劇抽身，但老鼠一把抓住了他。
 
-[sam left] 「滾開。」
+[sam left speed:slow ] 「滾開。」
 
 [narrator none sfx:hitHurt_var1 speed:fast fx:shake,flash_white]
 老鼠從皮靴內側抽出一把蝴蝶刀，衝向皮耶爾。

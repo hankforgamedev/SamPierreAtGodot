@@ -249,7 +249,7 @@ func _build_choices(choices: Array) -> void:
 	for i in choices.size():
 		var choice : Dictionary = choices[i] as Dictionary
 		var btn    := Button.new()
-		btn.text = "  ► " + (choice["text"] as String)
+		btn.text = "  ▶ " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.custom_minimum_size = Vector2(0, 0)

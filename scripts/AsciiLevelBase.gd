@@ -3,6 +3,7 @@ extends Control
 
 # ── Wall symbols (block movement) ─────────────────────────
 const WALL_SYMS := ["＃", "Ｉ", "｜"]
+const DOOR_SYMS := ["＞"]
 
 # ── Glitch pools ──────────────────────────────────────────
 const WALL_GLITCH  := ["ｌ", "１", "！", "ｉ", "｜", "；"]
@@ -12,6 +13,7 @@ const JUNK_CHAOS   := [
 	"¿", "Ж", "Ш", "ξ", "∂", "∑", "＊", "？", "＃", "～"
 ]
 
+const BASE_MAP_FONT := GameTheme.BASE_MAP_FONT
 
 # ── State ─────────────────────────────────────────────────
 var _map_base      : Array      = []
@@ -40,9 +42,9 @@ const CHAR_ASPECT      := 1.00  # full-width CJK advance-width / point-size rati
 # ── Layout scale roots (font sizes come from GameTheme; these are pixel offsets) ──
 const BASE_HUD_HEIGHT  := 28   # HUD label offset_top magnitude in scene
 const STATUSLINE_ROWS  := 3    # height of status bar at bottom of map (in grid rows)
-const BASE_AMB_TOP     := 32 + (STATUSLINE_ROWS * 8)  # padding above statusline
+const BASE_AMB_TOP     := 32 + (STATUSLINE_ROWS * BASE_MAP_FONT)  # padding above statusline
 const BASE_AMB_BOTTOM  := 8    # ambient label offset_bottom magnitude in scene
-const BASE_AMB_LEFT    := 14   # ambient label offset_left in scene
+const BASE_AMB_LEFT    := BASE_MAP_FONT  # ambient label offset_left in scene
 const BASE_PANEL_MARGIN := 28  # scene intro panel content margin
 const BASE_PANEL_SEP   := 20   # scene intro VBoxContainer separation
 const TYPEWRITER_SPEED := 0.035  # seconds per character
@@ -75,7 +77,7 @@ var _panel_full_text:    String = ""
 
 # ── Interactable objects ───────────────────────────────────
 var _objects: Dictionary = {}
-var _font_size: int = 28
+var _font_size: int = BASE_MAP_FONT
 
 # ── Story text (populated by each level subclass before super._ready()) ──────
 var _level_text: Dictionary = {}
@@ -93,23 +95,24 @@ func _get_scene_intro()    -> String     : return ""
 func _get_level_id()       -> String     : return ""
 func _get_ambient_track()  -> String     : return ""
 
+# [TODO] fix hardcoding & magic numbers 
 func _compute_font_size() -> int:
 	var vp   := get_viewport().get_visible_rect().size
 	var rows := _map_base.size()
 	if rows == 0:
-		return GameTheme.BASE_MAP_FONT
+		return BASE_MAP_FONT
 	var cols := 0
 	for row in _map_base:
 		cols = max(cols, (row as String).length())
 	if cols == 0:
-		return GameTheme.BASE_MAP_FONT
+		return BASE_MAP_FONT
 	# 0.65 = WorldUI anchor_left; subtract offset_left(24) from each side
 	var map_w := vp.x * 0.65 - 48.0
 	# subtract MapDisplay offset_top(24) + abs(offset_bottom(-40))
-	var map_h := vp.y - 64.0
+	var map_h := vp.y 
 	var sz_w  := int(map_w / (cols * CHAR_ASPECT))
 	var sz_h  := int(map_h / rows)
-	return clampi(mini(sz_w, sz_h), 14, 80)
+	return clampi(mini(sz_w, sz_h), 14, 200)
 
 # ── Lifecycle ─────────────────────────────────────────────
 func _ready() -> void:
@@ -120,9 +123,9 @@ func _ready() -> void:
 	world_dialogue.line_fx.connect(_on_line_fx)
 	world_dialogue.visible = false
 	_font_size = _compute_font_size()
-	theme = GameTheme.build_scaled_theme(float(_font_size) / float(GameTheme.BASE_MAP_FONT))
+	theme = GameTheme.build_scaled_theme(float(_font_size) / float(BASE_MAP_FONT))
 	hud_label.theme_type_variation = "AmbientLabel"
-	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(GameTheme.BASE_MAP_FONT)
+	hud_label.offset_top = -float(BASE_HUD_HEIGHT * _font_size) / float(BASE_MAP_FONT)
 	world_dialogue.apply_scale(_font_size)
 	_setup_display()
 	_draw_map()
@@ -251,9 +254,9 @@ func _setup_ambient() -> void:
 	lbl.anchor_right  = 0.62
 	lbl.anchor_top    = 1.0
 	lbl.anchor_bottom = 1.0
-	lbl.offset_top    = -float(BASE_AMB_TOP    * _font_size) / float(GameTheme.BASE_MAP_FONT)
-	lbl.offset_bottom = -float(BASE_AMB_BOTTOM * _font_size) / float(GameTheme.BASE_MAP_FONT)
-	lbl.offset_left   =  float(BASE_AMB_LEFT   * _font_size) / float(GameTheme.BASE_MAP_FONT)
+	lbl.offset_top    = -float(BASE_AMB_TOP    * _font_size) / float(BASE_MAP_FONT)
+	lbl.offset_bottom = -float(BASE_AMB_BOTTOM * _font_size) / float(BASE_MAP_FONT)
+	lbl.offset_left   =  float(BASE_AMB_LEFT   * _font_size) / float(BASE_MAP_FONT)
 	lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	lbl.z_index = 50
 	add_child(lbl)
@@ -270,7 +273,7 @@ func _setup_scene_panel() -> void:
 	style.bg_color = GameTheme.C_PANEL_BG
 	style.border_color = GameTheme.C_PANEL_BORDER
 	style.set_border_width_all(2)
-	style.set_content_margin_all(float(BASE_PANEL_MARGIN * _font_size) / float(GameTheme.BASE_MAP_FONT))
+	style.set_content_margin_all(float(BASE_PANEL_MARGIN * _font_size) / float(BASE_MAP_FONT))
 	panel.add_theme_stylebox_override("panel", style)
 	panel.anchor_left   = 0.15
 	panel.anchor_right  = 0.85
@@ -282,7 +285,7 @@ func _setup_scene_panel() -> void:
 
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", BASE_PANEL_SEP * _font_size / GameTheme.BASE_MAP_FONT)
+	vbox.add_theme_constant_override("separation", BASE_PANEL_SEP * _font_size / BASE_MAP_FONT)
 	panel.add_child(vbox)
 
 	var text_lbl := Label.new()
