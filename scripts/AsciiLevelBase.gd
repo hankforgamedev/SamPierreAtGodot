@@ -2,14 +2,14 @@ class_name AsciiLevelBase
 extends Control
 
 # ── Wall symbols (block movement) ─────────────────────────
-const WALL_SYMS := ["#", "I", "|"]
+const WALL_SYMS := ["＃", "Ｉ", "｜"]
 
 # ── Glitch pools ──────────────────────────────────────────
-const WALL_GLITCH  := ["l", "1", "!", "i", "¦", "╎", ";"]
-const FLOOR_GLITCH := ["v", "'", "`", "·", ";", ","]
+const WALL_GLITCH  := ["ｌ", "１", "！", "ｉ", "｜", "；"]
+const FLOOR_GLITCH := ["ｖ", "．", "，", "；", "－", "～"]
 const JUNK_CHAOS   := [
-	"@", "!", "$", "Ψ", "Ω", "Δ", "░", "▓", "×", "†",
-	"¿", "ß", "ñ", "‡", "¡", "Ж", "Ш", "ξ", "∂", "∑"
+	"＠", "！", "＄", "Ψ", "Ω", "Δ", "░", "▓", "×", "†",
+	"¿", "Ж", "Ш", "ξ", "∂", "∑", "＊", "？", "＃", "～"
 ]
 
 
@@ -35,7 +35,7 @@ const MOVE_HOLD_DELAY  := 0.18   # seconds before repeat kicks in
 const MOVE_REPEAT_RATE := 0.07   # seconds between repeat steps
 const FRICTION_STEPS   := 0      # no slide after release — 1 press = 1 step
 const FRICTION_RATE    := 0.14
-const CHAR_ASPECT      := 0.60  # Consolas advance-width / point-size ratio
+const CHAR_ASPECT      := 1.00  # full-width CJK advance-width / point-size ratio
 
 # ── Layout scale roots (font sizes come from GameTheme; these are pixel offsets) ──
 const BASE_HUD_HEIGHT  := 28   # HUD label offset_top magnitude in scene
@@ -144,9 +144,7 @@ func _setup_display() -> void:
 	map_display.fit_content    = false
 	map_display.focus_mode     = Control.FOCUS_NONE
 	map_display.mouse_filter   = Control.MOUSE_FILTER_IGNORE
-	var font := SystemFont.new()
-	font.font_names = PackedStringArray(["Consolas", "Courier New", "Courier", "Monospace"])
-	map_display.add_theme_font_override("normal_font", font)
+	map_display.add_theme_font_override("normal_font", load("res://font/genyo-gothic/GenYoGothic2TW-R.otf"))
 	# map grid font size set per-frame via [font_size=N] BBCode in _draw_map()
 
 # ── Input ─────────────────────────────────────────────────
@@ -521,11 +519,11 @@ func _apply_glitch() -> void:
 			continue
 		var x := randi() % row.length()
 		var sym := row[x]
-		if sym in ["#", "I"]:
+		if sym in ["＃", "Ｉ"]:
 			_glitch_overlay[Vector2i(x, y)] = WALL_GLITCH[randi() % WALL_GLITCH.size()]
-		elif sym == "%":
+		elif sym == "％":
 			_glitch_overlay[Vector2i(x, y)] = JUNK_CHAOS[randi() % JUNK_CHAOS.size()]
-		elif sym == "." and stress_level > 0.5:
+		elif sym == "．" and stress_level > 0.5:
 			_glitch_overlay[Vector2i(x, y)] = FLOOR_GLITCH[randi() % FLOOR_GLITCH.size()]
 
 # ── Rendering ─────────────────────────────────────────────
@@ -536,7 +534,7 @@ func _draw_map() -> void:
 		for x in row.length():
 			var pos := Vector2i(x, y)
 			if pos == _player_pos:
-				out += "[color=%s]@[/color]" % GameTheme.C_PLAYER
+				out += "[color=%s]＠[/color]" % GameTheme.C_PLAYER
 			elif pos == _dialogue_npc_pos and _npc_anim_offset != 0:
 				out += _sym_bbcode(row[x])
 			elif _dialogue_npc_pos.x != -1 and _npc_anim_offset != 0 \
@@ -561,27 +559,27 @@ func _draw_map() -> void:
 
 func _sym_bbcode(sym: String) -> String:
 	match sym:
-		"#", "I":
+		"＃", "Ｉ":
 			return "[color=%s]%s[/color]" % [GameTheme.C_WALL, sym]
-		"|":
-			return "[color=#AAAAAA]|[/color]"
-		"[":
-			return "[color=#AAAAAA][lb][/color]"
-		"]":
-			return "[color=#AAAAAA][rb][/color]"
-		"-", "_":
+		"｜":
+			return "[color=#AAAAAA]｜[/color]"
+		"［":
+			return "[color=#AAAAAA]［[/color]"
+		"］":
+			return "[color=#AAAAAA]］[/color]"
+		"－", "＿":
 			return "[color=#666666]%s[/color]" % sym
-		".", ",":
+		"．", "，":
 			return "[color=%s]%s[/color]" % [GameTheme.C_FLOOR, sym]
-		" ":
-			return " "
-		"%":
-			return "[color=%s]%%[/color]" % GameTheme.C_JUNK
-		">":
-			return "[color=%s]>[/color]" % GameTheme.C_DOOR
-		"~":
-			return "[color=#1A2A3A]~[/color]"
-		"?":
-			return "[color=#1E1E1E]?[/color]"
+		"　":
+			return "　"
+		"％":
+			return "[color=%s]％[/color]" % GameTheme.C_JUNK
+		"＞":
+			return "[color=%s]＞[/color]" % GameTheme.C_DOOR
+		"～":
+			return "[color=#1A2A3A]～[/color]"
+		"？":
+			return "[color=#1E1E1E]？[/color]"
 		_:
 			return "[color=#555555]%s[/color]" % sym

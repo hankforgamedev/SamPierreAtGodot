@@ -36,3 +36,6 @@ path hardcoding ("res://" is fine, that is the intended way. just nothing about 
   - [x] play diff sfx
   - [ ] go to a different scene/chapter
 - [ ] the dialog panel logic in ascii scenes should just reuse that of the pure dialog game scenes (chapters)
+- [ ] pure dialog scene doesn't seem to be using different typewrite speed setting despite intending to do so. this is the inconsistency caused by the issue mentioned just above.
+
+- [ ] procedural symbol map generator. just make sure NPC & exit can be reached by player.
