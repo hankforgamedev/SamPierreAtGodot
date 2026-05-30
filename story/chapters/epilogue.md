@@ -46,4 +46,4 @@ right_char: sam
 
 Story/Game by Hank L. and Sam K.
 
-Scores by Shawn L. & Alfa W. (for now)
+Scores by Shawn L. & Alfa W.

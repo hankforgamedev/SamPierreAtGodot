@@ -225,7 +225,7 @@ func _show_line(index: int) -> void:
 
 	_full_text   = line.get("text", "") as String
 	if is_inner:
-		_full_text = "[i]" + _full_text + "[/i]" # [DEBUG] disabled for now
+		# _full_text = "[i]" + _full_text + "[/i]" # [DEBUG] disabled for now
 		_full_text =  _full_text  
 
 	_typed_count = 0
