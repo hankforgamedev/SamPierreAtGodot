@@ -18,9 +18,10 @@ var _full_text    := ""
 var _typed_count  := 0
 var _type_timer   := 0.0
 var _type_speed   := GameTheme.SPEED_NORMAL
-var _has_choices    := false
-var _can_advance    := false
-var _is_player_line := false
+var _has_choices       := false
+var _can_advance       := false
+var _is_player_line    := false
+var _auto_advance_queued := false
 var _map_font_size  := GameTheme.BASE_MAP_FONT
 var _log_bbcode      : String = ""
 var _cur_entry_header: String = ""
@@ -103,8 +104,9 @@ func _process(delta: float) -> void:
 	if _typed_count >= _full_text.length():
 		_typing      = false
 		_can_advance = true
-		if _is_player_line:
-			_advance()
+		if _is_player_line and not _auto_advance_queued:
+			_auto_advance_queued = true
+			call_deferred("_deferred_auto_advance")
 	_update_display()
 
 func _input(event: InputEvent) -> void:
@@ -127,7 +129,7 @@ func _input(event: InputEvent) -> void:
 			for btn: Button in choice_buttons.get_children():
 				if btn.has_focus():
 					get_viewport().set_input_as_handled()
-					_select_choice(btn.get_meta("goto") as int)
+					_select_choice(btn.get_meta("choice_data") as Dictionary)
 					return
 		return
 	var is_advance := is_keyboard or is_mouse
@@ -150,6 +152,11 @@ func _navigate_choices(delta: int) -> void:
 			break
 	(btns[wrapi(idx + delta, 0, btns.size())] as Button).grab_focus()
 
+func _deferred_auto_advance() -> void:
+	_auto_advance_queued = false
+	if _is_player_line and _can_advance and not _typing and not _has_choices:
+		_advance()
+
 func _finish_typing() -> void:
 	_typed_count = _full_text.length()
 	_update_display()
@@ -166,10 +173,14 @@ func _advance() -> void:
 		_show_line(_current_index + 1)
 
 func _show_line(index: int) -> void:
+	if index < 0 or index >= _lines.size():
+		push_error("WorldDialogue: invalid line index %d — broken label/goto ref" % index)
+		return
 	_commit_current_line()
-	_current_index = index
-	_can_advance   = false
-	_has_choices   = false
+	_current_index       = index
+	_can_advance         = false
+	_has_choices         = false
+	_auto_advance_queued = false
 	choice_panel.visible = false
 
 	var line: Dictionary = _lines[index] as Dictionary
@@ -254,9 +265,11 @@ func _build_choices(choices: Array) -> void:
 		btn.text = "  ▶ " + (choice["text"] as String)
 		btn.flat = true
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		btn.custom_minimum_size = Vector2(0, 0)
-		btn.clip_text = true
+		btn.clip_text = false
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART  # wrap long CJK choice text instead of overflowing panel
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		# min height floor; autowrap grows it further for 3+ line choices
+		btn.custom_minimum_size = Vector2(0.0, float(_map_font_size) * 2.0)
 		var sn := StyleBoxFlat.new()
 		sn.bg_color = GameTheme.C_CHOICE_BG
 		sn.border_color = GameTheme.C_CHOICE_BORDER_HVR
@@ -272,17 +285,39 @@ func _build_choices(choices: Array) -> void:
 		btn.add_theme_stylebox_override("pressed", sh)
 		btn.add_theme_stylebox_override("focus",   sh)
 		var goto_index: int = choice["goto"] as int
+		btn.set_meta("choice_data", choice)
 		btn.set_meta("goto", goto_index)
-		btn.pressed.connect(_on_choice(goto_index))
+		btn.pressed.connect(_on_choice(choice))
 		choice_buttons.add_child(btn)
 	if choice_buttons.get_child_count() > 0:
 		(choice_buttons.get_child(0) as Button).call_deferred("grab_focus")
 
-func _select_choice(goto_index: int) -> void:
+func _select_choice(choice: Dictionary) -> void:
 	SoundManager.play_type_ding()
 	choice_panel.visible = false
 	_has_choices = false
-	_show_line(goto_index)
+	# Record the prompt + chosen reply into the scroll log before routing,
+	# so scrolling back shows what the player picked (VN side just routes).
+	_commit_current_line()
+	_commit_player_choice(choice)
+	_full_text = ""  # prevent _show_line from re-committing the prompt line
+	if choice.has("next_level"):
+		GameManager.go_to_level(choice["next_level"] as String)
+		return
+	elif choice.has("next_chapter"):
+		GameManager.start_chapter(choice["next_chapter"] as String)
+		return
+	_show_line(choice["goto"] as int)
 
-func _on_choice(goto_index: int) -> Callable:
-	return func() -> void: _select_choice(goto_index)
+func _commit_player_choice(choice: Dictionary) -> void:
+	var txt: String = choice.get("text", "") as String
+	if txt == "":
+		return
+	var spk_color: Color = GameTheme.CHAR_COLOR.get("sam", GameTheme.C_SPEAKER_TEXT) as Color
+	var disp: String = (GameManager.SPEAKER_NAMES.get("sam", "") as String).to_upper()
+	var hdr: String = ("[color=#%s]%s[/color]\n" % [spk_color.to_html(false), disp]) if disp != "" else ""
+	var body_hex: String = "#" + (GameTheme.C_BODY_TEXT as Color).to_html(false)
+	_log_bbcode += hdr + "[color=" + body_hex + "]" + txt + "[/color]\n\n"
+
+func _on_choice(choice: Dictionary) -> Callable:
+	return func() -> void: _select_choice(choice)

@@ -29,16 +29,16 @@ right_char: moujia
 「鐵皮屋的人很認真。我們要讓這座城市知道，有些事情是不被允許的。
 
 ——你願意聽更多嗎？」
-- 「我不是那種人。」 >> 10
-- 「……告訴我更多。」 >> 11
+- 「我不是那種人。」 >> DECLINE
+- 「……告訴我更多。」 >> CURIOUS
 
-[sam left next:12] 「我不是那種人。」
+[sam left next:MOUJIA_REPLY label:DECLINE] 「我不是那種人。」
 （轉身，走出了老蕭餐館）
 
-[sam left next:12] 「……告訴我更多。」
+[sam left next:MOUJIA_REPLY label:CURIOUS] 「……告訴我更多。」
 （拿起酒杯，沉默地喝了一口）
 
-[moujia right] 「你已經是那種人了，山姆。你只是還不知道。」
+[moujia right label:MOUJIA_REPLY] 「你已經是那種人了，山姆。你只是還不知道。」
 
 [narrator none] 無論如何，皮耶爾那天晚上獨自離開了老蕭餐館。
 

@@ -151,14 +151,27 @@ static func _parse_chapter_body(body: String) -> Array:
 		elif line.strip_edges().begins_with("- ") and current.get("_has_choices", false):
 			var s := line.strip_edges().substr(2)
 			var sep := s.rfind(" >> ")
-			var goto_n := -1
+			var goto_tok := ""
 			var choice_text := s
+			var choice_entry: Dictionary = {}
 			if sep != -1:
-				goto_n = int(s.substr(sep + 4).strip_edges())
+				var after_arrow := s.substr(sep + 4).strip_edges()
+				# Parse goto label and optional modifiers (next_level: / next_chapter:)
+				var tokens := after_arrow.split(" ", false, 1)
+				if tokens.size() > 0:
+					goto_tok = tokens[0]
+				if tokens.size() > 1:
+					var mods := tokens[1].strip_edges()
+					if mods.begins_with("next_level:"):
+						choice_entry["next_level"] = mods.substr(11).strip_edges()
+					elif mods.begins_with("next_chapter:"):
+						choice_entry["next_chapter"] = mods.substr(13).strip_edges()
 				choice_text = s.left(sep).strip_edges()
+			choice_entry["text"] = choice_text
+			choice_entry["goto"] = goto_tok  # label string; resolved to int index in _resolve_refs
 			if not current.has("choices"):
 				current["choices"] = []
-			(current["choices"] as Array).append({"text": choice_text, "goto": goto_n})
+			(current["choices"] as Array).append(choice_entry)
 
 		else:
 			text_lines.append(line)
@@ -170,7 +183,38 @@ static func _parse_chapter_body(body: String) -> Array:
 	for e in entries:
 		(e as Dictionary).erase("_has_choices")
 
+	_resolve_refs(entries)
 	return entries
+
+
+# Converts label strings on `next` and choice `goto` into integer entry indices.
+# Labels are case-insensitive. Unresolved/duplicate labels push_error (caught by StoryLinter).
+static func _resolve_refs(entries: Array) -> void:
+	var labels: Dictionary = {}
+	for i in entries.size():
+		var e: Dictionary = entries[i]
+		if e.has("label"):
+			var key: String = (e["label"] as String).strip_edges().to_lower()
+			if labels.has(key):
+				push_error("StoryLoader: duplicate label '%s'" % key)
+			labels[key] = i
+	for e in entries:
+		if e.has("next"):
+			e["next"] = _resolve_label(e["next"], labels)
+		if e.has("choices"):
+			for c in (e["choices"] as Array):
+				var cd: Dictionary = c
+				if cd.has("next_level") or cd.has("next_chapter"):
+					continue  # cross-scene/chapter routing — in-chapter goto unused
+				cd["goto"] = _resolve_label(cd.get("goto"), labels)
+
+
+static func _resolve_label(tok, labels: Dictionary) -> int:
+	var key: String = str(tok).strip_edges().to_lower()
+	if labels.has(key):
+		return labels[key] as int
+	push_error("StoryLoader: unresolved label '%s'" % str(tok))
+	return -1
 
 
 static func _apply_tag(entry: Dictionary, tag: String) -> void:
@@ -193,7 +237,9 @@ static func _apply_tag(entry: Dictionary, tag: String) -> void:
 		elif p == "minigame":
 			entry["minigame"] = "civil_servant"
 		elif p.begins_with("next:"):
-			entry["next"] = int(p.substr(5))
+			entry["next"] = p.substr(5)  # label string; resolved to int index in _resolve_refs
+		elif p.begins_with("label:"):
+			entry["label"] = p.substr(6)
 		elif p.begins_with("speed:"):
 			entry["speed"] = p.substr(6)
 		elif p.begins_with("fx:"):

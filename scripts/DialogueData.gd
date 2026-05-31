@@ -13,7 +13,7 @@ extends Node
 var CHAPTERS : Array = []
 
 func _ready() -> void:
-	for id in ["ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "epilogue"]:
+	for id in ["ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "epilogue", "subway_stub"]:
 		CHAPTERS.append(StoryLoader.load_chapter("res://story/chapters/%s.md" % id))
 
 func get_chapter(id: String) -> Dictionary:

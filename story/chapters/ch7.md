@@ -27,16 +27,16 @@ right_char: sarah
 
 [sam left choices] （看著那瓶洋酒，看著母親，有些話堵在喉嚨裡）
 
-- 「媽，你知道我小時候說的第一個字是什麼嗎？」 >> 9
-- （什麼也沒說，走進房間，關上門） >> 11
+- 「媽，你知道我小時候說的第一個字是什麼嗎？」 >> MOM_WHAT
+- （什麼也沒說，走進房間，關上門） >> WINDOW_NIGHT
 
-[sarah right] 「……什麼？」
+[sarah right label:MOM_WHAT] 「……什麼？」
 
 [sam left] 「伏特加。」
 
 我不知道那算不算你的錯，媽。但我記得。
 
-[narrator none sfx:metal_pipe] 窗外是十樓的夜空。
+[narrator none sfx:metal_pipe label:WINDOW_NIGHT] 窗外是十樓的夜空。
 
 皮耶爾轉過身，聽到了一聲他再也無法聽見第二次的聲音。
 

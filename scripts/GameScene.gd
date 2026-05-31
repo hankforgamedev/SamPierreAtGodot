@@ -146,7 +146,7 @@ func _input(event: InputEvent) -> void:
 			for btn: Button in choice_buttons.get_children():
 				if btn.has_focus():
 					get_viewport().set_input_as_handled()
-					_select_choice(btn.get_meta("goto") as int)
+					_select_choice(btn.get_meta("choice_data") as Dictionary)
 					return
 		return
 	if not can_advance:
@@ -221,6 +221,9 @@ func _advance() -> void:
 
 # ── Show line ─────────────────────────────────────────────────
 func _show_line(index: int) -> void:
+	if index < 0 or index >= lines.size():
+		push_error("GameScene: invalid line index %d — broken label/goto ref" % index)
+		return
 	current_index = index
 
 	var line    : Dictionary = lines[index] as Dictionary
@@ -317,20 +320,27 @@ func _build_choices(choices: Array) -> void:
 		btn.add_theme_stylebox_override("focus",  style_h)
 
 		var goto_index : int = choice["goto"] as int
+		btn.set_meta("choice_data", choice)
 		btn.set_meta("goto", goto_index)
-		btn.pressed.connect(_on_choice(goto_index))
+		btn.pressed.connect(_on_choice(choice))
 		choice_buttons.add_child(btn)
 	pass  # focus set in _focus_first_choice() when panel becomes visible
 
-func _select_choice(goto_index: int) -> void:
+func _select_choice(choice: Dictionary) -> void:
 	SoundManager.play_type_ding()
 	choice_panel.visible = false
 	has_choices = false
 	next_hint.text = "[ E / SPACE / CLICK ]"
-	_show_line(goto_index)
+	if choice.has("next_level"):
+		GameManager.go_to_level(choice["next_level"] as String)
+		return
+	elif choice.has("next_chapter"):
+		GameManager.start_chapter(choice["next_chapter"] as String)
+		return
+	_show_line(choice["goto"] as int)
 
-func _on_choice(goto_index: int) -> Callable:
-	return func() -> void: _select_choice(goto_index)
+func _on_choice(choice: Dictionary) -> Callable:
+	return func() -> void: _select_choice(choice)
 
 # ── Next chapter ──────────────────────────────────────────────
 const LEVEL_CHAPTERS := {

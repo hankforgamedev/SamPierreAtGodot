@@ -38,15 +38,13 @@ right_char: rat
 [rat right choices]
 「借些錢花花吧，我把錢都拿去買粉吸掉了。不然借我一百——一個你看我吃，一個我吃給你看——」
 
-- 「你比上次還要嗨，夥計。先坐下冷靜一下。」 >> 14
-- （沉默，繼續抽菸，不理他） >> 14
-- 「我沒有錢。」 >> 15
+- 「你比上次還要嗨，夥計。先坐下冷靜一下。」 >> RAT_PANIC
+- （沉默，繼續抽菸，不理他） >> RAT_PANIC
+- 「我沒有錢。」 >> PIERRE_STANDS
 
-[sam left] 「你比上次還要嗨，夥計，我覺得你得先坐下來冷靜一下。」
+[rat right label:RAT_PANIC] 「你幹嘛？朋友一場，何……何必這樣！」
 
-[rat right] 「你幹嘛？朋友一場，何……何必這樣！」
-
-[narrator none] 皮耶爾站起來，想要從這場鬧劇抽身，但老鼠一把抓住了他。
+[narrator none label:PIERRE_STANDS] 皮耶爾站起來，想要從這場鬧劇抽身，但老鼠一把抓住了他。
 
 [sam left speed:slow ] 「滾開。」
 

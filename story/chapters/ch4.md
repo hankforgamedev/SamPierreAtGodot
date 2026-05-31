@@ -26,18 +26,18 @@ right_char: bill
 
 ——那個念頭又來了。
 
-- 動手。 >> 7
-- 忍住。走開。 >> 8
+- 動手。 >> ACTED
+- 忍住。走開。 >> RESTRAINED
 
-[narrator none sfx:tom_screaming next:9] 他動手了。
+[narrator none sfx:tom_screaming next:DIARY label:ACTED] 他動手了。
 
 媒體的標題隔天出現：「警察英雄殉職——比爾先生，疑遭仇人推落月台。」
 
-[narrator none next:9] 他沒有動手。
+[narrator none next:DIARY label:RESTRAINED] 他沒有動手。
 
 但那個念頭，不會消失。
 
-[sam left] （日記）
+[sam left label:DIARY] （日記）
 「沒有人懷疑山姆·皮耶爾。
 
 ——或許因為沒有人記得山姆·皮耶爾。」

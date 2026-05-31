@@ -41,6 +41,25 @@ static func lint_chapter(path: String, content: String) -> void:
 	var body_lines := body.split("\n")
 	var in_choices := false
 
+	# Pre-scan: collect all defined labels (case-insensitive) so refs can be validated.
+	var labels: Dictionary = {}
+	for bl: String in body_lines:
+		var st := bl.strip_edges()
+		if not st.begins_with("["):
+			continue
+		var cl := st.find("]")
+		if cl == -1:
+			continue
+		for tk: String in st.substr(1, cl - 1).split(" ", false):
+			if tk.begins_with("label:"):
+				var lk := tk.substr(6).strip_edges().to_lower()
+				if lk == "":
+					push_error("StoryLinter [%s]: label: must have a value" % path)
+				elif labels.has(lk):
+					push_error("StoryLinter [%s]: duplicate label '%s'" % [path, lk])
+				else:
+					labels[lk] = true
+
 	for i in body_lines.size():
 		var line: String = body_lines[i]
 		var stripped := line.strip_edges()
@@ -81,10 +100,12 @@ static func lint_chapter(path: String, content: String) -> void:
 					in_choices = true
 				elif p == "minigame":
 					pass
+				elif p.begins_with("label:"):
+					pass  # collected + dup-checked in pre-scan
 				elif p.begins_with("next:"):
-					var val := p.substr(5)
-					if not val.is_valid_int():
-						push_error("StoryLinter [%s:%d]: next: must be integer, got '%s'" % [path, ln, val])
+					var val := p.substr(5).strip_edges()
+					if not labels.has(val.to_lower()):
+						push_error("StoryLinter [%s:%d]: next: unknown label '%s'" % [path, ln, val])
 				elif p.begins_with("speed:"):
 					var val := p.substr(6)
 					if val not in VALID_SPEEDS:
@@ -117,9 +138,16 @@ static func lint_chapter(path: String, content: String) -> void:
 			if sep == -1:
 				push_error("StoryLinter [%s:%d]: Choice missing '>> N' — %s" % [path, ln, stripped])
 			else:
-				var goto_str := s.substr(sep + 4).strip_edges()
-				if not goto_str.is_valid_int():
-					push_error("StoryLinter [%s:%d]: Choice >> target must be integer, got '%s'" % [path, ln, goto_str])
+				var after_arrow := s.substr(sep + 4).strip_edges()
+				var tokens := after_arrow.split(" ", false, 1)
+				var goto_str := tokens[0] if tokens.size() > 0 else ""
+				var has_cross := tokens.size() > 1 and (tokens[1].strip_edges().begins_with("next_level:") or tokens[1].strip_edges().begins_with("next_chapter:"))
+				if not has_cross and not labels.has(goto_str.to_lower()):
+					push_error("StoryLinter [%s:%d]: Choice >> unknown label '%s'" % [path, ln, goto_str])
+				if tokens.size() > 1:
+					var mods := tokens[1].strip_edges()
+					if not mods.begins_with("next_level:") and not mods.begins_with("next_chapter:"):
+						push_error("StoryLinter [%s:%d]: Unknown choice modifier '%s' — use next_level: or next_chapter:" % [path, ln, mods])
 
 
 static func _parse_fm(fm_text: String) -> Dictionary:

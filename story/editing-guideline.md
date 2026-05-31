@@ -97,7 +97,8 @@ Modifiers go inside `[...]` after the position, separated by spaces.
 | `fx:NAME,NAME`              | `fx:shake,flash_white` | Visual effect(s) — **comma-separated, no spaces**                   |
 | `sfx:NAME`                  | `sfx:riser`            | Sound effect from `audio/sfx/`                                      |
 | `score:NAME`                | `score:251019_001`     | Non-looping score from `audio/score/` (blocks advance until finish) |
-| `next:N`                    | `next:14`              | After this line, jump to line index N (0-based) instead of next     |
+| `next:LABEL`                | `next:DIARY`           | After this line, jump to the line tagged `label:DIARY` instead of next |
+| `label:NAME`                | `label:DIARY`          | Names this line so `>>` / `next:` can jump to it. ALL-CAPS by convention; matched case-insensitively. No spaces. |
 | `choices`                   | `choices`              | Marks this line as a choice prompt — follow with `- ` choice lines  |
 | `minigame`                  | `minigame`             | Triggers the civil servant mini-game, then returns here             |
 
@@ -118,17 +119,20 @@ Modifiers go inside `[...]` after the position, separated by spaces.
 
 ### Choices
 
-A `choices` line must be immediately followed by `- ` lines. Each choice needs a `>> N` jump target (0-based line index).
+A `choices` line must be immediately followed by `- ` lines. Each choice needs a `>> LABEL` jump target — the name of a line tagged `label:LABEL`.
 
 ```
 [rat right choices]
 「借些錢花花吧……」
-- 「你比上次還要嗨，夥計。」 >> 14
-- （沉默，繼續抽菸） >> 16
-- 「我沒有錢。」 >> 16
+- 「你比上次還要嗨，夥計。」 >> RAT_PANIC
+- （沉默，繼續抽菸） >> PIERRE_STANDS
+- 「我沒有錢。」 >> PIERRE_STANDS
+
+[rat right label:RAT_PANIC] 「你幹嘛？……」
+[narrator none label:PIERRE_STANDS] 皮耶爾站起來……
 ```
 
-To find the right index N: count `[tag]` lines in the file starting from 0. Each `[...]` tag = one entry.
+Labels are case-insensitive and may be defined before or after the jump. A `>>` or `next:` pointing at a label that doesn't exist is a hard error (the linter rejects it) — no more silent index drift when you insert a line.
 
 ### Multi-line Text
 
@@ -151,7 +155,8 @@ Blank lines inside an entry are preserved. Blank lines between entries are ignor
 | `bg_color` not valid hex — `bg_color: dark blue` | Godot error on chapter load                              |
 | Space in `fx:` — `fx:shake, flash_white`         | `" flash_white"` not recognized, effect silently ignored |
 | Unknown speaker — `[john left]`                  | No name/color shown; portrait blank                      |
-| `next:abc` (non-integer)                         | Jumps to line 0, likely wrong                            |
+| `next:TYPO` / `>> TYPO` (undefined label)        | Linter rejects it on load (`unknown label`); jump resolves to -1 |
+| Two lines with same `label:X`                    | Linter rejects it (`duplicate label`)                    |
 | CRLF line endings (Windows)                      | Speaker parsed as `"sam\r"` — no name/color shown        |
 | Missing frontmatter `id`                         | Chapter can't be found by router; game skips it          |
 | Choice missing `>>`                              | Choice shows but goes nowhere useful (goto -1)           |

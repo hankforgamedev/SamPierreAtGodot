@@ -28,14 +28,14 @@ right_char: rachel
 
 [sam left choices] （想了一下，該說什麼好？）
 
-- 「在警局做書記。」 >> 9
-- 「不怎麼樣。你呢？」 >> 10
+- 「在警局做書記。」 >> JOB_CLERK
+- 「不怎麼樣。你呢？」 >> JOB_DEFLECT
 
-[sam left next:11] 「在警局做書記。」
+[sam left next:RACHEL_KNOWS label:JOB_CLERK] 「在警局做書記。」
 
-[sam left next:11] 「不怎麼樣。你呢？」
+[sam left next:RACHEL_KNOWS label:JOB_DEFLECT] 「不怎麼樣。你呢？」
 
-[rachel right] 「你知道的。」
+[rachel right label:RACHEL_KNOWS] 「你知道的。」
 （喝了一口）「傷心總是難免的，山姆。」
 
 [narrator none] 她離開前說了一句話：

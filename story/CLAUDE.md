@@ -40,17 +40,15 @@ if mytag_val != "":
 - Add example usage in code block (line ~104)
 - If applicable, add error case to "What Crashes or Silently Breaks" (line ~139)
 
-## Current Tags
+## Tags
 
-| Tag | Parser | Linter | GameScene | Docs |
-|-----|--------|--------|-----------|------|
-| `speed:` | L:198 | L:88-91 | (built-in typewriter) | G:96 |
-| `fx:` | L:199-203 | L:92-99 | (not yet impl.) | G:97, 102 |
-| `sfx:` | L:204-205 | L:100-102 | GS:265-267 | G:97 |
-| `score:` | L:206-207 | L:103-105 | GS:257-261 | G:98 |
-| `next:` | L:195-196 | L:84-87 | (built-in) | G:99 |
-| `choices` | L:191-192 | L:80-81 | GS:252-255 | G:100 |
-| `minigame` | L:193-194 | L:82-83 | GS:218-222 | G:100 |
+Canonical tag list:
+
+@editing-guideline.md
+
+To find a tag's code, grep its prefix in `StoryLoader._apply_tag()` (parse) and `StoryLinter.lint_chapter()` (validate).
+
+**Label routing (dev note):** `>>`/`next:` reference a `label:NAME`, not a raw index. `StoryLoader._resolve_refs()` rewrites every label → int index after parse (two-pass), so `GameScene`/`WorldDialogue` stay int-based — no consumer change. `label:` is structural, not a per-line effect, so it skips the "GameScene applies the effect" step of the 4-step tag procedure.
 
 ## Key File Refs
 

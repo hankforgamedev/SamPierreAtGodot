@@ -5,6 +5,7 @@ const LEVELS = {
 	"Office":     "res://scenes/Office.tscn",
 	"Street":     "res://scenes/Street.tscn",
 	"Restaurant": "res://scenes/LaoxiaoRestaurant.tscn",
+	"SubwayCar":  "res://scenes/SubwayCar.tscn",
 }
 
 const CHAPTERS = ["ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "epilogue"]
