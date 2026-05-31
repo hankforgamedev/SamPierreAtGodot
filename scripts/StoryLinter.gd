@@ -8,7 +8,7 @@ const VALID_CHARS: PackedStringArray = [
 	"sam", "rat", "lee", "rachel", "sarah", "bill", "moujia", "david", "narrator"
 ]
 const VALID_SPEEDS: PackedStringArray = ["fast", "slow"]
-const VALID_FX: PackedStringArray = ["shake", "flash_white", "flash_black", "glitch_spike"]
+const VALID_FX: PackedStringArray = ["shake", "flash_white", "flash_black", "glitch_spike", "train"]
 
 
 static func lint_chapter(path: String, content: String) -> void:

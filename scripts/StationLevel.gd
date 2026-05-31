@@ -9,6 +9,7 @@ func _ready() -> void:
 	_level_text = StoryLoader.load_level_text("res://story/levels/station.md")
 	super._ready()
 	tree_exiting.connect(_kill_active_tweens)
+	world_dialogue.line_fx.connect(_on_dialogue_line_fx)
 
 func _get_level_name() -> String:
 	return _level_text.get("level_name", "")
@@ -75,13 +76,20 @@ func _on_player_moved() -> void:
 
 func _trigger_train_death() -> void:
 	_in_dialogue = true
+	await _animate_train()
+	SoundManager.play_sfx("tom_screaming")
+	trigger_flash(Color.BLACK, 1.0)
+	await get_tree().create_timer(2.1).timeout
+	if not is_inside_tree():
+		return
+	GameOverlay.show_overlay(self, "——末班車——")
 
+func _animate_train() -> void:
 	var narr := _make_narration("隆隆聲——")
 	add_child(narr)
 	SoundManager.play_sfx("riser")
 	await get_tree().create_timer(1.2).timeout
 
-	# 火車從右邊衝入
 	var train := Label.new()
 	train.text = "══════════════╗▶"
 	train.theme_type_variation = "TitleLabel"
@@ -96,23 +104,20 @@ func _trigger_train_death() -> void:
 	_train_tween.tween_property(train, "position:x", -500.0, 0.55).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await get_tree().create_timer(0.28).timeout
 
-	# 衝到玩家位置：爆炸效果
 	trigger_shake(22.0, 0.7)
 	trigger_flash(Color.WHITE, 0.35)
 	narr.text = "——末班車從黑暗中衝出——"
 	SoundManager.play_sfx("explosion")
 
-	SoundManager.play_sfx("tom_screaming")
 	await get_tree().create_timer(0.8).timeout
 	train.queue_free()
 	narr.queue_free()
 
 	_train_tween = null
-	trigger_flash(Color.BLACK, 2.0)
-	await get_tree().create_timer(2.1).timeout
-	if not is_inside_tree():
-		return
-	GameOverlay.show_overlay(self, "——末班車——")
+
+func _on_dialogue_line_fx(effects: Array) -> void:
+	if "train" in effects:
+		await _animate_train()
 
 func _make_narration(text: String) -> Label:
 	var lbl := Label.new()

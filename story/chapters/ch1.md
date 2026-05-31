@@ -18,12 +18,12 @@ right_char: rat
 
 [narrator none] 這裡充斥著粗俗下流的塗鴉與幾則爛笑話：
 
-[sam left sfx:canned_laughter_shorter speed:slow]
+[sam left]
 「為甚麼列寧喜歡穿皮鞋，史達林卻總是穿靴子？」
 
 「因為列寧時代，俄羅斯的血水只淹到腳踝。」
 
-[narrator none] 皮耶爾其實覺得沒有很好笑，他不喜歡太寫實的笑話。
+[narrator none speed:slow] 皮耶爾其實覺得沒有很好笑，他不喜歡太寫實的笑話。
 
 [rat right sfx:horse-walking-sound] 「嘿……山姆，對嗎？好久不見，呵。」
 
@@ -63,7 +63,7 @@ right_char: rat
 
 [rat right] 「那些怨念還有烏煙瘴氣，整個籠罩在你身上，我是說真的啦……幹，而且啊，死神在你頭上晃來晃去餒。您是貨真價實的憂鬱小子啊！非常憂鬱！」
 
-[rat right sfx:canned_laughter_shorter] 「誠心建議你趕快去市中心跳一跳樓，早死早超生，順道壓壓房價。」
+[rat right sfx:canned_laughter_longer] 「誠心建議你趕快去市中心跳一跳樓，早死早超生，順道壓壓房價。」
 
 [narrator none] 老鼠似乎被自己的笑話逗樂，突然暈頭轉向，跌到地上。
 
@@ -75,7 +75,7 @@ right_char: rat
 
 [rat right] 「說到這個，借些錢花花吧，我把錢都拿去買粉吸掉了，沒錢吃起司漢堡了。不然這樣吧，借我一百，我買兩個漢堡——一個你看我吃——一個我吃給你看——」
 
-[rat right choices]
+[rat right choices sfx:canned_laughter_shorter]
 老鼠邊笑邊說著，突然有些喘不過氣。
 
 - 「你比上次還要嗨，夥計。先坐下冷靜一下。」 >> RAT_PANIC
@@ -90,7 +90,7 @@ right_char: rat
 
 [narrator sfx:hitHurt none] 他用力一揮，把老鼠甩開，然後退到身邊的柱子旁。
 
-[narrator none speed:fast fx:shake,flash_white]
+[narrator none speed:fast fx:flash_white]
 老鼠從皮靴內側抽出一把十五公分的蝴蝶刀，衝向皮耶爾。
 
 [narrator none] 皮耶爾看到那刀就愣住了。「要是我死了怎麼辦？」他腦中的思緒開始爆炸。
@@ -102,7 +102,7 @@ right_char: rat
 
 「操！一次就好，就算只有一次也好，我想活著，真正的活著，而那就是現在。」
 
-[narrator none sfx:hitHurt_var1 speed:slow] 不過有點太遲了。皮耶爾反應過來掏槍時，他的下腹已被蝴蝶刀刺中，正好是有舊傷的部位。
+[narrator none sfx:hitHurt_var1 speed:slow fx:shake] 不過有點太遲了。皮耶爾反應過來掏槍時，他的下腹已被蝴蝶刀刺中，正好是有舊傷的部位。
 
 [narrator none speed:fast] 皮耶爾整個人被老鼠按在牆上，劇烈的疼痛讓他快要昏死過去，但他知道他不能閉眼。他仍試著擠出最後一點力氣開槍。
 
@@ -113,11 +113,14 @@ right_char: rat
 
 似乎萬念俱灰了。
 
-[narrator none sfx:explosion_stuffy] 好在皮耶爾終於等到了他的腎上腺素，他一記左鉤拳打在了老鼠的下巴上。
+[narrator none speed:fast sfx:explosion_stuffy fx:shake] 好在皮耶爾終於等到了他的腎上腺素，他一記左鉤拳打在了老鼠的下巴上。
 
 [narrator none speed:fast] 「焯！」老鼠咬到舌頭，向後蹣跚打跌幾步。
 
-[narrator none sfx:gunshot] 皮耶爾朝他的胸口開了一槍，射穿了他的肺。老鼠摔了一大跤跌坐在地上，「嘶……嘶……」那氣球洩氣似的聲音在月台上迴盪。
+[narrator none sfx:gunshot fx:shake] 皮耶爾又朝他的胸口開了一槍，射穿了他的肺。老鼠摔了一大跤跌坐在地上。
+
+[narrator none]
+「嘶……嘶……」那氣球洩氣似的聲音在月台上迴盪。
 
 [narrator none fx:flash_white] 隧道深處傳來一束微弱的光，皮耶爾笑了。
 
@@ -125,9 +128,9 @@ right_char: rat
 
 但皮耶爾毫不理會，他早已失去理智。
 
-[narrator none fx:flash_white] 那束光越來越近，車輪和軌道發出的尖嘯聲愈發刺耳，老鼠愣在月台邊四肢發軟動彈不得。
+[narrator none] 那束光越來越近，車輪和軌道發出的尖嘯聲愈發刺耳，老鼠愣在月台邊四肢發軟動彈不得。
 
-[narrator none sfx:tom_screaming speed:fast fx:flash_white,glitch_spike]
+[narrator none sfx:tom_screaming speed:fast fx:flash_white,glitch_spike,train]
 皮耶爾硬生生把他拽了起來，朝軌道的方向用力一推。「唰，噗吱！」末班車進站，可憐的鼠輩就像果凍一樣被輾碎。
 
 [narrator none] 鮮血濺到皮耶爾的臉上、衣服上，朱紅的顏料在白襯衫上渲染了好一幅抽象畫。
