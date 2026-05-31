@@ -156,30 +156,18 @@ Game is **Mandarin-native** (not English with Chinese labels). ASCII map scenes 
 
 Keyboard input is **not an afterthought**. Every UI/menu (start screen, game-over, choices, level HUDs) must be **fully keyboard-navigable**. Godot's built-in focus/input handling covers this without manual wiring — use it. Mouse clicks work out of the box for clickable objects; keyboard must have equal priority.
 
-## Known Issues — Dialogue Choice Behavior
+## Dialogue Systems — Shared Engine vs Distinct Behavior
 
-**Status:** Unstable. Scheduled for full fix 2026-05-31.
+**Status:** Reworked 2026-05-31. The two dialogue UIs share a reveal engine; their *rendering* is intentionally different.
 
-**Symptoms:**
-- Choice button text wrapping inconsistent (multi-line clipping with long CJK text)
-- Player response auto-advance timing frame-dependent (sometimes skips, sometimes waits)
-- WorldDialogue vs GameScene choice flow differ (inconsistent behavior across scenes)
+**Shared:** `scripts/Typewriter.gd` (`class_name Typewriter`, RefCounted) owns the text-reveal cadence + speed resolution (`SPEED_FAST/NORMAL/SLOW` from `GameTheme`). Both `GameScene` and `WorldDialogue` hold a `Typewriter` instance, call `start(text_len, speed_tag)` in `_show_line()`, and drive it from `_process()` (`tick(delta)` → N type-click SFX → render → `complete()`). This fixed `GameScene` ignoring per-line `speed:` (it was hardcoded `SPEED_NORMAL`).
 
-**Root Cause:**
-Partial fixes layered without unified design:
-1. `custom_minimum_size = Vector2(0, 0)` + `clip_text = true` (commit 6bdd1ae) — prevents overflow but breaks text flow
-2. `size_flags_horizontal = Control.SIZE_EXPAND_FILL` — helps width but doesn't solve clipping
-3. `_is_player_line` flag + `_advance()` in `_process()` — timing unsafe, depends on frame rate
+**Distinct by design (do NOT merge):**
+- `GameScene` (VN) — page flip: `dlg_text.text` is *replaced* each line. Has chapter card, portraits, progress bar.
+- `WorldDialogue` (ASCII world panel) — append: each finished line accumulates into `_log_bbcode` (scroll-back record), and a picked choice is committed to that log before routing. VN routes silently.
 
-**Affected Files:**
-- `scripts/WorldDialogue.gd` — `_build_choices()` L:240-265, `_process()` L:92-101, `_show_line()` L:176
-- `scripts/GameScene.gd` — `_build_choices()` L:282-313 (no auto-advance — inconsistent)
-
-**Fix Scope (TODO):**
-- Decouple choice flow from typewriter timing (use signal, not frame-based advance)
-- Set explicit button dimensions instead of clip_text
-- Unify GameScene + WorldDialogue choice behavior
-- Test with long Mandarin choice text (full-width chars break differently than ASCII)
-
-**Do Not Touch Until:** Ready to fix all three points in single session.
+**Still divergent / not unified (intentional or low-priority):**
+- `_build_choices()` + `_select_choice()` are still per-file — button styling and the commit-to-log step genuinely differ. Only the typewriter is shared.
+- `WorldDialogue` choice buttons use `autowrap_mode = AUTOWRAP_WORD_SMART`; `GameScene` choice buttons don't (wider panel, not observed clipping). Add if long-CJK clipping shows up there.
+- `WorldDialogue` auto-advances player (`sam`) lines via `call_deferred("_deferred_auto_advance")` + `_auto_advance_queued` guard; `GameScene` waits for input. This is a behavior difference, not a bug.
 

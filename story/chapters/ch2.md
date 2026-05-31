@@ -40,5 +40,5 @@ right_char: sarah
 
 死灰的天空下，黯淡的路像冥府擺渡人卡戎一樣向他招手。
 
-[sam left] （日記）
+[sam left speed:slow] （日記）
 「我們為何起床？我們為何工作？」

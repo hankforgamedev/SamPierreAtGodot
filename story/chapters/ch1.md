@@ -61,6 +61,7 @@ right_char: rat
 [narrator sfx:gunshot none speed:fast fx:shake]
 砰！子彈射穿老鼠的肺。
 
+[narrator none speed:slow]
 皮耶爾把老鼠拽向軌道，用力一推。
 
 末班車進站。

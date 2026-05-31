@@ -15,9 +15,7 @@ var _lines        : Array      = []
 var _current_index: int        = 0
 var _typing       := false
 var _full_text    := ""
-var _typed_count  := 0
-var _type_timer   := 0.0
-var _type_speed   := GameTheme.SPEED_NORMAL
+var _tw           : Typewriter = Typewriter.new()
 var _has_choices       := false
 var _can_advance       := false
 var _is_player_line    := false
@@ -96,12 +94,10 @@ func close() -> void:
 func _process(delta: float) -> void:
 	if not _typing:
 		return
-	_type_timer += delta
-	while _type_timer >= _type_speed and _typed_count < _full_text.length():
-		_type_timer -= _type_speed
-		_typed_count += 1
+	var added := _tw.tick(delta)
+	for _i in added:
 		SoundManager.play_type_click()
-	if _typed_count >= _full_text.length():
+	if _tw.complete():
 		_typing      = false
 		_can_advance = true
 		if _is_player_line and not _auto_advance_queued:
@@ -158,7 +154,7 @@ func _deferred_auto_advance() -> void:
 		_advance()
 
 func _finish_typing() -> void:
-	_typed_count = _full_text.length()
+	_tw.finish()
 	_update_display()
 	_typing      = false
 	_can_advance = true
@@ -220,12 +216,6 @@ func _show_line(index: int) -> void:
 		_current_score = score_track
 		SoundManager.play_score(score_track, false)
 
-	var spd: String = line.get("speed", "normal") as String
-	match spd:
-		"fast":  _type_speed = GameTheme.SPEED_FAST
-		"slow":  _type_speed = GameTheme.SPEED_SLOW
-		_:       _type_speed = GameTheme.SPEED_NORMAL
-
 	var sfx_name: String = line.get("sfx", "") as String
 	if sfx_name != "":
 		SoundManager.play_sfx(sfx_name)
@@ -237,10 +227,9 @@ func _show_line(index: int) -> void:
 	_full_text   = line.get("text", "") as String
 	if is_inner:
 		# _full_text = "[i]" + _full_text + "[/i]" # [DEBUG] disabled for now
-		_full_text =  _full_text  
+		_full_text =  _full_text
 
-	_typed_count = 0
-	_type_timer  = 0.0
+	_tw.start(_full_text.length(), line.get("speed", "normal") as String)
 	_typing      = true
 	_update_display()
 
@@ -251,7 +240,7 @@ func _commit_current_line() -> void:
 
 func _update_display() -> void:
 	dlg_text.text = _log_bbcode + _cur_entry_header \
-		+ "[color=" + _cur_body_hex + "]" + _full_text.substr(0, _typed_count) + "[/color]"
+		+ "[color=" + _cur_body_hex + "]" + _full_text.substr(0, _tw.count) + "[/color]"
 	if not _typing:
 		dlg_text.scroll_to_line(dlg_text.get_line_count())
 

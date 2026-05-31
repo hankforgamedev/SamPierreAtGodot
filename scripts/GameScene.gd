@@ -11,9 +11,8 @@ var can_advance    : bool       = false
 var typing         : bool       = false
 var has_choices    : bool       = false
 var full_text      : String     = ""
-var typed_so_far   : String     = ""
-var type_timer     : float      = 0.0
 var current_score  : String     = ""
+var _tw            : Typewriter = Typewriter.new()
 
 # ── Node refs ─────────────────────────────────────────────────
 @onready var base_color      : ColorRect    = $BG/Base
@@ -172,23 +171,19 @@ func _navigate_choices(delta: int) -> void:
 func _process(delta: float) -> void:
 	if not typing:
 		return
-	type_timer += delta
-	while type_timer >= GameTheme.SPEED_NORMAL and typed_so_far.length() < full_text.length():
-		typed_so_far  += full_text[typed_so_far.length()]
-		type_timer    -= GameTheme.SPEED_NORMAL
-		dlg_text.text  = typed_so_far
+	var added := _tw.tick(delta)
+	for _i in added:
 		SoundManager.play_type_click()
-	if typed_so_far.length() >= full_text.length():
-		typing        = false
-		dlg_text.text = full_text
-		if has_choices:
-			choice_panel.visible = true
-			next_hint.text = ""
-			_focus_first_choice()
+	dlg_text.text = full_text.substr(0, _tw.count)
+	if _tw.complete():
+		_on_typing_done()
 
 func _finish_typing() -> void:
+	_tw.finish()
+	_on_typing_done()
+
+func _on_typing_done() -> void:
 	typing        = false
-	typed_so_far  = full_text
 	dlg_text.text = full_text
 	if has_choices:
 		choice_panel.visible = true
@@ -281,10 +276,9 @@ func _show_line(index: int) -> void:
 	full_text    = line.get("text", "") as String
 	if is_inner: # has bug with web export [DEBUG]
 		# full_text = "[i]" + full_text + "[/i]"
-		full_text =  full_text  
+		full_text =  full_text
 
-	typed_so_far = ""
-	type_timer   = 0.0
+	_tw.start(full_text.length(), line.get("speed", "normal") as String)
 	typing       = true
 	dlg_text.text = ""
 

@@ -30,7 +30,7 @@ Unable to enable addon plugin at: 'res://addons/gdUnit4/plugin.gd' parsing of co
 
 - [x] ask about GD MCP for claude, or can it read from the GD language server (offered by official godot extension for VScode)
 
-path hardcoding ("res://" is fine, that is the intended way. just nothing about device-specific path, especially considering that the developers use different OS and devices to access this repo)
+- [ ] make sure no path hardcoding ("res://" is fine, that is the intended way. just nothing about device-specific path, especially considering that the developers use different OS and devices to access this repo)
 
 this shit everywhere:
 
@@ -47,3 +47,5 @@ GDScript backtrace (most recent call first):
 - [ ] pure dialog scene doesn't seem to be using different typewrite speed setting despite intending to do so. this is the inconsistency caused by the issue mentioned just above.
 
 - [ ] procedural symbol map generator. just make sure NPC & exit can be reached by player.
+
+- [ ] keyboard nav for dev menu
