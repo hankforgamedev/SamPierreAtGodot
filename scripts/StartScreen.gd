@@ -31,4 +31,8 @@ func _on_start() -> void:
 	get_tree().change_scene_to_file("res://scenes/Station.tscn")
 
 func _on_quit() -> void:
-	get_tree().quit()
+	# No real quit — web/native users quit the app themselves. Gag instead.
+	var btn := $TitleBlock/QuitButton as Button
+	btn.text = "你不能"
+	btn.add_theme_color_override("font_color",       GameTheme.C_RED)
+	btn.add_theme_color_override("font_hover_color", GameTheme.C_RED)

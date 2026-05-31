@@ -79,9 +79,10 @@ res://audio/ambient/*.ogg
 
 ### ASCII World System (grid-based, no physics)
 
-- **`AsciiLevelBase.gd`** — base `Control` class for all levels; handles grid movement, collision (`#`/`I`/`|` block), E-key interaction, glitch rendering, `stress_level` variable drives glitch frequency
-- **`StationLevel.gd`**, **`OfficeLevel.gd`**, **`StreetLevel.gd`**, **`RestaurantLevel.gd`** — each extends `AsciiLevelBase`; overrides `_get_map_data()` (Array[String]), `_get_player_spawn()` (Vector2i), `_get_npcs()` (Vector2i → Dict), `_get_level_name()`
-- **`WorldDialogue.gd`** — right-side panel (right 35% of screen); mirrors GameScene typewriter + choice logic; `open(chapter_id, start_line)` / `close()` / emits `dialogue_closed`
+- **`AsciiLevelBase.gd`** — base `Control` class for all levels; handles grid movement, collision (`#`/`I`/`|` block), E-key interaction, glitch rendering, `stress_level` variable drives glitch frequency. Ctrl+WASD / Ctrl+arrows = dash to next wall (`_dash_dir`). Interactable object cells render pulsed amber (`C_OBJECT_HINT`) so they're discoverable.
+- **`StationLevel.gd`**, **`OfficeLevel.gd`**, **`StreetLevel.gd`**, **`RestaurantLevel.gd`** — each extends `AsciiLevelBase`; overrides `_get_map_data()` (Array[String]), `_get_player_spawn()` (Vector2i), `_get_npcs()` (Vector2i → Dict), `_get_level_name()`, and `_get_chapter_id()` (scene's chapter — drives the entry card; "" = none)
+- **`ChapterCard.gd`** — shared full-screen title card. Shown on scene ENTER (one scene = one chapter) by `AsciiLevelBase._ready` when `_get_chapter_id()` set. `await ChapterCard.show_card(parent, title).finished`. GameScene VN has its own `.tscn`-based card.
+- **`WorldDialogue.gd`** — right-side panel (right 35% of screen); shares the `Typewriter` reveal engine with GameScene (see "Dialogue Systems" below); `open(chapter_id, start_line)` / `close()` / emits `dialogue_closed`. Appends finished lines + the picked choice to a scroll-back log (VN page-flips instead).
 - **NPC dict format**: `{Vector2i: {chapter_id, start_line, char_id, display}}` — or include `next_level` key for door transitions
 - **Glitch system**: `_glitch_overlay` (Vector2i → String) randomly corrupts `#`/`%`/`.` chars; chaos pool uses Unicode symbols (Ψ Ω Δ ░ ▓ etc.); scales with `stress_level`
 - **Font**: `SystemFont` with Consolas/Courier New at 28px set programmatically in `_setup_display()`
@@ -139,10 +140,14 @@ A line with `minigame` field saves `GameManager.resume_line = index + 1`, then s
 | `C_CHOICE_*` | Choice button scheme |
 | `C_HINT_TEXT`, `C_AMBIENT_TEXT` | World UI labels |
 | `C_RED`, `C_GREEN`, `C_TITLE_TEXT`, etc. | One-off named colors |
+| `C_OBJECT_HINT` | Amber hex for pulsed interactable-object cells (ASCII map) |
+| `INNER_FX_OPEN/CLOSE` | BBCode wrap for inner-monologue emphasis (`[wave]`; CJK has no italic) |
 | `CHAR_HEX` | BBCode hex strings per character |
 | `CHAR_COLOR` | `Color` objects per character for `add_theme_color_override` |
 | `BASE_MAP_FONT` | Root design font (28px); ASCII map grid scales from this |
 | `SPEED_FAST/NORMAL/SLOW` | Typewriter speeds in seconds/char |
+
+**Fonts** — loaded once in `_ensure_fonts()`: sans (GenYoGothic R/B/H), serif (SourceHanSerif Regular/Bold/Heavy). `build_scaled_theme` wires serif Regular→`normal_font`, serif Bold→`bold_font` for RichTextLabel (so `[b]` works for CJK). No italic — CJK fonts have none; use color/size/animated BBCode (`[wave]`/`[pulse]`/`[shake]`) for emphasis, never `[i]`.
 
 Adding a new character: add to **both** `CHAR_HEX` and `CHAR_COLOR` in `GameTheme.gd`.
 

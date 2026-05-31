@@ -24,6 +24,8 @@ var _map_font_size  := GameTheme.BASE_MAP_FONT
 var _log_bbcode      : String = ""
 var _cur_entry_header: String = ""
 var _cur_body_hex    : String = ""
+var _cur_fx_open     : String = ""
+var _cur_fx_close    : String = ""
 var _current_score  : String = ""
 
 @onready var spk_name      : Label           = $RightPanel/Margin/Inner/SpeakerHeader/SpeakerBar/SpeakerName
@@ -67,7 +69,7 @@ func _apply_panel_style() -> void:
 
 func apply_scale(map_font_size: int) -> void:
 	_map_font_size = map_font_size
-	var m := BASE_MARGIN * map_font_size / GameTheme.BASE_MAP_FONT
+	var m := roundi(float(BASE_MARGIN * map_font_size) / float(GameTheme.BASE_MAP_FONT))
 	margin_box.add_theme_constant_override("margin_left",   m)
 	margin_box.add_theme_constant_override("margin_right",  m)
 	margin_box.add_theme_constant_override("margin_top",    m)
@@ -200,6 +202,8 @@ func _show_line(index: int) -> void:
 	var body_color  : Color  = GameTheme.C_NARRATOR if is_narr \
 		else (GameTheme.C_INNER if is_inner else GameTheme.C_BODY_TEXT)
 	_cur_body_hex            = "#" + body_color.to_html(false)
+	_cur_fx_open  = GameTheme.INNER_FX_OPEN  if is_inner else ""
+	_cur_fx_close = GameTheme.INNER_FX_CLOSE if is_inner else ""
 	var disp_upper  : String = display.to_upper() if display != "" else ""
 	if disp_upper != "":
 		_cur_entry_header = "[color=#%s]%s[/color]\n" % [spk_color.to_html(false), disp_upper]
@@ -236,11 +240,11 @@ func _show_line(index: int) -> void:
 func _commit_current_line() -> void:
 	if _full_text == "":
 		return
-	_log_bbcode += _cur_entry_header + "[color=" + _cur_body_hex + "]" + _full_text + "[/color]\n\n"
+	_log_bbcode += _cur_entry_header + _cur_fx_open + "[color=" + _cur_body_hex + "]" + _full_text + "[/color]" + _cur_fx_close + "\n\n"
 
 func _update_display() -> void:
 	dlg_text.text = _log_bbcode + _cur_entry_header \
-		+ "[color=" + _cur_body_hex + "]" + _full_text.substr(0, _tw.count) + "[/color]"
+		+ _cur_fx_open + "[color=" + _cur_body_hex + "]" + _full_text.substr(0, _tw.count) + "[/color]" + _cur_fx_close
 	if not _typing:
 		dlg_text.scroll_to_line(dlg_text.get_line_count())
 

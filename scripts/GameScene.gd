@@ -13,6 +13,8 @@ var has_choices    : bool       = false
 var full_text      : String     = ""
 var current_score  : String     = ""
 var _tw            : Typewriter = Typewriter.new()
+var _fx_open       : String     = ""
+var _fx_close      : String     = ""
 
 # ── Node refs ─────────────────────────────────────────────────
 @onready var base_color      : ColorRect    = $BG/Base
@@ -174,7 +176,7 @@ func _process(delta: float) -> void:
 	var added := _tw.tick(delta)
 	for _i in added:
 		SoundManager.play_type_click()
-	dlg_text.text = full_text.substr(0, _tw.count)
+	dlg_text.text = _fx_open + full_text.substr(0, _tw.count) + _fx_close
 	if _tw.complete():
 		_on_typing_done()
 
@@ -184,7 +186,7 @@ func _finish_typing() -> void:
 
 func _on_typing_done() -> void:
 	typing        = false
-	dlg_text.text = full_text
+	dlg_text.text = _fx_open + full_text + _fx_close
 	if has_choices:
 		choice_panel.visible = true
 		next_hint.text = ""
@@ -254,6 +256,8 @@ func _show_line(index: int) -> void:
 	right_name.modulate = Color.WHITE if (right_lit and not is_narr and not is_inner) else GameTheme.C_ICON_DIM
 
 	dlg_text.theme_type_variation = "NarratorLabel" if (is_narr or is_inner) else ""
+	_fx_open  = GameTheme.INNER_FX_OPEN  if is_inner else ""
+	_fx_close = GameTheme.INNER_FX_CLOSE if is_inner else ""
 
 	# Check for choices
 	if line.has("choices"):

@@ -94,6 +94,7 @@ func _get_level_name()     -> String     : return ""
 func _get_scene_intro()    -> String     : return ""
 func _get_level_id()       -> String     : return ""
 func _get_ambient_track()  -> String     : return ""
+func _get_chapter_id()     -> String     : return ""  # scene's chapter — "" = no entry card
 
 # [TODO] fix hardcoding & magic numbers 
 func _compute_font_size() -> int:
@@ -135,6 +136,12 @@ func _ready() -> void:
 	_setup_ambient()
 	_objects = ObjectData.OBJECTS.get(_get_level_id(), {})
 	_setup_scene_panel()
+	# Chapter title card on scene enter (one scene = one chapter), before intro panel.
+	var chap_id := _get_chapter_id()
+	if chap_id != "":
+		var chap := DialogueData.get_chapter(chap_id)
+		if not chap.is_empty():
+			await ChapterCard.show_card(self, chap.get("title", "") as String).finished
 	_show_panel_text(_get_scene_intro())
 	SoundManager.play_ambient(_get_ambient_track())
 
@@ -155,6 +162,20 @@ func _input(event: InputEvent) -> void:
 	var _is_lmb := event is InputEventMouseButton \
 		and (event as InputEventMouseButton).pressed \
 		and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+
+	# Ctrl+WASD / Ctrl+arrows: dash to the next wall (DX for playtesting)
+	if event is InputEventKey and (event as InputEventKey).pressed and not (event as InputEventKey).echo \
+			and (event as InputEventKey).ctrl_pressed \
+			and not _in_dialogue and not _scene_panel_open and not _panel_typing:
+		var dash := _dash_dir(event as InputEventKey)
+		if dash != Vector2i.ZERO:
+			while _try_move(dash):
+				pass
+			_update_ambient()
+			if is_inside_tree():
+				get_viewport().set_input_as_handled()
+			return
+
 	if event.is_action_pressed("interact") or _is_lmb:
 		if _panel_typing:
 			_panel_typing = false
@@ -187,6 +208,14 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 # ── Movement ──────────────────────────────────────────────
+func _dash_dir(k: InputEventKey) -> Vector2i:
+	match k.physical_keycode:
+		KEY_W, KEY_UP:    return Vector2i(0, -1)
+		KEY_S, KEY_DOWN:  return Vector2i(0,  1)
+		KEY_A, KEY_LEFT:  return Vector2i(-1, 0)
+		KEY_D, KEY_RIGHT: return Vector2i(1,  0)
+		_:                return Vector2i.ZERO
+
 func _try_move(dir: Vector2i) -> bool:
 	var target := _player_pos + dir
 	if _is_walkable(target):
@@ -552,6 +581,9 @@ func _draw_map() -> void:
 				var col  := GameTheme.CHAR_HEX.get(npc.get("char_id", "narrator"), GameTheme.C_NPC_DEFAULT) as String
 				var disp := npc.get("display", "?") as String
 				out += "[color=%s]%s[/color]" % [col, disp]
+			elif pos in _objects:
+				# subtle pulsed amber so interactable objects are discoverable
+				out += "[pulse freq=0.8 ease=-2.0][color=%s]%s[/color][/pulse]" % [GameTheme.C_OBJECT_HINT, row[x]]
 			elif pos in _glitch_overlay:
 				out += "[color=%s]%s[/color]" % [GameTheme.C_GLITCH, _glitch_overlay[pos]]
 			else:

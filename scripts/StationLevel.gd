@@ -16,6 +16,9 @@ func _get_level_name() -> String:
 func _get_level_id() -> String:
 	return "station"
 
+func _get_chapter_id() -> String:
+	return "ch1"
+
 func _get_scene_intro() -> String:
 	return _level_text.get("intro", "")
 

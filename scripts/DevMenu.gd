@@ -12,39 +12,64 @@ const CHAPTERS = ["ch1", "ch2", "ch3", "ch4", "ch5", "ch6", "ch7", "ch8", "epilo
 
 func _ready() -> void:
 	theme = GameTheme.build_scaled_theme(get_viewport().get_visible_rect().size.y / float(GameTheme.BASE_VIEWPORT_H))
+
+	var bg := ColorRect.new()
+	bg.color = GameTheme.C_BG
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(bg)
+
+	var margin := MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
+		margin.add_theme_constant_override(side, 64)
+	add_child(margin)
+
 	var vbox := VBoxContainer.new()
-	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.add_theme_constant_override("separation", 10)
-	add_child(vbox)
+	vbox.add_theme_constant_override("separation", 20)
+	margin.add_child(vbox)
 
-	var lbl_levels := Label.new()
-	lbl_levels.text = "── Levels ──"
-	vbox.add_child(lbl_levels)
+	var title := Label.new()
+	title.text = "SAM PIERRE — DEV"
+	title.theme_type_variation = "DimLabel"
+	vbox.add_child(title)
 
-	var row_levels := HBoxContainer.new()
-	row_levels.add_theme_constant_override("separation", 6)
+	var first_btn: Button = null
+	vbox.add_child(_section_label("── Levels ──"))
+	var row_levels := _button_row()
 	vbox.add_child(row_levels)
 	for level_name: String in LEVELS:
-		var btn := Button.new()
-		btn.text = level_name
 		var path: String = LEVELS[level_name]
-		btn.pressed.connect(func() -> void: GameManager.go_to_level(path))
+		var btn := _make_button(level_name, func() -> void: GameManager.go_to_level(path))
 		row_levels.add_child(btn)
+		if first_btn == null:
+			first_btn = btn
 
-	var lbl_chapters := Label.new()
-	lbl_chapters.text = "── Chapters ──"
-	vbox.add_child(lbl_chapters)
-
-	var row_chapters := HBoxContainer.new()
-	row_chapters.add_theme_constant_override("separation", 6)
+	vbox.add_child(_section_label("── Chapters ──"))
+	var row_chapters := _button_row()
 	vbox.add_child(row_chapters)
 	for ch_id: String in CHAPTERS:
-		var btn := Button.new()
-		btn.text = ch_id
-		btn.pressed.connect(func() -> void: GameManager.start_chapter(ch_id))
-		row_chapters.add_child(btn)
+		row_chapters.add_child(_make_button(ch_id, func() -> void: GameManager.start_chapter(ch_id)))
 
-	var btn_full := Button.new()
-	btn_full.text = "Full Playthrough"
-	btn_full.pressed.connect(func() -> void: GameManager.go_to_level("res://scenes/StartScreen.tscn"))
-	vbox.add_child(btn_full)
+	var row_full := _button_row()
+	vbox.add_child(row_full)
+	row_full.add_child(_make_button("Full Playthrough", func() -> void: GameManager.go_to_level("res://scenes/StartScreen.tscn")))
+
+	if first_btn != null:
+		first_btn.grab_focus()  # keyboard nav: arrows move between buttons, Space/Enter activates
+
+func _section_label(text: String) -> Label:
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.theme_type_variation = "DimLabel"
+	return lbl
+
+func _button_row() -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	return row  # buttons stay content-width (HBox doesn't stretch children)
+
+func _make_button(label: String, on_press: Callable) -> Button:
+	var btn := Button.new()
+	btn.text = "  %s  " % label  # breathing room around label
+	btn.pressed.connect(on_press)
+	return btn

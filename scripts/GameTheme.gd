@@ -2,8 +2,10 @@ class_name GameTheme
 
 # ── Custom fonts (loaded once, cached) ───────────────────────────────────────
 static var _font_sans:       FontFile = null
+static var _font_sans_bold:       FontFile = null
 static var _font_sans_heavy: FontFile = null
 static var _font_serif:      FontFile = null
+static var _font_serif_bold: FontFile = null
 static var _font_serif_heavy: FontFile = null
 
 
@@ -12,8 +14,10 @@ static func _ensure_fonts() -> void:
 	if _font_sans != null:
 		return
 	_font_sans       = load("res://font/genyo-gothic/GenYoGothic2TW-R.otf")
+	_font_sans_bold  = load("res://font/genyo-gothic/GenYoGothic2TW-B.otf")
 	_font_sans_heavy = load("res://font/genyo-gothic/GenYoGothic2TW-H.otf")
 	_font_serif      = load("res://font/han-serif/SourceHanSerifTC-Regular.otf")
+	_font_serif_bold = load("res://font/han-serif/SourceHanSerifTC-Bold.otf")
 	_font_serif_heavy = load("res://font/han-serif/SourceHanSerifTC-Heavy.otf")
 
 
@@ -38,9 +42,12 @@ static func build_scaled_theme(scale: float) -> Theme:
 		t.set_font("font",        "Button",        _font_sans)
 	if _font_serif != null:
 		t.set_font("normal_font", "RichTextLabel", _font_serif)
+	if _font_serif_bold != null:
+		t.set_font("bold_font", "RichTextLabel", _font_serif_bold)  # enables [b] for CJK
 	t.set_font_size("font_size",        "Label",        maxi(int(FONT_BODY    * scale), FONT_BODY))
 	t.set_color(    "font_color",       "Label",        C_BODY_TEXT)
 	t.set_font_size("normal_font_size", "RichTextLabel",maxi(int(FONT_BODY    * scale), FONT_BODY))
+	t.set_font_size("bold_font_size",   "RichTextLabel",maxi(int(FONT_BODY    * scale), FONT_BODY))
 	t.set_font_size("font_size",        "Button",       maxi(int(FONT_DIM     * scale), FONT_DIM))
 	t.set_color(    "font_color",       "Button",       C_CHOICE_TXT)
 	t.set_color(    "font_hover_color", "Button",       C_CHOICE_HVTXT)
@@ -83,6 +90,10 @@ const C_HINT_TEXT    := Color(0.52,  0.48,  0.38)    # "E / Space to interact"
 const C_AMBIENT_TEXT := Color(0.68,  0.62,  0.50)    # ambient label
 const C_DIM          := Color(0.50,  0.42,  0.30)    # secondary / dim UI text
 const C_INNER        := Color(0.50, 0.48, 0.42, 0.65)  # inner monologue: muted, lower opacity
+# Inner-monologue emphasis. CJK has no italic; use a web-safe animated BBCode
+# effect instead. Swap [wave]→[pulse]/[shake]/[tornado] to taste. Empty = none.
+const INNER_FX_OPEN  := "[wave amp=12.0 freq=3.0]" 
+const INNER_FX_CLOSE := "[/wave]"
 const C_ICON_DIM     := Color(0.25,  0.25,  0.25, 0.40)  # portrait icon inactive
 const C_STAMP_BORDER := Color(0.60,  0.08,  0.05)    # red stamp border
 const C_RED          := Color(0.85,  0.25,  0.20)    # reject / danger
@@ -108,6 +119,7 @@ const C_PLAYER      := "#C8B890"
 const C_GLITCH      := "#FF1111"
 const C_NPC_DEFAULT := "#888888"
 const C_TRAIN       := "#ffbf00"
+const C_OBJECT_HINT := "#B8924A"   # interactable object cell — subtle amber, pulsed in _draw_map
 
 # ── Character colors ─────────────────────────────────────────────────────────
 # CHAR_HEX  — BBCode map rendering (hex strings)
