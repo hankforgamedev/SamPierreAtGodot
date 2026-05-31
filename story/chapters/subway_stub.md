@@ -6,4 +6,4 @@ left_char: sam
 right_char: narrator
 ---
 
-[narrator none] 這個人看起來一言不發。
+[narrator none] 這個人一言不發。
