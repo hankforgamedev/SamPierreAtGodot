@@ -3,6 +3,7 @@ extends SceneTree
 ## 執行：godot --headless --path . --script tools/smoke_levels.gd
 
 const LEVELS := [
+	"res://scenes3d/HuZhaiCheng.tscn",
 	"res://scenes3d/Station.tscn",
 	"res://scenes3d/Office.tscn",
 	"res://scenes3d/Restaurant.tscn",
@@ -34,10 +35,9 @@ func _init() -> void:
 			else:
 				problems.append("%s: interactable without chapter_id/next_level" % node.name)
 
-		if npcs == 0:
-			problems.append("no NPC")
-		if doors == 0:
-			problems.append("no door")
+		# hub（街區）合法地沒有章節 NPC，只要求「至少一個可互動物件」
+		if npcs + doors == 0:
+			problems.append("no interactable (npc/door)")
 
 		if problems.is_empty():
 			print("PASS %s (npcs=%d doors=%d)" % [path, npcs, doors])

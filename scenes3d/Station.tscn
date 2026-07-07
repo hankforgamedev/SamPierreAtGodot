@@ -455,8 +455,8 @@ shape = SubResource("CapsuleShape3D_j05lp")
 
 [node name="DoorOffice" type="StaticBody3D" parent="." unique_id=1953825540 groups=["interactable"]]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -14.9, 0, -2)
-metadata/next_level = "res://scenes3d/Office.tscn"
-metadata/display_name = "辦公室"
+metadata/next_level = "res://scenes3d/HuZhaiCheng.tscn"
+metadata/display_name = "巷弄"
 
 [node name="Model" type="Node3D" parent="DoorOffice" unique_id=1996069307 instance=ExtResource("3_unfyl")]
 transform = Transform3D(2.1, 0, 0, 0, 2.1, 0, 0, 0, 2.1, 0, 0, 0)

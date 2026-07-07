@@ -8,6 +8,7 @@ extends Object
 
 const MODEL_DIR := "res://assets/models/kenney_furniture/"
 const MODEL_SCALE := 2.0  # Kenney furniture kit 約 1:2 縮尺，×2 貼近真人比例
+const TEX_DIR := "res://assets/textures/huzhaicheng/"  # Hank 丟貼圖進這，重跑 build 即自動接上
 const GM := preload("res://scripts/GameManager.gd")
 
 
@@ -60,6 +61,34 @@ static func flat_mat(color: Color, tex: Texture2D = null,
 		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		m.uv1_scale = uv_scale
 	return m
+
+
+## 自動接貼圖：assets/textures/huzhaicheng/<name>.png 存在就貼上、否則退回 fallback 純色。
+## 讓 Hank 之後把貼圖丟進資料夾、重跑 build 就換上，門與邏輯完全不動。
+static func tex_mat(tex_name: String, fallback: Color, uv_scale := Vector3.ONE,
+		transparent := false) -> StandardMaterial3D:
+	var path := TEX_DIR + tex_name + ".png"
+	var tex: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	var m := flat_mat(Color.WHITE if tex else fallback, tex, uv_scale)
+	if transparent:
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return m
+
+
+## 薄片（晾衣、破布、貼紙、招牌布幔）— 無碰撞，雙面
+static func add_quad(root: Node3D, node_name: String, pos: Vector3, size: Vector2,
+		rot_deg: Vector3, mat: Material) -> void:
+	var mesh := QuadMesh.new()
+	mesh.size = size
+	var mi := MeshInstance3D.new()
+	mi.name = node_name
+	mi.mesh = mesh
+	mi.material_override = mat
+	mi.position = pos
+	mi.rotation = Vector3(deg_to_rad(rot_deg.x), deg_to_rad(rot_deg.y), deg_to_rad(rot_deg.z))
+	root.add_child(mi)
+	mi.owner = root
 
 
 static func checker_tex(c1: Color, c2: Color) -> ImageTexture:

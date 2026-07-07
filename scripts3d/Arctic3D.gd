@@ -6,7 +6,7 @@ extends Node
 ##   NPC：meta chapter_id / start_line / char_id → 開對話
 ##   門 ：meta next_level / display_name → 換關卡
 
-const START_LEVEL := "res://scenes3d/Station.tscn"
+const START_LEVEL := "res://scenes3d/HuZhaiCheng.tscn"
 const VIEW_SHRINK := 6  # 1920/6 = 320x180
 
 var _player: FPPlayer

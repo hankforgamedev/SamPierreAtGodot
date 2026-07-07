@@ -14,6 +14,7 @@
 - [x] CC0 素材入庫:Kenney Furniture Kit(`assets/models/kenney_furniture/`,附 LICENSE)
 - [x] GDUnit4 測試 **42 綠**(object_interaction 21 + ambient_b 21)
 - [x] 第九次試玩兩個 UI bug 修掉(對話文字飛左上角 / 有選項的對話卡死 → 同根因:`set_anchors_preset` 把純 Control 縮 0x0,改用 `set_anchors_and_offsets_preset`)
+- [x] **虎寨城 3D 街區 hub 切片**:`scenes3d/HuZhaiCheng.tscn`(圍院 + 可攀爬天橋 + 管線/冷氣/晾衣/積水/招牌/拆遷公告/「一次就好」塗鴉)。設為 START_LEVEL,三扇門通往 Station/Office/Restaurant,三內裝的出口門回指街區 → hub 迴圈成立。box 幾何 + 自動貼圖接口(`level_builder_lib.tex_mat`,貼圖丟 `assets/textures/huzhaicheng/` 重跑即接上)。smoke test 4/4 PASS、GDUnit 42/42 綠(build script:`tools/build_huzhaicheng.gd`)
 
 ## 🔧 Doing / Next(優先高→低,對齊 SPEC.md §6)
 
@@ -29,6 +30,7 @@
 
 - **對話刪減幅度**:等 Hank 拍板砍多少、砍哪些,才動 story/chapters/(先保留不動)
 - **抽菸/安眠藥的玩法定位**:是純演出 / 狀態管理 / 還是影響旗標?待與 Hank 對齊
+- **虎寨城街區的視覺驗收**:結構已 smoke-test 過,但氛圍/走位需 Hank 按 F5 實跑確認(斜坡能否爬上天橋、壓迫感是否成立);貼圖待 Hank 依 SPEC image spec 畫好丟資料夾
 
 ## 🧱 品質基線(收工必查)
 
