@@ -67,9 +67,11 @@ func _init() -> void:
 	# NPC：某甲（ch5），吧檯後
 	Lib.add_npc(root, "NPC_Moujia", "moujia", "ch5", 0, Vector3(0, 0, -3.2))
 
-	# 門 → 辦公室
-	Lib.add_door(root, "DoorOffice", Vector3(0, 0, 5.0), 180.0,
-		"res://scenes3d/Office.tscn", "辦公室")
+	# 門 → 虎寨城街區（回 hub）+ 出口招牌（DoorLight 已在門口）
+	Lib.add_door(root, "DoorStreet", Vector3(0, 0, 5.0), 180.0,
+		"res://scenes3d/HuZhaiCheng.tscn", "巷弄")
+	Lib.add_sign(root, "ExitSign", "▸ 出口", Vector3(0, 2.7, 4.8), 180.0,
+		Color(0.95, 0.78, 0.35), 48)
 
 	Lib.add_spawn(root, Vector3(0, 0.1, 3.5))
 	quit(0 if Lib.save(root, "res://scenes3d/Restaurant.tscn") == OK else 1)

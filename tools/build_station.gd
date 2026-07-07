@@ -74,9 +74,12 @@ func _init() -> void:
 	# NPC：老鼠（ch1）
 	Lib.add_npc(root, "NPC_Rat", "rat", "ch1", 0, Vector3(10, 0, -1))
 
-	# 門 → 辦公室
-	Lib.add_door(root, "DoorOffice", Vector3(-14.9, 0, -2), 90.0,
-		"res://scenes3d/Office.tscn", "辦公室")
+	# 門 → 虎寨城街區（回 hub）+ 出口招牌與燈，讓玩家找得到回去的路
+	Lib.add_door(root, "DoorStreet", Vector3(-14.9, 0, -2), 90.0,
+		"res://scenes3d/HuZhaiCheng.tscn", "巷弄")
+	Lib.add_sign(root, "ExitSign", "▸ 出口", Vector3(-14.6, 2.7, -2), 90.0,
+		Color(0.95, 0.78, 0.35), 48)
+	Lib.add_omni(root, "ExitLight", Vector3(-13.8, 2.4, -2), Color(0.95, 0.78, 0.42), 1.1, 5.0)
 
 	Lib.add_spawn(root, Vector3(-10, 0.1, -2))
 	quit(0 if Lib.save(root, "res://scenes3d/Station.tscn") == OK else 1)
