@@ -7,7 +7,7 @@ extends Node
 ##   門 ：meta next_level / display_name → 換關卡
 
 const START_LEVEL := "res://scenes3d/HuZhaiCheng.tscn"
-const VIEW_SHRINK := 6  # 1920/6 = 320x180
+const VIEW_SHRINK := 2  # 1080p 視窗 → 960x540 內部渲染（遠處字看得清；想更粗改回大一點的值）
 
 var _player: FPPlayer
 var _level: Node3D

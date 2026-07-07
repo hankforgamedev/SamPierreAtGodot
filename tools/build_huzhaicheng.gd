@@ -44,14 +44,15 @@ func _init() -> void:
 
 	# ---------- 垂直感：西側斜坡 → 天橋走道 ----------
 	# 斜坡 30°：一端貼地、一端達天橋高度，用 CharacterBody 可直接走上去
-	var ramp := Lib.add_box(root, "Ramp", Vector3(-7.6, 1.5, 5.2), Vector3(2.6, 0.3, 6.0), metal_mat)
-	ramp.rotation.x = deg_to_rad(30)
-	# 天橋走道（沿西牆，供俯瞰內院）
-	Lib.add_box(root, "Catwalk", Vector3(-7.6, 2.9, -1.0), Vector3(2.6, 0.2, 14.0), metal_mat)
-	Lib.add_box(root, "CatwalkRail", Vector3(-6.3, 3.4, -1.0), Vector3(0.1, 0.9, 14.0),
+	# 斜坡 ~23°：低端貼地(z≈8.5)、高端接上天橋南端(z≈1.5, y≈3)，緩到 CharacterBody 走得上去
+	var ramp := Lib.add_box(root, "Ramp", Vector3(-7.7, 1.5, 5.0), Vector3(2.6, 0.3, 7.8), metal_mat)
+	ramp.rotation.x = deg_to_rad(-23.2)
+	# 天橋走道（沿西牆北段，與斜坡高端相接，可俯瞰內院）
+	Lib.add_box(root, "Catwalk", Vector3(-7.7, 2.9, -3.0), Vector3(2.6, 0.2, 10.0), metal_mat)
+	Lib.add_box(root, "CatwalkRail", Vector3(-6.4, 3.4, -3.0), Vector3(0.1, 0.9, 10.0),
 		Lib.flat_mat(Color(0.20, 0.21, 0.22)))
 	# 天橋上一扇封死的門（走得到、進不去，暗示樓上還有無數層）
-	Lib.add_box(root, "SealedDoor", Vector3(-8.7, 3.9, -6.0), Vector3(1.4, 2.0, 0.15),
+	Lib.add_box(root, "SealedDoor", Vector3(-9.0, 3.9, -6.0), Vector3(1.4, 2.0, 0.15),
 		Lib.flat_mat(Color(0.12, 0.10, 0.09)))
 
 	# ---------- KWC 質感：管線、冷氣、晾衣、垃圾、積水 ----------

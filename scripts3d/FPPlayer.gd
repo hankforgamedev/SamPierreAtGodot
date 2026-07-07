@@ -37,6 +37,10 @@ func _ready() -> void:
 	_ray.target_position = Vector3(0, 0, -INTERACT_RANGE)
 	cam.add_child(_ray)
 
+	# 讓斜坡走得上去、上下坡不彈起：放寬地面角度上限 + 貼地吸附
+	floor_max_angle = deg_to_rad(50.0)
+	floor_snap_length = 0.5
+
 
 func rotate_look(relative: Vector2) -> void:
 	if not input_enabled:

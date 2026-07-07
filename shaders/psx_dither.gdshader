@@ -3,10 +3,11 @@ shader_type canvas_item;
 // Arctic Eggs 風格後製：限色量化 + 4x4 Bayer dithering + 綠灰色調
 // 掛在 SubViewportContainer 上，TEXTURE 是低解析度 3D 畫面
 
-uniform int color_steps : hint_range(2, 16) = 5;
-uniform float dither_strength : hint_range(0.0, 2.0) = 1.0;
-uniform float saturation : hint_range(0.0, 1.5) = 0.45;
-uniform vec3 tint : source_color = vec3(0.80, 1.0, 0.84);
+// 2026-07-08 依 Hank 回饋放寬：色階更多、抖動更弱、飽和更高 → 遠處看得清，仍保留綠灰氛圍
+uniform int color_steps : hint_range(2, 16) = 8;
+uniform float dither_strength : hint_range(0.0, 2.0) = 0.4;
+uniform float saturation : hint_range(0.0, 1.5) = 0.65;
+uniform vec3 tint : source_color = vec3(0.88, 1.0, 0.90);
 
 const float BAYER[16] = float[16](
 	 0.0,  8.0,  2.0, 10.0,
