@@ -4,3 +4,6 @@
 
 # Editor temp junk — never commit
 *.tmp
+
+# GDUnit4 HTML/XML test reports — build artifacts, regenerated each run
+reports/
